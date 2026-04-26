@@ -1,0 +1,16 @@
+{
+  "name": "liara-interfaces",
+  "version": "0.0.0",
+  "description": "C ABI headers shared by all Liara modules.",
+  "homepage": "https://github.com/liara-engine/liara-interfaces",
+  "license": "MIT",
+  "dependencies": [],
+  "features": {
+    "tests": {
+      "description": "Build the liara-interfaces test suite (compile-only and C-callability checks).",
+      "dependencies": [
+        "doctest"
+      ]
+    }
+  }
+}
