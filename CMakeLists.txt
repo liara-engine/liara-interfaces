@@ -20,23 +20,23 @@ option(LIARA_INTERFACES_INSTALL
         "Generate install targets for liara-interfaces."
         ${LIARA_INTERFACES_IS_TOP_LEVEL})
 
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_C_EXTENSIONS OFF)
+if(LIARA_INTERFACES_IS_TOP_LEVEL)
+    set(CMAKE_C_STANDARD 11)
+    set(CMAKE_C_STANDARD_REQUIRED ON)
+    set(CMAKE_C_EXTENSIONS OFF)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+    set(CMAKE_CXX_STANDARD 20)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_EXTENSIONS OFF)
+endif()
 
 add_library(liara_interfaces INTERFACE)
 add_library(Liara::Interfaces ALIAS liara_interfaces)
 
 target_include_directories(liara_interfaces INTERFACE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-
-target_compile_features(liara_interfaces INTERFACE c_std_11)
 
 if(LIARA_INTERFACES_BUILD_TESTS)
     enable_testing()
@@ -62,7 +62,7 @@ if(LIARA_INTERFACES_INSTALL)
 
     write_basic_package_version_file(
             "${CMAKE_CURRENT_BINARY_DIR}/LiaraInterfacesConfigVersion.cmake"
-            VERSION   ${PROJECT_VERSION}
+            VERSION ${PROJECT_VERSION}
             COMPATIBILITY SameMajorVersion
             ARCH_INDEPENDENT
     )
