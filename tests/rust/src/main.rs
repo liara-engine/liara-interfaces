@@ -7,7 +7,10 @@ fn main() {
     println!("LIARA_INTERFACE_VERSION_MAJOR = {}", LIARA_INTERFACE_VERSION_MAJOR);
     println!("LIARA_INTERFACE_VERSION_MINOR = {}", LIARA_INTERFACE_VERSION_MINOR);
     println!("LIARA_INTERFACE_VERSION_PATCH = {}", LIARA_INTERFACE_VERSION_PATCH);
-    assert_eq!(LIARA_INTERFACE_VERSION_MAJOR, 1);
+
+    assert_eq!(LIARA_INTERFACE_VERSION_MAJOR, 0);
+    assert_eq!(LIARA_INTERFACE_VERSION_MINOR, 0);
+    assert_eq!(LIARA_INTERFACE_VERSION_PATCH, 0);
 
     // Test 2: inline functions, called through the C wrapper
     let v = unsafe { liara_rs_make_version(2, 5, 17) };
