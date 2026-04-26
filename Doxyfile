@@ -1,0 +1,34 @@
+PROJECT_NAME           = "Robomaniak ROS2 Project"
+OUTPUT_DIRECTORY       = build/docs
+INPUT                  = src/ README.md
+RECURSIVE              = YES
+USE_MDFILE_AS_MAINPAGE = README.md
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+
+OPTIMIZE_OUTPUT_FOR_C  = NO
+BUILTIN_STL_SUPPORT    = YES
+
+GENERATE_LATEX         = NO
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+
+HTML_HEADER            = doxygen/header.html
+HTML_FOOTER            = doxygen/footer.html
+
+HTML_EXTRA_STYLESHEET  = tokens/design-tokens.css \
+                         navbar/navbar.css \
+                         doxygen/doxygen-custom.css
+
+HTML_EXTRA_FILES       = navbar/navbar.js
+
+# Enable the side-nav tree (the Liara CSS is tuned for this layout)
+GENERATE_TREEVIEW      = YES
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+
+# Disable Doxygen's own dark mode — we manage it via design tokens
+HTML_COLORSTYLE        = LIGHT
+HTML_DYNAMIC_MENUS     = YES
