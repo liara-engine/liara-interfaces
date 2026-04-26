@@ -46,10 +46,9 @@ in isolation:
 git clone https://github.com/liara-engine/liara-interfaces.git
 cd liara-interfaces
 
-cmake --preset=linux-debug-clang \
-      -DLIARA_INTERFACES_BUILD_TESTS=ON
+cmake --preset=linux-debug-clang
 cmake --build --preset=linux-debug-clang
-ctest  --preset=linux-debug-clang --output-on-failure
+ctest --preset=linux-debug-clang --output-on-failure
 ```
 
 The full development setup (Vulkan SDK, vcpkg, presets, etc.) is
