@@ -1,3 +1,17 @@
 .idea
 .vscode
+
 build
+target
+
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*.DS_Store
+
+Cargo.lock
+
+/tests/zig/main
+/tests/zig/test
