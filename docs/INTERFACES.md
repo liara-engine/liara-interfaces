@@ -658,6 +658,27 @@ extern "C" {
 This allows C++ consumers to include the header normally and have C
 linkage applied. It is mandatory; CI verifies its presence.
 
+### Macros vs. Functions for Cross-Language Consumability
+
+Macros do not cross language FFI boundaries. A consumer language
+that parses C headers (Rust via bindgen, Zig via translate-c,
+Python via ctypes with manual binding) typically does not see
+macros, or sees only the simplest constant ones.
+When a header would naturally use a macro for a small computation
+or a packed value, prefer instead:
+
+- An `enum` for integer constants (visible to all binding tools).
+- A `static inline` function for computations (compiled into each
+TU, no symbol exported, header-only-friendly).
+- Or both: a macro **and** a `static inline` function delegating
+to the macro, when the macro form is needed for constant
+expressions (case labels, array sizes, `static_assert`).
+
+The cost of `static inline` functions is zero at runtime (they
+inline) and minimal at compile time. The benefit is that the
+entire interface is consumable from any language with a C FFI,
+not just C and C++.
+
 ---
 
 ## 10. Documentation
