@@ -1,0 +1,8 @@
+[package]
+name = "liara_abi_test"
+version = "0.0.0"
+edition = "2021"
+
+[build-dependencies]
+bindgen = "0.71"
+cc = "1.0"

@@ -13,3 +13,6 @@ set_target_properties(test_interfaces_c PROPERTIES
         C_STANDARD_REQUIRED ON
         C_EXTENSIONS        OFF)
 add_test(NAME test_interfaces_c COMMAND test_interfaces_c)
+
+add_test(NAME test_rust COMMAND cargo run WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests/rust)
+add_test(NAME test_zig COMMAND zig run test.zig -I${CMAKE_SOURCE_DIR}/include -lc -target x86_64-linux-gnu WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests/zig)
