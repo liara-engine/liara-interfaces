@@ -1,6 +1,6 @@
-PROJECT_NAME           = "Robomaniak ROS2 Project"
+PROJECT_NAME           = "liara-interfaces"
 OUTPUT_DIRECTORY       = build/docs
-INPUT                  = src/ README.md
+INPUT                  = include/ README.md
 RECURSIVE              = YES
 USE_MDFILE_AS_MAINPAGE = README.md
 
