@@ -1,0 +1,90 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 29, "patch": 0 },
+
+  "configurePresets": [
+    {
+      "name": "common",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_MANIFEST_FEATURES": "tests",
+        "LIARA_INTERFACES_BUILD_TESTS": "ON",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "linux-base",
+      "hidden": true,
+      "inherits": "common",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+
+    {
+      "name": "linux-debug-gcc",
+      "inherits": "linux-base",
+      "displayName": "Linux Debug (GCC)",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+    {
+      "name": "linux-release-gcc",
+      "inherits": "linux-base",
+      "displayName": "Linux Release (GCC)",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+    {
+      "name": "linux-debug-clang",
+      "inherits": "linux-base",
+      "displayName": "Linux Debug (Clang)",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++"
+      }
+    },
+    {
+      "name": "linux-release-clang",
+      "inherits": "linux-base",
+      "displayName": "Linux Release (Clang)",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++"
+      }
+    }
+  ],
+
+  "buildPresets": [
+    { "name": "linux-debug-gcc",     "configurePreset": "linux-debug-gcc"     },
+    { "name": "linux-release-gcc",   "configurePreset": "linux-release-gcc"   },
+    { "name": "linux-debug-clang",   "configurePreset": "linux-debug-clang"   },
+    { "name": "linux-release-clang", "configurePreset": "linux-release-clang" }
+  ],
+
+  "testPresets": [
+    {
+      "name": "common-test",
+      "hidden": true,
+      "output": { "outputOnFailure": true },
+      "execution": { "noTestsAction": "error", "stopOnFailure": false }
+    },
+    { "name": "linux-debug-gcc",     "configurePreset": "linux-debug-gcc",     "inherits": "common-test" },
+    { "name": "linux-release-gcc",   "configurePreset": "linux-release-gcc",   "inherits": "common-test" },
+    { "name": "linux-debug-clang",   "configurePreset": "linux-debug-clang",   "inherits": "common-test" },
+    { "name": "linux-release-clang", "configurePreset": "linux-release-clang", "inherits": "common-test" }
+  ]
+}
