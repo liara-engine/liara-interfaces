@@ -1,5 +1,5 @@
 PROJECT_NAME           = "liara-interfaces"
-OUTPUT_DIRECTORY       = build/docs
+OUTPUT_DIRECTORY       = build/doxygen
 INPUT                  = include/ README.md
 RECURSIVE              = YES
 USE_MDFILE_AS_MAINPAGE = README.md
@@ -15,14 +15,14 @@ GENERATE_LATEX         = NO
 GENERATE_HTML          = YES
 HTML_OUTPUT            = html
 
-HTML_HEADER            = doxygen/header.html
-HTML_FOOTER            = doxygen/footer.html
+HTML_HEADER            = docs-shared/doxygen/header.html
+HTML_FOOTER            = docs-shared/doxygen/footer.html
 
-HTML_EXTRA_STYLESHEET  = tokens/design-tokens.css \
-                         navbar/navbar.css \
-                         doxygen/doxygen-custom.css
+HTML_EXTRA_STYLESHEET  = docs-shared/tokens/design-tokens.css \
+                         docs-shared/navbar/navbar.css \
+                         docs-shared/doxygen/doxygen-custom.css
 
-HTML_EXTRA_FILES       = navbar/navbar.js
+HTML_EXTRA_FILES       = docs-shared/navbar/navbar.js
 
 # Enable the side-nav tree (the Liara CSS is tuned for this layout)
 GENERATE_TREEVIEW      = YES
