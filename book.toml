@@ -8,9 +8,9 @@ src = "docs"
 hash-files = false
 default-theme = "light"
 preferred-dark-theme = "navy"
-git-repository-url = "https://github.com/liara-engine/liara"
+git-repository-url = "https://github.com/liara-engine/liara-interface"
 git-repository-icon = "fa-github"
-edit-url-template = "https://github.com/liara-engine/liara/edit/main/docs/user/{path}"
+edit-url-template = "https://github.com/liara-engine/interface/edit/main/docs/{path}"
 
 theme = "docs-shared/mdbook/theme"
 
@@ -21,6 +21,7 @@ additional-css = [
 ]
 additional-js = [
   "docs-shared/navbar/navbar.js",
+  "docs-shared/navbar/navbar.config.js",
   "docs-shared/mdbook/additionals/js/admonitions.js",
 ]
 

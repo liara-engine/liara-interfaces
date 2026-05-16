@@ -22,7 +22,10 @@ HTML_EXTRA_STYLESHEET  = docs-shared/tokens/design-tokens.css \
                          docs-shared/navbar/navbar.css \
                          docs-shared/doxygen/doxygen-custom.css
 
-HTML_EXTRA_FILES       = docs-shared/navbar/navbar.js
+HTML_EXTRA_FILES       = docs-shared/navbar/navbar.js \
+                         docs-shared/navbar/navbar.config.js \
+                         docs-shared/assets/favicon.ico \
+                         docs-shared/assets/logo.svg
 
 # Enable the side-nav tree (the Liara CSS is tuned for this layout)
 GENERATE_TREEVIEW      = YES
