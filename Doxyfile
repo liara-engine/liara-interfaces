@@ -28,3 +28,5 @@ FULL_SIDEBAR           = NO
 # Disable Doxygen's own dark mode — we manage it via design tokens
 HTML_COLORSTYLE        = LIGHT
 HTML_DYNAMIC_MENUS     = YES
+
+ALIASES += threadsafety="\\xrefitem threadsafety \"Thread Safety\" \"Thread Safety\" "
