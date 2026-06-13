@@ -24,14 +24,14 @@ freely until the first tagged release.
 ## Documentation
 
 - **Interface design rules** (mandatory reading before modifying any
-  header): [`docs/INTERFACES.md`](./docs/INTERFACES.md).
+  header): [`docs/INTERFACES.md`](https://liara-engine.liara-engine-documentation.workers.dev/liara-interfaces/latest/book/INTERFACES).
 - **Architecture and rationale**: see the meta repository's
-  [`docs/ARCHITECTURE.md`](https://github.com/liara-engine/liara/blob/main/docs/ARCHITECTURE.md)
-  and [`docs/MODULES.md`](https://github.com/liara-engine/liara/blob/main/docs/MODULES.md).
+  [`docs/ARCHITECTURE.md`](https://liara-engine.liara-engine-documentation.workers.dev/liara/latest/book/ARCHITECTURE)
+  and [`docs/MODULES.md`](https://liara-engine.liara-engine-documentation.workers.dev/liara/latest/book/MODULES).
 - **Day-to-day workflow**: meta repository's
-  [`docs/CONTRIBUTING.md`](https://github.com/liara-engine/liara/blob/main/docs/CONTRIBUTING.md).
+  [`docs/CONTRIBUTING.md`](https://liara-engine.liara-engine-documentation.workers.dev/liara/latest/book/CONTRIBUTING).
 - **API reference** (Doxygen, deployed once Phase 0 completes):
-  [liara-engine.github.io/liara-interfaces](https://liara-engine.github.io/liara-interfaces).
+  [liara-engine.github.io/liara-interfaces](https://liara-engine.liara-engine-documentation.workers.dev/).
 
 ---
 
@@ -53,7 +53,7 @@ ctest --preset=linux-debug-clang --output-on-failure
 
 The full development setup (Vulkan SDK, vcpkg, presets, etc.) is
 documented in the meta repository's
-[`docs/BOOTSTRAP.md`](https://github.com/liara-engine/liara/blob/main/docs/BOOTSTRAP.md).
+[`docs/BOOTSTRAP.md`](https://liara-engine.liara-engine-documentation.workers.dev/liara/latest/book/BOOTSTRAP).
 
 ---
 
@@ -74,4 +74,4 @@ package config.
 
 ## License
 
-Released under the [MIT License](./LICENSE).
+Released under the [MIT License](https://liara-engine.liara-engine-documentation.workers.dev/liara/latest/book/LICENSE).

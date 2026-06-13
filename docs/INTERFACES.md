@@ -6,7 +6,7 @@
 > modifying anything in this repository.
 >
 > The philosophy behind these rules is documented in section 5 of
-> the meta repository's [`ARCHITECTURE.md`](https://github.com/liara-engine/liara/blob/main/docs/ARCHITECTURE.md).
+> the meta repository's [`ARCHITECTURE.md`](https://liara-engine.liara-engine-documentation.workers.dev/liara/latest/book/ARCHITECTURE).
 
 ---
 
