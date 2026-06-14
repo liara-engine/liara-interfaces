@@ -26,6 +26,7 @@ jobs:
   preview:
     permissions:
       contents: read
+      packages: read
       pull-requests: write
     needs: changes
     if: >
