@@ -24,6 +24,9 @@ jobs:
               - 'README.md'
 
   preview:
+    permissions:
+      contents: read
+      pull-requests: write
     needs: changes
     if: >
       needs.changes.outputs.docs == 'true' ||
