@@ -46,7 +46,7 @@ enum {
  * @param patch The patch version number (0-4095).
  * @return A 32-bit unsigned integer representing the combined version.
  *
- * @threadsafety This macro is thread-safe as it does not modify any shared state.
+ * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
  */
 #define LIARA_MAKE_VERSION(major, minor, patch) \
     (((uint32_t)(major) << 22) | ((uint32_t)(minor) << 12) | (uint32_t)(patch))
@@ -62,7 +62,7 @@ enum {
  * @param patch The patch version number (0-4095).
  * @return A 32-bit unsigned integer representing the combined version.
  *
- * @threadsafety This function is thread-safe as it does not modify any shared state.
+ * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
 static inline uint32_t liara_make_version(uint32_t major, uint32_t minor, uint32_t patch) { return LIARA_MAKE_VERSION(major, minor, patch); }
 
@@ -74,7 +74,7 @@ static inline uint32_t liara_make_version(uint32_t major, uint32_t minor, uint32
  * @param v The combined version number from which to extract the major version.
  * @return The major version number (0-1023).
  *
- * @threadsafety This macro is thread-safe as it does not modify any shared state.
+ * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
  */
 #define LIARA_VERSION_MAJOR(v) (((uint32_t)(v) >> 22) & 0x3FFu)
 
@@ -86,7 +86,7 @@ static inline uint32_t liara_make_version(uint32_t major, uint32_t minor, uint32
  * @param v The combined version number from which to extract the minor version.
  * @return The minor version number (0-1023).
  *
- * @threadsafety This macro is thread-safe as it does not modify any shared state.
+ * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
  */
 #define LIARA_VERSION_MINOR(v) (((uint32_t)(v) >> 12) & 0x3FFu)
 
@@ -98,7 +98,7 @@ static inline uint32_t liara_make_version(uint32_t major, uint32_t minor, uint32
  * @param v The combined version number from which to extract the patch version.
  * @return The patch version number (0-4095).
  *
- * @threadsafety This macro is thread-safe as it does not modify any shared state.
+ * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
  */
 #define LIARA_VERSION_PATCH(v) ((uint32_t)(v) & 0xFFFu)
 
@@ -111,7 +111,7 @@ static inline uint32_t liara_make_version(uint32_t major, uint32_t minor, uint32
  * @param v The combined version number from which to extract the major version.
  * @return The major version number (0-1023).
  *
- * @threadsafety This function is thread-safe as it does not modify any shared state.
+ * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
 static inline uint32_t liara_version_major(uint32_t v) { return LIARA_VERSION_MAJOR(v); }
 
@@ -124,7 +124,7 @@ static inline uint32_t liara_version_major(uint32_t v) { return LIARA_VERSION_MA
  * @param v The combined version number from which to extract the minor version.
  * @return The minor version number (0-1023).
  *
- * @threadsafety This function is thread-safe as it does not modify any shared state.
+ * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
 static inline uint32_t liara_version_minor(uint32_t v) { return LIARA_VERSION_MINOR(v); }
 
@@ -137,7 +137,7 @@ static inline uint32_t liara_version_minor(uint32_t v) { return LIARA_VERSION_MI
  * @param v The combined version number from which to extract the patch version.
  * @return The patch version number (0-4095).
  *
- * @threadsafety This function is thread-safe as it does not modify any shared state.
+ * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
 static inline uint32_t liara_version_patch(uint32_t v) { return LIARA_VERSION_PATCH(v); }
 
@@ -147,7 +147,7 @@ static inline uint32_t liara_version_patch(uint32_t v) { return LIARA_VERSION_PA
  * This macro defines the current version of the Liara interface by combining the major, minor, and patch version numbers defined above.
  * It can be used to check for compatibility with specific versions of the interface.
  *
- * @threadsafety This macro is thread-safe as it does not modify any shared state.
+ * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
  */
 #define LIARA_INTERFACE_VERSION \
     LIARA_MAKE_VERSION( \
@@ -163,7 +163,7 @@ static inline uint32_t liara_version_patch(uint32_t v) { return LIARA_VERSION_PA
  *
  * @return A 32-bit unsigned integer representing the current version of the Liara interface.
  *
- * @threadsafety This function is thread-safe as it does not modify any shared state.
+ * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
 static inline uint32_t liara_interface_version(void) { return LIARA_INTERFACE_VERSION; }
 
