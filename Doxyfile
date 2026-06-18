@@ -29,4 +29,5 @@ FULL_SIDEBAR           = NO
 HTML_COLORSTYLE        = LIGHT
 HTML_DYNAMIC_MENUS     = YES
 
-ALIASES += threadsafety{1}="\\xrefitem threadsafety \"Thread Safety\" \"Thread Safety\" {1}"
+ALIASES += "threadsafety=<dl class='section threadsafety'><dt>Thread Safety</dt><dd>"
+ALIASES += "endthreadsafety=</dd></dl>"
