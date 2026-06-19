@@ -16,3 +16,4 @@ jobs:
     uses: liara-engine/.github/.github/workflows/reusable-validate-manifest.yml@preview-5
     with:
       package: '.'
+      github-repo-version: 'preview-5'
