@@ -14,5 +14,16 @@ set_target_properties(test_interfaces_c PROPERTIES
         C_EXTENSIONS        OFF)
 add_test(NAME test_interfaces_c COMMAND test_interfaces_c)
 
-add_test(NAME test_rust COMMAND cargo run WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests/rust)
-add_test(NAME test_zig COMMAND zig run test.zig -I${CMAKE_SOURCE_DIR}/include -lc -target x86_64-linux-gnu WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/tests/zig)
+find_program(ZIG_EXECUTABLE NAMES zig)
+if(ZIG_EXECUTABLE)
+    if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+        add_test(NAME test_zig_linux COMMAND ${ZIG_EXECUTABLE} run test.zig -I${PROJECT_SOURCE_DIR}/include -lc -target x86_64-linux-gnu WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/zig)
+    elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+        add_test(NAME test_zig_windows COMMAND ${ZIG_EXECUTABLE} run test.zig -I${PROJECT_SOURCE_DIR}/include -lc -target x86_64-windows-gnu WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/zig)
+    endif()
+endif()
+
+find_program(RUST_EXECUTABLE NAMES cargo)
+if(RUST_EXECUTABLE)
+    add_test(NAME test_rust COMMAND ${RUST_EXECUTABLE} run WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/rust)
+endif()
