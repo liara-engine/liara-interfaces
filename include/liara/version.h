@@ -16,6 +16,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <liara/version_config.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,11 +30,11 @@ extern "C" {
  */
 enum {
     /** Liara interface major version number. Update this when making incompatible API changes. */
-    LIARA_INTERFACE_VERSION_MAJOR = 0,
+    LIARA_INTERFACE_VERSION_MAJOR = DONT_USE_LIARA_INTERFACE_VERSION_MAJOR,
     /** Liara interface minor version number. Update this when adding functionality in a backward-compatible manner. If there is any doubt on the backward compatibility of a change, you must update the major version instead. */
-    LIARA_INTERFACE_VERSION_MINOR = 0,
+    LIARA_INTERFACE_VERSION_MINOR = DONT_USE_LIARA_INTERFACE_VERSION_MINOR,
     /** Liara interface patch version number. Update this when adding documentation, comments, whitespace, or other non-functional changes. */
-    LIARA_INTERFACE_VERSION_PATCH = 0,
+    LIARA_INTERFACE_VERSION_PATCH = DONT_USE_LIARA_INTERFACE_VERSION_PATCH,
 };
 
 /**

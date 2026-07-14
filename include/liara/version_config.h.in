@@ -1,0 +1,39 @@
+#pragma once
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @brief The major version number of the Liara interface.
+ *
+ * The value is automatically generated from the CMake configuration and should not be modified manually.
+ *
+ * @warning Please do not use this macro directly. Use the `LIARA_INTERFACE_VERSION_MAJOR` macro from `liara/version.h` instead.
+ *          This macro is intended for internal use only and may change without notice.
+ */
+#define DONT_USE_LIARA_INTERFACE_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
+
+/**
+ * @brief The minor version number of the Liara interface.
+ *
+ * The value is automatically generated from the CMake configuration and should not be modified manually.
+ *
+ * @warning Please do not use this macro directly. Use the `LIARA_INTERFACE_VERSION_MINOR` macro from `liara/version.h` instead.
+ *          This macro is intended for internal use only and may change without notice.
+ */
+#define DONT_USE_LIARA_INTERFACE_VERSION_MINOR @PROJECT_VERSION_MINOR@
+
+/**
+ * @brief The patch version number of the Liara interface.
+ *
+ * The value is automatically generated from the CMake configuration and should not be modified manually.
+ *
+ * @warning Please do not use this macro directly. Use the `LIARA_INTERFACE_VERSION_PATCH` macro from `liara/version.h` instead.
+ *          This macro is intended for internal use only and may change without notice.
+ */
+#define DONT_USE_LIARA_INTERFACE_VERSION_PATCH @PROJECT_VERSION_PATCH@
+
+#ifdef __cplusplus
+}
+#endif

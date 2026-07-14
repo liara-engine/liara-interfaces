@@ -1,10 +1,20 @@
 cmake_minimum_required(VERSION 3.29)
 
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/.release-please-manifest.json" RELEASE_PLEASE_MANIFEST)
+string(JSON PROJECT_VERSION GET ${RELEASE_PLEASE_MANIFEST} ".")
+message(STATUS "LiaraInterfaces version: ${PROJECT_VERSION}")
+
 project(LiaraInterfaces
-        VERSION 0.0.0
+        VERSION ${PROJECT_VERSION}
         DESCRIPTION "C ABI headers shared by all Liara modules"
         HOMEPAGE_URL "https://github.com/liara-engine/liara-interfaces"
         LANGUAGES C CXX
+)
+
+configure_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/liara/version_config.h.in"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/liara/version_config.h"
+        @ONLY
 )
 
 if(PROJECT_IS_TOP_LEVEL)
@@ -34,6 +44,7 @@ add_library(liara_interfaces INTERFACE)
 add_library(Liara::Interfaces ALIAS liara_interfaces)
 
 target_include_directories(liara_interfaces INTERFACE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/generated>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
@@ -49,7 +60,14 @@ if(LIARA_INTERFACES_INSTALL)
 
     install(DIRECTORY include/
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-            FILES_MATCHING PATTERN "*.h"
+            FILES_MATCHING
+            PATTERN "*.h"
+            PATTERN "version_config.h.in" EXCLUDE
+    )
+
+    install(
+            FILES "${CMAKE_CURRENT_BINARY_DIR}/generated/liara/version_config.h"
+            DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/liara"
     )
 
     install(TARGETS liara_interfaces EXPORT LiaraInterfacesTargets)
