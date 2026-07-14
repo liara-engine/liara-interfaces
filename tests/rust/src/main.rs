@@ -10,7 +10,7 @@ fn main() {
 
     assert_eq!(LIARA_INTERFACE_VERSION_MAJOR, 0);
     assert_eq!(LIARA_INTERFACE_VERSION_MINOR, 0);
-    assert_eq!(LIARA_INTERFACE_VERSION_PATCH, 0);
+    assert_eq!(LIARA_INTERFACE_VERSION_PATCH, 1);
 
     // Test 2: inline functions, called through the C wrapper
     let v = unsafe { liara_rs_make_version(2, 5, 17) };

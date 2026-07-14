@@ -12,7 +12,7 @@ pub fn main() void {
 
     assert(major == 0);
     assert(minor == 0);
-    assert(patch == 0);
+    assert(patch == 1);
 
     std.debug.print("Version compile-time: {}.{}.{}\n", .{ major, minor, patch });
 

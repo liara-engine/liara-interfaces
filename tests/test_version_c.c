@@ -12,7 +12,7 @@ int main(void) {
     uint32_t interface_version = LIARA_INTERFACE_VERSION;
     if (LIARA_VERSION_MAJOR(interface_version) != 0 ||
         LIARA_VERSION_MINOR(interface_version) != 0 ||
-        LIARA_VERSION_PATCH(interface_version) != 0) {
+        LIARA_VERSION_PATCH(interface_version) != 1) {
         return 1;
     }
 
