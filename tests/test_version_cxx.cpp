@@ -1,6 +1,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 
+#include <liara/abi_version.h>
 #include <liara/version.h>
 
 TEST_CASE("Version encoding and decoding") {
@@ -9,7 +10,7 @@ TEST_CASE("Version encoding and decoding") {
     CHECK(LIARA_VERSION_MINOR(version) == 2);
     CHECK(LIARA_VERSION_PATCH(version) == 3);
 
-    uint32_t interface_version = LIARA_INTERFACE_VERSION;
+    uint32_t interface_version = LIARA_ABI_VERSION;
     CHECK(LIARA_VERSION_MAJOR(interface_version) == 0);
     CHECK(LIARA_VERSION_MINOR(interface_version) == 0);
     CHECK(LIARA_VERSION_PATCH(interface_version) == 1);

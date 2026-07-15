@@ -2,13 +2,13 @@ const std = @import("std");
 const assert = std.debug.assert;
 
 const c = @cImport({
-    @cInclude("liara/version.h");
+    @cInclude("liara/abi_version.h");
 });
 
 pub fn main() void {
-    const major = c.LIARA_INTERFACE_VERSION_MAJOR;
-    const minor = c.LIARA_INTERFACE_VERSION_MINOR;
-    const patch = c.LIARA_INTERFACE_VERSION_PATCH;
+    const major = c.LIARA_ABI_VERSION_MAJOR;
+    const minor = c.LIARA_ABI_VERSION_MINOR;
+    const patch = c.LIARA_ABI_VERSION_PATCH;
 
     assert(major == 0);
     assert(minor == 0);
@@ -16,7 +16,7 @@ pub fn main() void {
 
     std.debug.print("Version compile-time: {}.{}.{}\n", .{ major, minor, patch });
 
-    const version_macro = c.LIARA_INTERFACE_VERSION;
+    const version_macro = c.LIARA_ABI_VERSION;
     std.debug.print("Version macro: {}\n", .{version_macro});
     std.debug.print(
         "Version macro decoded: {}.{}.{}\n",
@@ -30,8 +30,8 @@ pub fn main() void {
     const v1 = c.liara_make_version(1, 2, 3);
     std.debug.print("make_version(1,2,3) = {}\n", .{v1});
 
-    const v2 = c.liara_interface_version();
-    std.debug.print("interface_version() = {}\n", .{v2});
+    const v2 = c.liara_abi_version();
+    std.debug.print("abi_version() = {}\n", .{v2});
 
     std.debug.print(
         "decode: {}.{}.{}\n",

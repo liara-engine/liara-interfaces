@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <liara/abi_version.h>
 #include <liara/version.h>
 
 int main(void) {
@@ -9,7 +10,7 @@ int main(void) {
         return 1;
     }
 
-    uint32_t interface_version = LIARA_INTERFACE_VERSION;
+    uint32_t interface_version = LIARA_ABI_VERSION;
     if (LIARA_VERSION_MAJOR(interface_version) != 0 ||
         LIARA_VERSION_MINOR(interface_version) != 0 ||
         LIARA_VERSION_PATCH(interface_version) != 1) {

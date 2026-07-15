@@ -3,14 +3,14 @@
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
 fn main() {
-    // Test 1: enum constants (these come straight from liara/version.h)
-    println!("LIARA_INTERFACE_VERSION_MAJOR = {}", LIARA_INTERFACE_VERSION_MAJOR);
-    println!("LIARA_INTERFACE_VERSION_MINOR = {}", LIARA_INTERFACE_VERSION_MINOR);
-    println!("LIARA_INTERFACE_VERSION_PATCH = {}", LIARA_INTERFACE_VERSION_PATCH);
+    // Test 1: enum constants (these come from liara/abi_version.h)
+    println!("LIARA_ABI_VERSION_MAJOR = {}", LIARA_ABI_VERSION_MAJOR);
+    println!("LIARA_ABI_VERSION_MINOR = {}", LIARA_ABI_VERSION_MINOR);
+    println!("LIARA_ABI_VERSION_PATCH = {}", LIARA_ABI_VERSION_PATCH);
 
-    assert_eq!(LIARA_INTERFACE_VERSION_MAJOR, 0);
-    assert_eq!(LIARA_INTERFACE_VERSION_MINOR, 0);
-    assert_eq!(LIARA_INTERFACE_VERSION_PATCH, 1);
+    assert_eq!(LIARA_ABI_VERSION_MAJOR, 0);
+    assert_eq!(LIARA_ABI_VERSION_MINOR, 0);
+    assert_eq!(LIARA_ABI_VERSION_PATCH, 1);
 
     // Test 2: inline functions, called through the C wrapper
     let v = unsafe { liara_rs_make_version(2, 5, 17) };
@@ -25,10 +25,10 @@ fn main() {
     assert_eq!(patch, 17);
 
     // Test 3: roundtrip with the project's actual version
-    let project_version = unsafe { liara_rs_interface_version() };
+    let project_version = unsafe { liara_rs_abi_version() };
     let pmaj = unsafe { liara_rs_version_major(project_version) };
     println!("project version major = {}", pmaj);
-    assert_eq!(pmaj, LIARA_INTERFACE_VERSION_MAJOR as u32);
+    assert_eq!(pmaj, LIARA_ABI_VERSION_MAJOR as u32);
 
     println!("\nAll Rust FFI tests passed!");
 }

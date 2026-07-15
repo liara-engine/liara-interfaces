@@ -16,6 +16,6 @@ uint32_t liara_rs_version_patch(uint32_t version) {
     return liara_version_patch(version);
 }
 
-uint32_t liara_rs_interface_version(void) {
-    return liara_interface_version();
+uint32_t liara_rs_abi_version(void) {
+    return liara_abi_version();
 }

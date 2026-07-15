@@ -19,7 +19,7 @@ fn main() {
         .flag_if_supported("-std=c11")
         .compile("liara_rs_wrapper");
 
-    // Generate Rust bindings for wrapper.h (which transitively pulls in version.h).
+    // Generate Rust bindings for wrapper.h (which transitively pulls in abi_version.h).
     let bindings = bindgen::Builder::default()
         .header("wrapper.h")
         .clang_arg(format!("-I{}", include_dir.display()))
