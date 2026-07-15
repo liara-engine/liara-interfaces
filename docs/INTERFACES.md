@@ -482,18 +482,18 @@ realistic timeline.
 
 ### The Interface Version Macro
 
-The current interface version is declared in `liara/version.h`:
+The current interface version is declared in `liara/abi_version.h`:
 
 ```c
-#define LIARA_INTERFACE_VERSION_MAJOR  1
-#define LIARA_INTERFACE_VERSION_MINOR  0
-#define LIARA_INTERFACE_VERSION_PATCH  0
+#define LIARA_ABI_VERSION_MAJOR  1
+#define LIARA_ABI_VERSION_MINOR  0
+#define LIARA_ABI_VERSION_PATCH  0
 
-#define LIARA_INTERFACE_VERSION \
+#define LIARA_ABI_VERSION \
     LIARA_MAKE_VERSION( \
-        LIARA_INTERFACE_VERSION_MAJOR, \
-        LIARA_INTERFACE_VERSION_MINOR, \
-        LIARA_INTERFACE_VERSION_PATCH)
+        LIARA_ABI_VERSION_MAJOR, \
+        LIARA_ABI_VERSION_MINOR, \
+        LIARA_ABI_VERSION_PATCH)
 ```
 
 Every module that consumes the interface compiles against a specific
@@ -507,15 +507,15 @@ implements:
 
 ```c
 // Required entry point for every module.
-uint32_t liara_module_get_interface_version(void);
+uint32_t liara_<module>_get_interface_version(void);
 ```
 
-The implementation simply returns `LIARA_INTERFACE_VERSION` as
+The implementation simply returns `LIARA_ABI_VERSION` as
 captured at the module's compile time:
 
 ```c
-uint32_t liara_module_get_interface_version(void) {
-    return LIARA_INTERFACE_VERSION;
+uint32_t liara_<module>_get_interface_version(void) {
+    return LIARA_ABI_VERSION;
 }
 ```
 
@@ -526,8 +526,8 @@ calling its entry point; tomorrow: at dynamic load, by `dlsym`), it
 checks compatibility:
 
 ```c
-uint32_t module_version = liara_module_get_interface_version();
-uint32_t expected_version = LIARA_INTERFACE_VERSION;
+uint32_t module_version = liara_<module>_get_interface_version();
+uint32_t expected_version = LIARA_ABI_VERSION;
 
 if (LIARA_VERSION_MAJOR(module_version) != LIARA_VERSION_MAJOR(expected_version)) {
     // Hard failure: refuse to load.
@@ -775,7 +775,7 @@ conservative major bump merely costs one version number.
 The PR includes:
 
 - The header changes.
-- Updates to `LIARA_INTERFACE_VERSION_*` macros in `version.h`.
+- Updates to `LIARA_ABI_VERSION_*` macros in `abi_version.h`.
 - New ABI layout tests for any new or modified structs.
 - A note in the changelog.
 
