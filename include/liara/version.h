@@ -1,46 +1,42 @@
 /**
  * @file version.h
- * @brief Liara interface version definitions.
- *
- * This header defines the versioning scheme for the Liara interface, including macros and inline functions
- * for creating and extracting version numbers.
- *
- * The version is represented as a 32-bit unsigned integer, where:
- * - The major version occupies bits 22-31 (10 bits).
- * - The minor version occupies bits 12-21 (10 bits).
- * - The patch version occupies bits 0-11 (12 bits).
- *
- * This allows for a maximum major version of 1023, a maximum minor version of 1023, and a maximum patch version of 4095.
+ * @brief Generic 32-bit version encoding/decoding and utilities.
  */
 
 #pragma once
 
+#include <stddef.h>
+#include <stdbool.h>
 #include <stdint.h>
-#include <liara/version_config.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/**
- * @brief Liara interface version components.
- *
- * These constants define the major, minor, and patch version numbers for the Liara interface.
- * They can be updated as needed to reflect changes in the interface.
- */
-enum {
-    /** Liara interface major version number. Update this when making incompatible API changes. */
-    LIARA_INTERFACE_VERSION_MAJOR = DONT_USE_LIARA_INTERFACE_VERSION_MAJOR,
-    /** Liara interface minor version number. Update this when adding functionality in a backward-compatible manner. If there is any doubt on the backward compatibility of a change, you must update the major version instead. */
-    LIARA_INTERFACE_VERSION_MINOR = DONT_USE_LIARA_INTERFACE_VERSION_MINOR,
-    /** Liara interface patch version number. Update this when adding documentation, comments, whitespace, or other non-functional changes. */
-    LIARA_INTERFACE_VERSION_PATCH = DONT_USE_LIARA_INTERFACE_VERSION_PATCH,
-};
+#define LIARA_VERSION_MAJOR_BITS 10u
+#define LIARA_VERSION_MINOR_BITS 10u
+#define LIARA_VERSION_PATCH_BITS 12u
+
+#define LIARA_VERSION_MAJOR_SHIFT (LIARA_VERSION_MINOR_BITS + LIARA_VERSION_PATCH_BITS)
+#define LIARA_VERSION_MINOR_SHIFT (LIARA_VERSION_PATCH_BITS)
+#define LIARA_VERSION_PATCH_SHIFT (0u)
+
+#define LIARA_VERSION_MAJOR_MASK ((1u << LIARA_VERSION_MAJOR_BITS) - 1u)
+#define LIARA_VERSION_MINOR_MASK ((1u << LIARA_VERSION_MINOR_BITS) - 1u)
+#define LIARA_VERSION_PATCH_MASK ((1u << LIARA_VERSION_PATCH_BITS) - 1u)
+
+_Static_assert(LIARA_VERSION_MAJOR_BITS + LIARA_VERSION_MINOR_BITS + LIARA_VERSION_PATCH_BITS <= 32u, "Version components exceed 32 bits");
 
 /**
- * @brief Create a version number from major, minor, and patch components.
+ * @brief Create a version number from major, minor, and patch components, with NO safety checks.
  *
  * This macro combines the major, minor, and patch version numbers into a single 32-bit unsigned integer.
+ *
+ * @warning This macro does not perform any safety checks on the input values. It is the caller's responsibility to
+ * ensure that the major, minor, and patch values are within their respective valid ranges:
+ * - @c major must be between 0 and 1023 (inclusive)
+ * - @c minor must be between 0 and 1023 (inclusive)
+ * - @c patch must be between 0 and 4095 (inclusive)
  *
  * @param major The major version number (0-1023).
  * @param minor The minor version number (0-1023).
@@ -49,23 +45,95 @@ enum {
  *
  * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-#define LIARA_MAKE_VERSION(major, minor, patch) \
-    (((uint32_t)(major) << 22) | ((uint32_t)(minor) << 12) | (uint32_t)(patch))
+#define LIARA_MAKE_VERSION_UNSAFE(major, minor, patch) (uint32_t)( \
+    ((uint32_t)(major) << LIARA_VERSION_MAJOR_SHIFT) |             \
+    ((uint32_t)(minor) << LIARA_VERSION_MINOR_SHIFT) |             \
+    ((uint32_t)(patch) << LIARA_VERSION_PATCH_SHIFT))
 
+// TODO: Remove in 0.0.2
 /**
- * @brief Inline function to create a version number from major, minor, and patch components.
+ * @deprecated This macro is deprecated. Use the version of this macro with explicit name indicating that it is unsafe,
+ *             or use the inline function with output parameter for better error handling.
+ *             Will be removed in version 0.0.2 of the Liara interface.
+ * @brief Create a version number from major, minor, and patch components, with NO safety checks.
  *
- * This function is a wrapper around the LIARA_MAKE_VERSION macro for other languages that may not support macros
- * or for better type safety in C. It combines the major, minor, and patch version numbers into a single 32-bit unsigned integer.
+ * This macro combines the major, minor, and patch version numbers into a single 32-bit unsigned integer.
+ *
+ * @warning This macro does not perform any safety checks on the input values. It is the caller's responsibility to
+ * ensure that the major, minor, and patch values are within their respective valid ranges:
+ * - @c major must be between 0 and 1023 (inclusive)
+ * - @c minor must be between 0 and 1023 (inclusive)
+ * - @c patch must be between 0 and 4095 (inclusive)
  *
  * @param major The major version number (0-1023).
  * @param minor The minor version number (0-1023).
  * @param patch The patch version number (0-4095).
  * @return A 32-bit unsigned integer representing the combined version.
  *
+ * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
+ */
+#define LIARA_MAKE_VERSION(major, minor, patch) LIARA_MAKE_VERSION_UNSAFE((major), (minor), (patch))
+
+// TODO: Remove in 0.0.2
+/**
+ * @deprecated This function is deprecated. Use the version of this function that takes an output parameter for better error handling.
+ *             Will be removed in version 0.0.2 of the Liara interface.
+ *
+ * @brief Inline function to create a version number from major, minor, and patch components.
+ *
+ * This function combines the major, minor, and patch version numbers into a single 32-bit unsigned integer.
+ * It performs safety checks to ensure that the input values are within their respective valid ranges:
+ * - @c major must be between 0 and 1023 (inclusive)
+ * - @c minor must be between 0 and 1023 (inclusive)
+ * - @c patch must be between 0 and 4095 (inclusive)
+ *
+ * @warning If any of the input values are out of range, the function will not generate an explicit error, but will return 0.
+ *          It is the caller's responsibility to check the return value for validity.
+ *          We strongly recommend using the version of this function that takes an output parameter for better error handling.
+ *
+ * @param major The major version number (0-1023).
+ * @param minor The minor version number (0-1023).
+ * @param patch The patch version number (0-4095).
+ * @return A 32-bit unsigned integer representing the combined version, or 0 if any of the input values are out of range.
+ *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-static inline uint32_t liara_make_version(uint32_t major, uint32_t minor, uint32_t patch) { return LIARA_MAKE_VERSION(major, minor, patch); }
+static inline uint32_t liara_make_version(const uint32_t major, const uint32_t minor, const uint32_t patch) {
+    if (major > LIARA_VERSION_MAJOR_MASK) { return 0; }
+    if (minor > LIARA_VERSION_MINOR_MASK) { return 0; }
+    if (patch > LIARA_VERSION_PATCH_MASK) { return 0; }
+    return LIARA_MAKE_VERSION_UNSAFE(major, minor, patch);
+}
+
+/**
+ * @brief Inline function to create a version number from major, minor, and patch components, with output parameter
+ *
+ * This function combines the major, minor, and patch version numbers into a single 32-bit unsigned integer.
+ * It performs safety checks to ensure that the input values are within their respective valid ranges:
+ * - @c major must be between 0 and 1023 (inclusive)
+ * - @c minor must be between 0 and 1023 (inclusive)
+ * - @c patch must be between 0 and 4095 (inclusive)
+ *
+ * If the input values are valid, the combined version is stored in the output parameter @c out_version.
+ * If any of the input values are out of range, the function returns false and does not modify @c out_version.
+ *
+ * The allocation of the output parameter is the responsibility of the caller, and it must be a valid pointer to a uint32_t.
+ *
+ * @param major The major version number (0-1023).
+ * @param minor The minor version number (0-1023). * @param patch The patch version number (0-4095).
+ * @param out_version Pointer to a uint32_t where the combined version will be stored if successful.
+ * @return Non-zero if the version was successfully created and stored in @c out_version, zero otherwise.
+ *
+ * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
+ */
+static inline bool liara_try_make_version(const uint32_t major, const uint32_t minor, const uint32_t patch, uint32_t* out_version) {
+    if (out_version == NULL) { return false; }
+    if (major > LIARA_VERSION_MAJOR_MASK) { return false; }
+    if (minor > LIARA_VERSION_MINOR_MASK) { return false; }
+    if (patch > LIARA_VERSION_PATCH_MASK) { return false; }
+    *out_version = LIARA_MAKE_VERSION_UNSAFE(major, minor, patch);
+    return true;
+}
 
 /**
  * @brief Extract the major version component from a combined version number.
@@ -77,7 +145,7 @@ static inline uint32_t liara_make_version(uint32_t major, uint32_t minor, uint32
  *
  * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-#define LIARA_VERSION_MAJOR(v) (((uint32_t)(v) >> 22) & 0x3FFu)
+#define LIARA_VERSION_MAJOR(v) (((uint32_t)(v) >> LIARA_VERSION_MAJOR_SHIFT) & LIARA_VERSION_MAJOR_MASK)
 
 /**
  * @brief Extract the minor version component from a combined version number.
@@ -89,19 +157,19 @@ static inline uint32_t liara_make_version(uint32_t major, uint32_t minor, uint32
  *
  * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-#define LIARA_VERSION_MINOR(v) (((uint32_t)(v) >> 12) & 0x3FFu)
+#define LIARA_VERSION_MINOR(v) (((uint32_t)(v) >> LIARA_VERSION_MINOR_SHIFT) & LIARA_VERSION_MINOR_MASK)
 
 /**
  * @brief Extract the patch version component from a combined version number.
  *
- * This macro extracts the patch version number from a combined version number by masking.
+ * This macro extracts the patch version number from a combined version number by shifting and masking.
  *
  * @param v The combined version number from which to extract the patch version.
  * @return The patch version number (0-4095).
  *
  * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-#define LIARA_VERSION_PATCH(v) ((uint32_t)(v) & 0xFFFu)
+#define LIARA_VERSION_PATCH(v) (((uint32_t)(v) >> LIARA_VERSION_PATCH_SHIFT) & LIARA_VERSION_PATCH_MASK)
 
 /**
  * @brief Inline function to extract the major version component from a combined version number.
@@ -114,7 +182,7 @@ static inline uint32_t liara_make_version(uint32_t major, uint32_t minor, uint32
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-static inline uint32_t liara_version_major(uint32_t v) { return LIARA_VERSION_MAJOR(v); }
+static inline uint32_t liara_version_major(const uint32_t v) { return LIARA_VERSION_MAJOR(v); }
 
 /**
  * @brief Inline function to extract the minor version component from a combined version number.
@@ -127,46 +195,131 @@ static inline uint32_t liara_version_major(uint32_t v) { return LIARA_VERSION_MA
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-static inline uint32_t liara_version_minor(uint32_t v) { return LIARA_VERSION_MINOR(v); }
+static inline uint32_t liara_version_minor(const uint32_t v) { return LIARA_VERSION_MINOR(v); }
 
 /**
  * @brief Inline function to extract the patch version component from a combined version number.
  *
  * This function is a wrapper around the LIARA_VERSION_PATCH macro for other languages that may not support macros
- * or for better type safety in C. It extracts the patch version number from a combined version number by masking.
+ * or for better type safety in C. It extracts the patch version number from a combined version number by shifting and masking.
  *
  * @param v The combined version number from which to extract the patch version.
  * @return The patch version number (0-4095).
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-static inline uint32_t liara_version_patch(uint32_t v) { return LIARA_VERSION_PATCH(v); }
+static inline uint32_t liara_version_patch(const uint32_t v) { return LIARA_VERSION_PATCH(v); }
 
 /**
- * @brief The current version of the Liara interface.
+ * @brief Inline function to compare two version numbers for equality, with an option to ignore the patch version.
  *
- * This macro defines the current version of the Liara interface by combining the major, minor, and patch version numbers defined above.
- * It can be used to check for compatibility with specific versions of the interface.
+ * This function compares two version numbers for equality. If the `ignore_patch` parameter is set to a non-zero value,
+ * the comparison will only consider the major and minor version components, ignoring the patch version.
  *
- * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
- */
-#define LIARA_INTERFACE_VERSION \
-    LIARA_MAKE_VERSION( \
-        LIARA_INTERFACE_VERSION_MAJOR, \
-        LIARA_INTERFACE_VERSION_MINOR, \
-        LIARA_INTERFACE_VERSION_PATCH)
-
-/**
- * @brief Inline function to get the current version of the Liara interface.
- *
- * This function is a wrapper around the LIARA_INTERFACE_VERSION macro for other languages that may not support macros
- * or for better type safety in C. It returns the current version of the Liara interface by combining the major, minor, and patch version numbers defined above.
- *
- * @return A 32-bit unsigned integer representing the current version of the Liara interface.
+ * @param v1 The first version number to compare.
+ * @param v2 The second version number to compare.
+ * @param ignore_patch If non-zero, ignore the patch version in the comparison.
+ * @return Non-zero if the versions are considered equal based on the specified criteria, zero otherwise.
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-static inline uint32_t liara_interface_version(void) { return LIARA_INTERFACE_VERSION; }
+static inline bool liara_version_eq(const uint32_t v1, const uint32_t v2, const bool ignore_patch) {
+    if (ignore_patch) {
+        return LIARA_VERSION_MAJOR(v1) == LIARA_VERSION_MAJOR(v2) &&
+               LIARA_VERSION_MINOR(v1) == LIARA_VERSION_MINOR(v2);
+    }
+    return v1 == v2;
+}
+
+/**
+ * @brief Inline function to compare two version numbers for inequality, with an option to ignore the patch version.
+ *
+ * This function compares two version numbers for inequality. If the `ignore_patch` parameter is set to a non-zero value,
+ * the comparison will only consider the major and minor version components, ignoring the patch version.
+ *
+ * @param v1 The first version number to compare.
+ * @param v2 The second version number to compare.
+ * @param ignore_patch If non-zero, ignore the patch version in the comparison.
+ * @return Non-zero if the versions are considered not equal based on the specified criteria, zero otherwise.
+ *
+ * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
+ */
+static inline bool liara_version_neq(const uint32_t v1, const uint32_t v2, const bool ignore_patch) {
+    return !liara_version_eq(v1, v2, ignore_patch);
+}
+
+/**
+ * @brief Inline function to compare two version numbers to determine if the first is less than the second, with an option to ignore the patch version.
+ *
+ * This function compares two version numbers to determine if the first is less than the second. If the `ignore_patch` parameter is set to a non-zero value,
+ * the comparison will only consider the major and minor version components, ignoring the patch version.
+ *
+ * @param v1 The first version number to compare.
+ * @param v2 The second version number to compare.
+ * @param ignore_patch If non-zero, ignore the patch version in the comparison.
+ * @return Non-zero if the first version is considered less than the second based on the specified criteria, zero otherwise.
+ *
+ * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
+ */
+static inline bool liara_version_lt(const uint32_t v1, const uint32_t v2, const bool ignore_patch) {
+    if (ignore_patch) {
+        if (LIARA_VERSION_MAJOR(v1) < LIARA_VERSION_MAJOR(v2)) return true;
+        if (LIARA_VERSION_MAJOR(v1) > LIARA_VERSION_MAJOR(v2)) return false;
+        return LIARA_VERSION_MINOR(v1) < LIARA_VERSION_MINOR(v2);
+    }
+    return v1 < v2;
+}
+
+/**
+ * @brief Inline function to compare two version numbers to determine if the first is less than or equal to the second, with an option to ignore the patch version.
+ *
+ * This function compares two version numbers to determine if the first is less than or equal to the second. If the `ignore_patch` parameter is set to a non-zero value,
+ * the comparison will only consider the major and minor version components, ignoring the patch version.
+ *
+ * @param v1 The first version number to compare.
+ * @param v2 The second version number to compare.
+ * @param ignore_patch If non-zero, ignore the patch version in the comparison.
+ * @return Non-zero if the first version is considered less than or equal to the second based on the specified criteria, zero otherwise.
+ *
+ * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
+ */
+static inline bool liara_version_lte(const uint32_t v1, const uint32_t v2, const bool ignore_patch) {
+    return liara_version_lt(v1, v2, ignore_patch) || liara_version_eq(v1, v2, ignore_patch);
+}
+
+/**
+ * @brief Inline function to compare two version numbers to determine if the first is greater than the second, with an option to ignore the patch version.
+ *
+ * This function compares two version numbers to determine if the first is greater than the second. If the `ignore_patch` parameter is set to a non-zero value,
+ * the comparison will only consider the major and minor version components, ignoring the patch version.
+ *
+ * @param v1 The first version number to compare.
+ * @param v2 The second version number to compare.
+ * @param ignore_patch If non-zero, ignore the patch version in the comparison.
+ * @return Non-zero if the first version is considered greater than the second based on the specified criteria, zero otherwise.
+ *
+ * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
+ */
+static inline bool liara_version_gt(const uint32_t v1, const uint32_t v2, const bool ignore_patch) {
+    return !liara_version_lte(v1, v2, ignore_patch);
+}
+
+/**
+ * @brief Inline function to compare two version numbers to determine if the first is greater than or equal to the second, with an option to ignore the patch version.
+ *
+ * This function compares two version numbers to determine if the first is greater than or equal to the second. If the `ignore_patch` parameter is set to a non-zero value,
+ * the comparison will only consider the major and minor version components, ignoring the patch version.
+ *
+ * @param v1 The first version number to compare.
+ * @param v2 The second version number to compare.
+ * @param ignore_patch If non-zero, ignore the patch version in the comparison.
+ * @return Non-zero if the first version is considered greater than or equal to the second based on the specified criteria, zero otherwise.
+ *
+ * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
+ */
+static inline bool liara_version_gte(const uint32_t v1, const uint32_t v2, const bool ignore_patch) {
+    return !liara_version_lt(v1, v2, ignore_patch);
+}
 
 #ifdef __cplusplus
 }
