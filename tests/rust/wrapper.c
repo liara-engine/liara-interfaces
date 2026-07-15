@@ -1,7 +1,7 @@
 #include "wrapper.h"
 
-uint32_t liara_rs_make_version(uint32_t major, uint32_t minor, uint32_t patch) {
-    return liara_make_version(major, minor, patch);
+bool liara_rs_try_make_version(uint32_t major, uint32_t minor, uint32_t patch, uint32_t *version) {
+    return liara_try_make_version(major, minor, patch, version);
 }
 
 uint32_t liara_rs_version_major(uint32_t version) {

@@ -50,61 +50,6 @@ _Static_assert(LIARA_VERSION_MAJOR_BITS + LIARA_VERSION_MINOR_BITS + LIARA_VERSI
     ((uint32_t)(minor) << LIARA_VERSION_MINOR_SHIFT) |             \
     ((uint32_t)(patch) << LIARA_VERSION_PATCH_SHIFT))
 
-// TODO: Remove in 0.0.2
-/**
- * @deprecated This macro is deprecated. Use the version of this macro with explicit name indicating that it is unsafe,
- *             or use the inline function with output parameter for better error handling.
- *             Will be removed in version 0.0.2 of the Liara interface.
- * @brief Create a version number from major, minor, and patch components, with NO safety checks.
- *
- * This macro combines the major, minor, and patch version numbers into a single 32-bit unsigned integer.
- *
- * @warning This macro does not perform any safety checks on the input values. It is the caller's responsibility to
- * ensure that the major, minor, and patch values are within their respective valid ranges:
- * - @c major must be between 0 and 1023 (inclusive)
- * - @c minor must be between 0 and 1023 (inclusive)
- * - @c patch must be between 0 and 4095 (inclusive)
- *
- * @param major The major version number (0-1023).
- * @param minor The minor version number (0-1023).
- * @param patch The patch version number (0-4095).
- * @return A 32-bit unsigned integer representing the combined version.
- *
- * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
- */
-#define LIARA_MAKE_VERSION(major, minor, patch) LIARA_MAKE_VERSION_UNSAFE((major), (minor), (patch))
-
-// TODO: Remove in 0.0.2
-/**
- * @deprecated This function is deprecated. Use the version of this function that takes an output parameter for better error handling.
- *             Will be removed in version 0.0.2 of the Liara interface.
- *
- * @brief Inline function to create a version number from major, minor, and patch components.
- *
- * This function combines the major, minor, and patch version numbers into a single 32-bit unsigned integer.
- * It performs safety checks to ensure that the input values are within their respective valid ranges:
- * - @c major must be between 0 and 1023 (inclusive)
- * - @c minor must be between 0 and 1023 (inclusive)
- * - @c patch must be between 0 and 4095 (inclusive)
- *
- * @warning If any of the input values are out of range, the function will not generate an explicit error, but will return 0.
- *          It is the caller's responsibility to check the return value for validity.
- *          We strongly recommend using the version of this function that takes an output parameter for better error handling.
- *
- * @param major The major version number (0-1023).
- * @param minor The minor version number (0-1023).
- * @param patch The patch version number (0-4095).
- * @return A 32-bit unsigned integer representing the combined version, or 0 if any of the input values are out of range.
- *
- * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
- */
-static inline uint32_t liara_make_version(const uint32_t major, const uint32_t minor, const uint32_t patch) {
-    if (major > LIARA_VERSION_MAJOR_MASK) { return 0; }
-    if (minor > LIARA_VERSION_MINOR_MASK) { return 0; }
-    if (patch > LIARA_VERSION_PATCH_MASK) { return 0; }
-    return LIARA_MAKE_VERSION_UNSAFE(major, minor, patch);
-}
-
 /**
  * @brief Inline function to create a version number from major, minor, and patch components, with output parameter
  *

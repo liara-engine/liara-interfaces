@@ -27,7 +27,8 @@ pub fn main() void {
         },
     );
 
-    const v1 = c.liara_make_version(1, 2, 3);
+    var v1: u32 = 0;
+    assert(c.liara_try_make_version(1, 2, 3, &v1) == true);
     std.debug.print("make_version(1,2,3) = {}\n", .{v1});
 
     const v2 = c.liara_abi_version();

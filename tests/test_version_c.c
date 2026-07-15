@@ -3,7 +3,10 @@
 #include <liara/version.h>
 
 int main(void) {
-    uint32_t version = LIARA_MAKE_VERSION(1, 2, 3);
+    uint32_t version;
+    if (!liara_try_make_version(1, 2, 3, &version)) {
+        return 1;
+    }
     if (LIARA_VERSION_MAJOR(version) != 1 ||
         LIARA_VERSION_MINOR(version) != 2 ||
         LIARA_VERSION_PATCH(version) != 3) {

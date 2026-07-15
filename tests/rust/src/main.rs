@@ -13,8 +13,10 @@ fn main() {
     assert_eq!(LIARA_ABI_VERSION_PATCH, 1);
 
     // Test 2: inline functions, called through the C wrapper
-    let v = unsafe { liara_rs_make_version(2, 5, 17) };
-    println!("liara_make_version(2, 5, 17) = 0x{:08x} = {}", v, v);
+    let mut v: u32 = 0;
+    let success = unsafe { liara_rs_try_make_version(2, 5, 17, &mut v) };
+    assert!(success);
+    println!("liara_try_make_version(2, 5, 17) = 0x{:08x} = {}", v, v);
 
     let major = unsafe { liara_rs_version_major(v) };
     let minor = unsafe { liara_rs_version_minor(v) };

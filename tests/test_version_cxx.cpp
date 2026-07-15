@@ -5,7 +5,8 @@
 #include <liara/version.h>
 
 TEST_CASE("Version encoding and decoding") {
-    uint32_t version = LIARA_MAKE_VERSION(1, 2, 3);
+    uint32_t version;
+    REQUIRE(liara_try_make_version(1, 2, 3, &version));
     CHECK(LIARA_VERSION_MAJOR(version) == 1);
     CHECK(LIARA_VERSION_MINOR(version) == 2);
     CHECK(LIARA_VERSION_PATCH(version) == 3);
