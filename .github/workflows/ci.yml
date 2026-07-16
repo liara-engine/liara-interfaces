@@ -1,0 +1,18 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*.*.*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  abi-header-portability:
+    uses: liara-engine/.github/.github/workflows/reusable-abi-header-portability.yml@preview-8
+    with:
+      include-dir: include
+      c-standards: '11;17;23'
+      cxx-standards: '17;20;23'
+      github-repo-version: preview-8
