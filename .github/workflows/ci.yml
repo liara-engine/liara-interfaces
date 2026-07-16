@@ -16,3 +16,13 @@ jobs:
       c-standards: '11;17;23'
       cxx-standards: '17;20;23'
       github-repo-version: preview-8
+
+  abi-report:
+    needs: [abi-header-portability]
+    if: ${{ always() && github.event_name == 'pull_request' }}
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: liara-engine/.github/.github/workflows/reusable-abi-report.yml@preview-8
+    with:
+      github-repo-version: preview-8
