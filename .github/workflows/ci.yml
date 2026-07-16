@@ -17,8 +17,16 @@ jobs:
       cxx-standards: '17;20;23'
       github-repo-version: preview-8
 
+  abi-interface-rules:
+    uses: liara-engine/.github/.github/workflows/reusable-abi-interface-rules.yml@preview-8
+    with:
+      include-dir: include
+      std: 'c++20'
+      prefix: 'liara'
+      github-repo-version: preview-8
+
   abi-report:
-    needs: [abi-header-portability]
+    needs: [abi-header-portability, abi-interface-rules]
     if: ${{ always() && github.event_name == 'pull_request' }}
     permissions:
       contents: read
