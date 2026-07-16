@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <liara/private_utils.h>
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -25,8 +27,8 @@ extern "C" {
 #define LIARA_VERSION_MINOR_MASK ((1u << LIARA_VERSION_MINOR_BITS) - 1u)
 #define LIARA_VERSION_PATCH_MASK ((1u << LIARA_VERSION_PATCH_BITS) - 1u)
 
-_Static_assert(LIARA_VERSION_MAJOR_BITS + LIARA_VERSION_MINOR_BITS + LIARA_VERSION_PATCH_BITS <= 32u,
-               "Version components exceed 32 bits");
+LIARA_STATIC_ASSERT(LIARA_VERSION_MAJOR_BITS + LIARA_VERSION_MINOR_BITS + LIARA_VERSION_PATCH_BITS <= 32u,
+                    "Version components exceed 32 bits");
 
 /**
  * @brief Create a version number from major, minor, and patch components, with NO safety checks.

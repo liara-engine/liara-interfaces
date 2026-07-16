@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <liara/private_utils.h>
 #include <liara/version.h>
 #include <liara/version_config.h>
 
@@ -29,9 +30,9 @@ enum {
     LIARA_ABI_VERSION_PATCH = LIARA_PRIVATE_CMAKE_VERSION_PATCH,
 };
 
-_Static_assert(LIARA_ABI_VERSION_MAJOR <= LIARA_VERSION_MAJOR_MASK, "Major version exceeds maximum value");
-_Static_assert(LIARA_ABI_VERSION_MINOR <= LIARA_VERSION_MINOR_MASK, "Minor version exceeds maximum value");
-_Static_assert(LIARA_ABI_VERSION_PATCH <= LIARA_VERSION_PATCH_MASK, "Patch version exceeds maximum value");
+LIARA_STATIC_ASSERT(LIARA_ABI_VERSION_MAJOR <= LIARA_VERSION_MAJOR_MASK, "Major version exceeds maximum value");
+LIARA_STATIC_ASSERT(LIARA_ABI_VERSION_MINOR <= LIARA_VERSION_MINOR_MASK, "Minor version exceeds maximum value");
+LIARA_STATIC_ASSERT(LIARA_ABI_VERSION_PATCH <= LIARA_VERSION_PATCH_MASK, "Patch version exceeds maximum value");
 
 /**
  * @brief The current version of the Liara ABI interface.
