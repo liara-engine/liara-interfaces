@@ -1,10 +1,9 @@
 ---
 # Liara Engine - clang-format configuration
-# See docs/CODE_STYLE.md for explanations of each section.
+# See docs/INTERFACE.md for explanations of each section.
 
 BasedOnStyle: LLVM
-Language: Cpp
-Standard: c++20
+Language: C
 
 # === INDENTATION & SPACING ===
 IndentWidth: 4
@@ -25,39 +24,41 @@ SpacesBeforeTrailingComments: 2
 # === BRACES ===
 BreakBeforeBraces: Custom
 BraceWrapping:
-  AfterCaseLabel:        false
-  AfterClass:            true
-  AfterControlStatement: Never
-  AfterEnum:             true
-  AfterFunction:         false
-  AfterNamespace:        true
-  AfterStruct:           true
-  AfterUnion:            true
-  AfterExternBlock:      false
-  BeforeCatch:           true
-  BeforeElse:            true
-  BeforeWhile:           true
-  IndentBraces:          false
-  SplitEmptyFunction:    false
-  SplitEmptyRecord:      true
-  SplitEmptyNamespace:   true
+    AfterCaseLabel: false
+    AfterClass: true
+    AfterControlStatement: Never
+    AfterEnum: false
+    AfterFunction: false
+    AfterNamespace: true
+    AfterStruct: false
+    AfterUnion: false
+    AfterExternBlock: false
+    BeforeCatch: true
+    BeforeElse: true
+    BeforeWhile: true
+    IndentBraces: false
+    SplitEmptyFunction: false
+    SplitEmptyRecord: true
+    SplitEmptyNamespace: true
 
 # === SPACING ===
-SpaceAfterCStyleCast:               false
-SpaceAfterLogicalNot:               false
-SpaceAfterTemplateKeyword:          true
-SpaceBeforeAssignmentOperators:     true
-SpaceBeforeCpp11BracedList:         false
-SpaceBeforeCtorInitializerColon:    true
-SpaceBeforeInheritanceColon:        true
-SpaceBeforeParens:                  ControlStatements
-SpaceBeforeRangeBasedForLoopColon:  true
-SpaceInEmptyParentheses:            false
-SpacesInAngles:                     false
-SpacesInContainerLiterals:          false
-SpacesInCStyleCastParentheses:      false
-SpacesInParentheses:                false
-SpacesInSquareBrackets:             false
+SpaceAfterCStyleCast: false
+SpaceAfterLogicalNot: false
+SpaceAfterTemplateKeyword: false
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeCpp11BracedList: true
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeInheritanceColon: true
+SpaceBeforeParens: ControlStatements
+SpaceBeforeRangeBasedForLoopColon: true
+SpacesInAngles: Never
+SpacesInContainerLiterals: false
+SpacesInSquareBrackets: false
+
+SpacesInParens: Custom
+SpacesInParensOptions:
+    InEmptyParentheses: false
+    InCStyleCasts: false
 
 # === POINTERS & REFERENCES ===
 PointerAlignment: Left      # Type* var
@@ -67,55 +68,36 @@ ReferenceAlignment: Left    # Type& var
 SortIncludes: CaseInsensitive
 IncludeBlocks: Regroup
 IncludeCategories:
-  # 0. Special headers that must come first
-  - Regex: '^<SDL\.h>$'
-    Priority: 0
-    SortPriority: 0
-  # 1. Module's own header (corresponding .h for a .cpp)
-  - Regex: '^"[^/]+\.h"$'
-    Priority: 1
-    SortPriority: 1
-  # 2. Other headers from the same module
-  - Regex: '^"[^"]+/[^"]+\.h"$'
-    Priority: 2
-    SortPriority: 2
-  # 3. Liara public interface headers
-  - Regex: '^<liara/.*>$'
-    Priority: 3
-    SortPriority: 3
-  # 4. Vulkan, SDL, ImGui, GLM and other third-party with C-style includes
-  - Regex: '^<(vulkan|SDL|imgui|glm|cgltf)/.*>$'
-    Priority: 4
-    SortPriority: 4
-  # 5. C++ standard library
-  - Regex: '^<[a-z_]+>$'
-    Priority: 5
-    SortPriority: 5
-  # 6. C standard library
-  - Regex: '^<[a-z_]+\.h>$'
-    Priority: 6
-    SortPriority: 6
-  # 7. Other (catch-all)
-  - Regex: '.*'
-    Priority: 7
-    SortPriority: 7
+    # 1. Liara public interface headers
+    -   Regex: '^<liara/.*>$'
+        Priority: 1
+        SortPriority: 1
+    # 2. C standard library
+    -   Regex: '^<[a-z_]+\.h>$'
+        Priority: 2
+        SortPriority: 2
+    # 3. Other (catch-all)
+    -   Regex: '.*'
+        Priority: 3
+        SortPriority: 3
 
 # === ALIGNMENT ===
 AlignAfterOpenBracket: true
-AlignArrayOfStructures: Left
-AlignConsecutiveAssignments: false
+AlignArrayOfStructures: Right
+AlignConsecutiveAssignments: None
 AlignConsecutiveBitFields: Consecutive
-AlignConsecutiveDeclarations: false
+AlignConsecutiveDeclarations: None
 AlignConsecutiveMacros: Consecutive
 AlignEscapedNewlines: Left
-AlignOperands: AlignAfterOperator
+AlignOperands: Align
 
 # === BREAK / WRAP ===
-AlwaysBreakAfterReturnType: None
+BreakAfterReturnType: Automatic
+PenaltyReturnTypeOnItsOwnLine: 100000
 AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: Yes
 BinPackArguments: false
-BinPackParameters: false
+BinPackParameters: OnePerLine
 BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeConceptDeclarations: Always
 BreakBeforeTernaryOperators: true
@@ -129,12 +111,12 @@ AllowShortLambdasOnASingleLine: All
 LambdaBodyIndentation: Signature
 
 # === CONTROL FLOW ===
-AllowShortBlocksOnASingleLine: Empty
-AllowShortCaseLabelsOnASingleLine: false
-AllowShortEnumsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: Empty
-AllowShortIfStatementsOnASingleLine: WithoutElse
-AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Always
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortEnumsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: All
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
+AllowShortLoopsOnASingleLine: true
 
 # === EMPTY LINES ===
 EmptyLineAfterAccessModifier: Never
