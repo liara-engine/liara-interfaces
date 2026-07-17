@@ -10,8 +10,8 @@ extern "C" {
 /**
  * @brief Returns the current version of the Liara renderer ABI interface.
  *
- * This function returns the current version of the Liara renderer ABI interface as a 32-bit unsigned integer. The version
- * is encoded using the same scheme as the Liara ABI version, with major, minor, and patch components.
+ * This function returns the current version of the Liara renderer ABI interface as a 32-bit unsigned integer. The
+ * version is encoded using the same scheme as the Liara ABI version, with major, minor, and patch components.
  *
  * @return A 32-bit unsigned integer representing the current version of the Liara renderer ABI interface.
  *
@@ -84,8 +84,8 @@ void liara_renderer_set_text_color(const liara_renderer_t* renderer, uint32_t co
 /**
  * @brief Sets the background color for the Liara renderer.
  *
- * This function sets the background color used by the Liara renderer for subsequent print operations. The color is specified
- * as a 32-bit unsigned integer, typically in ARGB format.
+ * This function sets the background color used by the Liara renderer for subsequent print operations. The color is
+ * specified as a 32-bit unsigned integer, typically in ARGB format.
  *
  * @param[in] renderer A pointer to the renderer instance for which to set the background color.
  * @param[in] color A 32-bit unsigned integer representing the desired background color (e.g., ARGB format).
