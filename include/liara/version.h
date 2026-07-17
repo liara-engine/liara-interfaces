@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <liara/private_utils.h>
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -25,8 +27,8 @@ extern "C" {
 #define LIARA_VERSION_MINOR_MASK ((1u << LIARA_VERSION_MINOR_BITS) - 1u)
 #define LIARA_VERSION_PATCH_MASK ((1u << LIARA_VERSION_PATCH_BITS) - 1u)
 
-_Static_assert(LIARA_VERSION_MAJOR_BITS + LIARA_VERSION_MINOR_BITS + LIARA_VERSION_PATCH_BITS <= 32u,
-               "Version components exceed 32 bits");
+LIARA_STATIC_ASSERT(LIARA_VERSION_MAJOR_BITS + LIARA_VERSION_MINOR_BITS + LIARA_VERSION_PATCH_BITS <= 32u,
+                    "Version components exceed 32 bits");
 
 /**
  * @brief Create a version number from major, minor, and patch components, with NO safety checks.
@@ -39,9 +41,9 @@ _Static_assert(LIARA_VERSION_MAJOR_BITS + LIARA_VERSION_MINOR_BITS + LIARA_VERSI
  * - @c minor must be between 0 and 1023 (inclusive)
  * - @c patch must be between 0 and 4095 (inclusive)
  *
- * @param major The major version number (0-1023).
- * @param minor The minor version number (0-1023).
- * @param patch The patch version number (0-4095).
+ * @param major[in] The major version number (0-1023).
+ * @param minor[in] The minor version number (0-1023).
+ * @param patch[in] The patch version number (0-4095).
  * @return A 32-bit unsigned integer representing the combined version.
  *
  * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
@@ -65,9 +67,10 @@ _Static_assert(LIARA_VERSION_MAJOR_BITS + LIARA_VERSION_MINOR_BITS + LIARA_VERSI
  * The allocation of the output parameter is the responsibility of the caller, and it must be a valid pointer to a
  * uint32_t.
  *
- * @param major The major version number (0-1023).
- * @param minor The minor version number (0-1023). * @param patch The patch version number (0-4095).
- * @param out_version Pointer to a uint32_t where the combined version will be stored if successful.
+ * @param major[in] The major version number (0-1023).
+ * @param minor[in] The minor version number (0-1023).
+ * @param patch[in] The patch version number (0-4095).
+ * @param out_version[out] Pointer to a uint32_t where the combined version will be stored if successful.
  * @return Non-zero if the version was successfully created and stored in @c out_version, zero otherwise.
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
@@ -89,7 +92,7 @@ static inline bool liara_try_make_version(const uint32_t major,
  *
  * This macro extracts the major version number from a combined version number by shifting and masking.
  *
- * @param v The combined version number from which to extract the major version.
+ * @param v[in] The combined version number from which to extract the major version.
  * @return The major version number (0-1023).
  *
  * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
@@ -101,7 +104,7 @@ static inline bool liara_try_make_version(const uint32_t major,
  *
  * This macro extracts the minor version number from a combined version number by shifting and masking.
  *
- * @param v The combined version number from which to extract the minor version.
+ * @param v[in] The combined version number from which to extract the minor version.
  * @return The minor version number (0-1023).
  *
  * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
@@ -113,7 +116,7 @@ static inline bool liara_try_make_version(const uint32_t major,
  *
  * This macro extracts the patch version number from a combined version number by shifting and masking.
  *
- * @param v The combined version number from which to extract the patch version.
+ * @param v[in] The combined version number from which to extract the patch version.
  * @return The patch version number (0-4095).
  *
  * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
@@ -127,7 +130,7 @@ static inline bool liara_try_make_version(const uint32_t major,
  * or for better type safety in C. It extracts the major version number from a combined version number by shifting and
  * masking.
  *
- * @param v The combined version number from which to extract the major version.
+ * @param v[in] The combined version number from which to extract the major version.
  * @return The major version number (0-1023).
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
@@ -141,7 +144,7 @@ static inline uint32_t liara_version_major(const uint32_t v) { return LIARA_VERS
  * or for better type safety in C. It extracts the minor version number from a combined version number by shifting and
  * masking.
  *
- * @param v The combined version number from which to extract the minor version.
+ * @param v[in] The combined version number from which to extract the minor version.
  * @return The minor version number (0-1023).
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
@@ -155,7 +158,7 @@ static inline uint32_t liara_version_minor(const uint32_t v) { return LIARA_VERS
  * or for better type safety in C. It extracts the patch version number from a combined version number by shifting and
  * masking.
  *
- * @param v The combined version number from which to extract the patch version.
+ * @param v[in] The combined version number from which to extract the patch version.
  * @return The patch version number (0-4095).
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
@@ -168,9 +171,9 @@ static inline uint32_t liara_version_patch(const uint32_t v) { return LIARA_VERS
  * This function compares two version numbers for equality. If the `ignore_patch` parameter is set to a non-zero value,
  * the comparison will only consider the major and minor version components, ignoring the patch version.
  *
- * @param v1 The first version number to compare.
- * @param v2 The second version number to compare.
- * @param ignore_patch If non-zero, ignore the patch version in the comparison.
+ * @param v1[in] The first version number to compare.
+ * @param v2[in] The second version number to compare.
+ * @param ignore_patch[in] If non-zero, ignore the patch version in the comparison.
  * @return Non-zero if the versions are considered equal based on the specified criteria, zero otherwise.
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
@@ -188,9 +191,9 @@ static inline bool liara_version_eq(const uint32_t v1, const uint32_t v2, const 
  * This function compares two version numbers for inequality. If the `ignore_patch` parameter is set to a non-zero
  * value, the comparison will only consider the major and minor version components, ignoring the patch version.
  *
- * @param v1 The first version number to compare.
- * @param v2 The second version number to compare.
- * @param ignore_patch If non-zero, ignore the patch version in the comparison.
+ * @param v1[in] The first version number to compare.
+ * @param v2[in] The second version number to compare.
+ * @param ignore_patch[in] If non-zero, ignore the patch version in the comparison.
  * @return Non-zero if the versions are considered not equal based on the specified criteria, zero otherwise.
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
@@ -207,9 +210,9 @@ static inline bool liara_version_neq(const uint32_t v1, const uint32_t v2, const
  * parameter is set to a non-zero value, the comparison will only consider the major and minor version components,
  * ignoring the patch version.
  *
- * @param v1 The first version number to compare.
- * @param v2 The second version number to compare.
- * @param ignore_patch If non-zero, ignore the patch version in the comparison.
+ * @param v1[in] The first version number to compare.
+ * @param v2[in] The second version number to compare.
+ * @param ignore_patch[in] If non-zero, ignore the patch version in the comparison.
  * @return Non-zero if the first version is considered less than the second based on the specified criteria, zero
  * otherwise.
  *
@@ -232,9 +235,9 @@ static inline bool liara_version_lt(const uint32_t v1, const uint32_t v2, const 
  * `ignore_patch` parameter is set to a non-zero value, the comparison will only consider the major and minor version
  * components, ignoring the patch version.
  *
- * @param v1 The first version number to compare.
- * @param v2 The second version number to compare.
- * @param ignore_patch If non-zero, ignore the patch version in the comparison.
+ * @param v1[in] The first version number to compare.
+ * @param v2[in] The second version number to compare.
+ * @param ignore_patch[in] If non-zero, ignore the patch version in the comparison.
  * @return Non-zero if the first version is considered less than or equal to the second based on the specified criteria,
  * zero otherwise.
  *
@@ -252,9 +255,9 @@ static inline bool liara_version_lte(const uint32_t v1, const uint32_t v2, const
  * `ignore_patch` parameter is set to a non-zero value, the comparison will only consider the major and minor version
  * components, ignoring the patch version.
  *
- * @param v1 The first version number to compare.
- * @param v2 The second version number to compare.
- * @param ignore_patch If non-zero, ignore the patch version in the comparison.
+ * @param v1[in] The first version number to compare.
+ * @param v2[in] The second version number to compare.
+ * @param ignore_patch[in] If non-zero, ignore the patch version in the comparison.
  * @return Non-zero if the first version is considered greater than the second based on the specified criteria, zero
  * otherwise.
  *
@@ -272,9 +275,9 @@ static inline bool liara_version_gt(const uint32_t v1, const uint32_t v2, const 
  * `ignore_patch` parameter is set to a non-zero value, the comparison will only consider the major and minor version
  * components, ignoring the patch version.
  *
- * @param v1 The first version number to compare.
- * @param v2 The second version number to compare.
- * @param ignore_patch If non-zero, ignore the patch version in the comparison.
+ * @param v1[in] The first version number to compare.
+ * @param v2[in] The second version number to compare.
+ * @param ignore_patch[in] If non-zero, ignore the patch version in the comparison.
  * @return Non-zero if the first version is considered greater than or equal to the second based on the specified
  * criteria, zero otherwise.
  *
