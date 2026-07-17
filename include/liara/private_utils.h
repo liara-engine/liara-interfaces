@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-#if defined(__cplusplus)
+#ifdef __cplusplus
     #define LIARA_STATIC_ASSERT(cond, msg) static_assert(cond, msg)
 #elif __STDC_VERSION__ >= 202311L
     #define LIARA_STATIC_ASSERT(cond, msg) static_assert(cond, msg)
