@@ -25,8 +25,15 @@ jobs:
       prefix: 'liara'
       github-repo-version: preview-8
 
+  abi-layout-freeze:
+    uses: liara-engine/.github/.github/workflows/reusable-abi-layout-freeze.yml@preview-8
+    with:
+      include-dir: include
+      golden-header: 'tests/abi/abi_layout.generated.h'
+      github-repo-version: preview-8
+
   abi-report:
-    needs: [abi-header-portability, abi-interface-rules]
+    needs: [abi-header-portability, abi-interface-rules, abi-layout-freeze]
     if: ${{ always() && github.event_name == 'pull_request' }}
     permissions:
       contents: read
