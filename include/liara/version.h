@@ -6,6 +6,7 @@
 #pragma once
 
 #include <liara/private_utils.h>
+#include <liara/result.h>
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -53,7 +54,7 @@ LIARA_STATIC_ASSERT(LIARA_VERSION_MAJOR_BITS + LIARA_VERSION_MINOR_BITS + LIARA_
                | ((uint32_t)(patch) << LIARA_VERSION_PATCH_SHIFT))
 
 /**
- * @brief Inline function to create a version number from major, minor, and patch components, with output parameter
+ * @brief Inline function to create a version number from major, minor, and patch components.
  *
  * This function combines the major, minor, and patch version numbers into a single 32-bit unsigned integer.
  * It performs safety checks to ensure that the input values are within their respective valid ranges:
@@ -62,7 +63,8 @@ LIARA_STATIC_ASSERT(LIARA_VERSION_MAJOR_BITS + LIARA_VERSION_MINOR_BITS + LIARA_
  * - @c patch must be between 0 and 4095 (inclusive)
  *
  * If the input values are valid, the combined version is stored in the output parameter @c out_version.
- * If any of the input values are out of range, the function returns false and does not modify @c out_version.
+ * If any of the input values are out of range or if @c out_version is NULL, the function returns an appropriate
+ * liara_result error code and does not modify @c out_version.
  *
  * The allocation of the output parameter is the responsibility of the caller, and it must be a valid pointer to a
  * uint32_t.
@@ -71,20 +73,22 @@ LIARA_STATIC_ASSERT(LIARA_VERSION_MAJOR_BITS + LIARA_VERSION_MINOR_BITS + LIARA_
  * @param minor[in] The minor version number (0-1023).
  * @param patch[in] The patch version number (0-4095).
  * @param out_version[out] Pointer to a uint32_t where the combined version will be stored if successful.
- * @return Non-zero if the version was successfully created and stored in @c out_version, zero otherwise.
+ * @return LIARA_RESULT_SUCCESS if the version was successfully created and stored in @c out_version,
+ *         LIARA_RESULT_NULL_POINTER if @c out_version is NULL,
+ *         LIARA_RESULT_OUT_OF_RANGE if any of the input values are out of range.
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-static inline bool liara_try_make_version(const uint32_t major,
-                                          const uint32_t minor,
-                                          const uint32_t patch,
-                                          uint32_t* out_version) {
-    if (out_version == NULL) { return false; }
-    if (major > LIARA_VERSION_MAJOR_MASK) { return false; }
-    if (minor > LIARA_VERSION_MINOR_MASK) { return false; }
-    if (patch > LIARA_VERSION_PATCH_MASK) { return false; }
+static inline liara_result liara_try_make_version(const uint32_t major,
+                                                  const uint32_t minor,
+                                                  const uint32_t patch,
+                                                  uint32_t* out_version) {
+    if (out_version == NULL) { return LIARA_RESULT_NULL_POINTER; }
+    if (major > LIARA_VERSION_MAJOR_MASK) { return LIARA_RESULT_OUT_OF_RANGE; }
+    if (minor > LIARA_VERSION_MINOR_MASK) { return LIARA_RESULT_OUT_OF_RANGE; }
+    if (patch > LIARA_VERSION_PATCH_MASK) { return LIARA_RESULT_OUT_OF_RANGE; }
     *out_version = LIARA_MAKE_VERSION_UNSAFE(major, minor, patch);
-    return true;
+    return LIARA_RESULT_SUCCESS;
 }
 
 /**

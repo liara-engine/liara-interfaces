@@ -15,7 +15,7 @@ fn main() {
     // Test 2: inline functions, called through the C wrapper
     let mut v: u32 = 0;
     let success = unsafe { liara_rs_try_make_version(2, 5, 17, &mut v) };
-    assert!(success);
+    assert_eq!(success, 0);
     println!("liara_try_make_version(2, 5, 17) = 0x{:08x} = {}", v, v);
 
     let major = unsafe { liara_rs_version_major(v) };
