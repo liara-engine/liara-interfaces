@@ -1,5 +1,7 @@
 #pragma once
 
+#include <liara/result.h>
+
 #include <stddef.h>
 #include <stdint.h>
 
