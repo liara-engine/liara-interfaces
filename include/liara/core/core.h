@@ -48,17 +48,17 @@ typedef struct liara_core_t liara_core_t;
  * This function allocates and initializes a new Liara core instance. The created core is returned through the
  * `out_core` parameter. The caller is responsible for destroying the core using `liara_core_destroy`.
  *
- * @param[in] renderer A pointer to the renderer instance to be used by the core.
+ * @param[in] renderer_handle A pointer to the renderer instance to be used by the core.
  * @param[out] out_core A pointer to a pointer that will receive the newly created core instance.
  *
  * @return A `liara_result` indicating the success or failure of the operation. Possible return values include:
  * - `LIARA_RESULT_SUCCESS`: The core was created successfully.
- * - `LIARA_RESULT_NULL_POINTER`: The `out_core` or `renderer` parameter is a null pointer.
+ * - `LIARA_RESULT_NULL_POINTER`: The `out_core` or `renderer_handle` parameter is a null pointer.
  *
  * @threadsafety This function is thread-safe as long as it is not called concurrently with `liara_core_destroy` on
  * the same core instance. @endthreadsafety
  */
-liara_result liara_core_create(liara_renderer_t* renderer, liara_core_t** out_core);
+liara_result liara_core_create(liara_renderer_t* renderer_handle, liara_core_t** out_core);
 
 /**
  * @brief Destroys a Liara core instance.
@@ -66,13 +66,13 @@ liara_result liara_core_create(liara_renderer_t* renderer, liara_core_t** out_co
  * This function deallocates and cleans up the resources associated with a Liara core instance. After calling this
  * function, the core pointer should not be used again.
  *
- * @param[in] core A pointer to the core instance to be destroyed.
+ * @param[in] core_handle A pointer to the core instance to be destroyed.
  *
  * @return A `liara_result` indicating the success or failure of the operation. Possible return values include:
  * - `LIARA_RESULT_SUCCESS`: The core was destroyed successfully.
  * - `LIARA_RESULT_NULL_POINTER`: The `core` parameter is a null pointer.
  */
-liara_result liara_core_destroy(const liara_core_t* core);
+liara_result liara_core_destroy(const liara_core_t* core_handle);
 
 /**
  * @brief Enumeration representing the run modes of the Liara core.
@@ -114,14 +114,14 @@ enum liara_core_run_mode {
  * parameter specifies the desired run mode, and the `fixed_time_step` parameter is used when the fixed run mode is
  * selected.
  *
- * @param[in] core A pointer to the core instance whose run mode is to be set.
+ * @param[in] core_handle A pointer to the core instance whose run mode is to be set.
  * @param[in] run_mode The desired run mode for the core.
  * @param[in] fixed_time_step The fixed time step to use when in fixed run mode. Ignored for other modes.
  *
  * @threadsafety This function is thread-safe as long as it is not called concurrently with other functions that modify
  * the core's state. @endthreadsafety
  */
-void liara_core_set_run_mode(liara_core_t* core, enum liara_core_run_mode run_mode, float fixed_time_step);
+void liara_core_set_run_mode(liara_core_t* core_handle, enum liara_core_run_mode run_mode, float fixed_time_step);
 
 /**
  * @brief Runs the Liara core's update loop.
@@ -129,12 +129,12 @@ void liara_core_set_run_mode(liara_core_t* core, enum liara_core_run_mode run_mo
  * This function starts the Liara core's update loop in automatic or fixed run mode. It will continuously update and
  * render until the core is stopped or destroyed. In manual run mode, this function has no effect.
  *
- * @param[in] core A pointer to the core instance to run.
+ * @param[in] core_handle A pointer to the core instance to run.
  *
  * @threadsafety This function is thread-safe as long as it is not called concurrently with other functions that modify
  * the core's state. @endthreadsafety
  */
-void liara_core_run(liara_core_t* core);
+void liara_core_run(liara_core_t* core_handle);
 
 /**
  * @brief Stops the Liara core's update loop.
@@ -142,12 +142,12 @@ void liara_core_run(liara_core_t* core);
  * This function stops the Liara core's update loop if it is currently running in automatic or fixed run mode. In manual
  * run mode, this function has no effect.
  *
- * @param[in] core A pointer to the core instance to stop.
+ * @param[in] core_handle A pointer to the core instance to stop.
  *
  * @threadsafety This function is thread-safe as long as it is not called concurrently with other functions that modify
  * the core's state. @endthreadsafety
  */
-void liara_core_stop(liara_core_t* core);
+void liara_core_stop(liara_core_t* core_handle);
 
 /**
  * @brief Updates the Liara core in manual run mode.
@@ -156,13 +156,13 @@ void liara_core_stop(liara_core_t* core);
  * specifies the time elapsed since the last update, allowing for time-based calculations within the core.
  * In automatic or fixed run modes, this function has no effect, as updates are handled automatically.
  *
- * @param[in] core A pointer to the core instance to update.
+ * @param[in] core_handle A pointer to the core instance to update.
  * @param[in] delta_time The time elapsed since the last update, in seconds.
  *
  * @threadsafety This function is thread-safe as long as it is not called concurrently with other functions that modify
  * the core's state. @endthreadsafety
  */
-void liara_core_update(liara_core_t* core, float delta_time);
+void liara_core_update(liara_core_t* core_handle, float delta_time);
 
 /**
  * @brief Sets the late update callback for the Liara core.
@@ -170,14 +170,14 @@ void liara_core_update(liara_core_t* core, float delta_time);
  * This function sets a callback function that will be called during the late update phase of the Liara core's update
  * loop. The callback receives the core instance and the delta time since the last update.
  *
- * @param[in] core A pointer to the core instance for which to set the late update callback.
+ * @param[in] core_handle A pointer to the core instance for which to set the late update callback.
  * @param[in] callback A pointer to the callback function to be called during late updates. If `NULL`, no callback will
  * be called.
  *
  * @threadsafety This function is thread-safe as long as it is not called concurrently with other functions that modify
  * the core's state. @endthreadsafety
  */
-void liara_core_set_late_update_callback(liara_core_t* core, void (*callback)(liara_core_t* core, float delta_time));
+void liara_core_set_late_update_callback(liara_core_t* core_handle, void (*callback)(liara_core_t* core, float delta_time));
 
 #ifdef __cplusplus
 }
