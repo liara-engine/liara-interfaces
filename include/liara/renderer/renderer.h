@@ -22,6 +22,18 @@ extern "C" {
 uint32_t liara_renderer_abi_version(void);
 
 /**
+ * @brief Returns the current version of the Liara renderer.
+ *
+ * This function returns the current version of the Liara renderer as a 32-bit unsigned integer. The version is encoded
+ * using the same scheme as the Liara ABI version, with major, minor, and patch components.
+ *
+ * @return A 32-bit unsigned integer representing the current version of the Liara renderer.
+ *
+ * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
+ */
+uint32_t liara_renderer_version(void);
+
+/**
  * @brief Opaque structure representing a Liara renderer instance.
  *
  * This structure is used to encapsulate the internal state and resources associated with a Liara renderer. The actual
@@ -84,6 +96,26 @@ liara_result liara_renderer_destroy(const liara_renderer_t* renderer);
  * @note This function is just for demonstration purposes and can be removed at any time, without notice.
  */
 liara_result liara_renderer_print(const liara_renderer_t* renderer, const char* message, size_t message_length);
+
+/**
+ * @brief Prints a message with a newline using the Liara renderer.
+ *
+ * This function sends a message to be printed by the Liara renderer, followed by a newline character. The message is
+ * provided as a string and its length is specified by the `message_length` parameter.
+ *
+ * @param[in] renderer A pointer to the renderer instance used for printing the message.
+ * @param[in] message A pointer to the message string to be printed.
+ * @param[in] message_length The length of the message string in bytes.
+ *
+ * @return A `liara_result` indicating the success or failure of the operation. Possible return values include:
+ * - `LIARA_RESULT_SUCCESS`: The message was printed successfully.
+ * - `LIARA_RESULT_NULL_POINTER`: The `renderer` or `message` parameter is a null pointer.
+ * - `LIARA_RESULT_INVALID_ARGUMENT`: The `message_length` parameter is zero.
+ * - `LIARA_RESULT_INVALID_STATE`: The renderer instance is in an invalid state (e.g., not initialized).
+ *
+ * @note This function is just for demonstration purposes and can be removed at any time, without notice.
+ */
+liara_result liara_renderer_println(const liara_renderer_t* renderer, const char* message, size_t message_length);
 
 /**
  * @brief Sets the text color for the Liara renderer.
