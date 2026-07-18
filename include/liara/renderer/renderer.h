@@ -36,10 +36,14 @@ typedef struct liara_renderer_t liara_renderer_t;
  *
  * @param[out] out_renderer A pointer to a pointer that will receive the newly created renderer instance.
  *
+ * @return A `liara_result` indicating the success or failure of the operation. Possible return values include:
+ * - `LIARA_RESULT_SUCCESS`: The renderer was created successfully.
+ * - `LIARA_RESULT_NULL_POINTER`: The `out_renderer` parameter is a null pointer.
+ *
  * @threadsafety This function is thread-safe as long as it is not called concurrently with `liara_renderer_destroy` on
  * the same renderer instance. @endthreadsafety
  */
-void liara_renderer_create(liara_renderer_t** out_renderer);
+liara_result liara_renderer_create(liara_renderer_t** out_renderer);
 
 /**
  * @brief Destroys a Liara renderer instance.
@@ -49,10 +53,15 @@ void liara_renderer_create(liara_renderer_t** out_renderer);
  *
  * @param[in] renderer A pointer to the renderer instance to be destroyed.
  *
+ * @return A `liara_result` indicating the success or failure of the operation. Possible return values include:
+ * - `LIARA_RESULT_SUCCESS`: The renderer was destroyed successfully.
+ * - `LIARA_RESULT_NULL_POINTER`: The `renderer` parameter is a null pointer.
+ * - `LIARA_RESULT_INVALID_STATE`: The renderer instance is in an invalid state (e.g., already destroyed).
+ *
  * @threadsafety This function is thread-safe as long as it is not called concurrently with `liara_renderer_create` on
  * the same renderer instance. @endthreadsafety
  */
-void liara_renderer_destroy(const liara_renderer_t* renderer);
+liara_result liara_renderer_destroy(const liara_renderer_t* renderer);
 
 /**
  * @brief Prints a message using the Liara renderer.
@@ -64,9 +73,15 @@ void liara_renderer_destroy(const liara_renderer_t* renderer);
  * @param[in] message A pointer to the message string to be printed.
  * @param[in] message_length The length of the message string in bytes.
  *
+ * @return A `liara_result` indicating the success or failure of the operation. Possible return values include:
+ * - `LIARA_RESULT_SUCCESS`: The message was printed successfully.
+ * - `LIARA_RESULT_NULL_POINTER`: The `renderer` or `message` parameter is a null pointer.
+ * - `LIARA_RESULT_INVALID_ARGUMENT`: The `message_length` parameter is zero.
+ * - `LIARA_RESULT_INVALID_STATE`: The renderer instance is in an invalid state (e.g., not initialized).
+ *
  * @note This function is just for demonstration purposes and can be removed at any time, without notice.
  */
-void liara_renderer_print(const liara_renderer_t* renderer, const char* message, size_t message_length);
+liara_result liara_renderer_print(const liara_renderer_t* renderer, const char* message, size_t message_length);
 
 /**
  * @brief Sets the text color for the Liara renderer.
