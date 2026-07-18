@@ -16,6 +16,6 @@ TEST_CASE("Version encoding and decoding") {
 
     auto interface_version = LIARA_ABI_VERSION;
     CHECK(LIARA_VERSION_MAJOR(interface_version) == 0);
-    CHECK(LIARA_VERSION_MINOR(interface_version) == 0);
-    CHECK(LIARA_VERSION_PATCH(interface_version) == 1);
+    CHECK(LIARA_VERSION_MINOR(interface_version) == 1);
+    CHECK(LIARA_VERSION_PATCH(interface_version) == 0);
 }

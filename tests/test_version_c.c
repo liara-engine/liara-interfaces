@@ -11,8 +11,8 @@ int main(void) {
     }
 
     uint32_t interface_version = LIARA_ABI_VERSION;
-    if (LIARA_VERSION_MAJOR(interface_version) != 0 || LIARA_VERSION_MINOR(interface_version) != 0
-        || LIARA_VERSION_PATCH(interface_version) != 1) {
+    if (LIARA_VERSION_MAJOR(interface_version) != 0 || LIARA_VERSION_MINOR(interface_version) != 1
+        || LIARA_VERSION_PATCH(interface_version) != 0) {
         return 1;
     }
 

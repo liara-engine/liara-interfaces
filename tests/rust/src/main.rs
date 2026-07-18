@@ -9,8 +9,8 @@ fn main() {
     println!("LIARA_ABI_VERSION_PATCH = {}", LIARA_ABI_VERSION_PATCH);
 
     assert_eq!(LIARA_ABI_VERSION_MAJOR, 0);
-    assert_eq!(LIARA_ABI_VERSION_MINOR, 0);
-    assert_eq!(LIARA_ABI_VERSION_PATCH, 1);
+    assert_eq!(LIARA_ABI_VERSION_MINOR, 1);
+    assert_eq!(LIARA_ABI_VERSION_PATCH, 0);
 
     // Test 2: inline functions, called through the C wrapper
     let mut v: u32 = 0;

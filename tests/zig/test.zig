@@ -11,8 +11,8 @@ pub fn main() void {
     const patch = c.LIARA_ABI_VERSION_PATCH;
 
     assert(major == 0);
-    assert(minor == 0);
-    assert(patch == 1);
+    assert(minor == 1);
+    assert(patch == 0);
 
     std.debug.print("Version compile-time: {}.{}.{}\n", .{ major, minor, patch });
 
@@ -28,7 +28,7 @@ pub fn main() void {
     );
 
     var v1: u32 = 0;
-    assert(c.liara_try_make_version(1, 2, 3, &v1) == true);
+    assert(c.liara_try_make_version(1, 2, 3, &v1) == 0);
     std.debug.print("make_version(1,2,3) = {}\n", .{v1});
 
     const v2 = c.liara_abi_version();
