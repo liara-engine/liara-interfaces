@@ -1,6 +1,6 @@
 {
   "name": "liara-interfaces",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "C ABI headers shared by all Liara modules.",
   "homepage": "https://github.com/liara-engine/liara-interfaces",
   "license": "MIT",
