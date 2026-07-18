@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.1.0](https://github.com/liara-engine/liara-interfaces/compare/v0.0.1...v0.1.0) (2026-07-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* **version:** liara_try_make_version now return liara_result, 0 is now a success
+
+### Features
+
+* **abi:** introduce LIARA_STATIC_ASSERT ([f388fe3](https://github.com/liara-engine/liara-interfaces/commit/f388fe3429ea88fe899b20a57e7e1d832f6ec9dc))
+* **ci:** add CI workflow ([#6](https://github.com/liara-engine/liara-interfaces/issues/6)) ([e6ea14e](https://github.com/liara-engine/liara-interfaces/commit/e6ea14e59b5a2afc228e05ef0c663d9aba6d11f7))
+* **core:** add a first very basic Liara core API ([bb90517](https://github.com/liara-engine/liara-interfaces/commit/bb90517be2297d3e7dcf090826235e8f6c6852c2))
+* **manifest:** update ABI compatibility for versions 0.0.1 and 0.1.0 ([cc35622](https://github.com/liara-engine/liara-interfaces/commit/cc3562211d09cd7b8fda82e9df554f4b822f35d5))
+* **renderer:** add a first very basic Liara renderer API (console only) ([0809a0a](https://github.com/liara-engine/liara-interfaces/commit/0809a0abf3da9ada61517013f4a817658a9654d4))
+* **renderer:** add functions to retrieve renderer version and println ([1f990a9](https://github.com/liara-engine/liara-interfaces/commit/1f990a97c69000f73661534831a29fd161590224))
+* **renderer:** update renderer functions to return liara_result for better error handling ([06450ac](https://github.com/liara-engine/liara-interfaces/commit/06450aca44213f3dfdb54831377f70ac0d49797e))
+* **result:** add liara_result type and error code definitions ([62815b2](https://github.com/liara-engine/liara-interfaces/commit/62815b279fb4676b1211467ecd59ca238d4f0d81))
+* **version:** update liara_try_make_version to return error codes for null pointer and out of range values ([d5fabd6](https://github.com/liara-engine/liara-interfaces/commit/d5fabd6464f9936e64354e099b8dae695eda11ee))
+
+
+### Bug Fixes
+
+* **format:** update clang-format and clang-tidy ([d8dd48e](https://github.com/liara-engine/liara-interfaces/commit/d8dd48e5f9cd4185224c62fce1c2206cf5528ff5))
+* **renderer:** add missing liara result include ([68dfb3c](https://github.com/liara-engine/liara-interfaces/commit/68dfb3c1bfa4a6ed9384b1c5e5cf67feb75f153b))
+
 ## 0.0.1 (2026-07-15)
 
 
