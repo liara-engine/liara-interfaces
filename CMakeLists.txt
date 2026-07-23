@@ -12,8 +12,8 @@ project(LiaraInterfaces
 )
 
 configure_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/include/liara/version_config.h.in"
-        "${CMAKE_CURRENT_SOURCE_DIR}/include/liara/version_config.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/liara/config.h.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/generated/liara/config.h"
         @ONLY
 )
 
@@ -62,11 +62,11 @@ if(LIARA_INTERFACES_INSTALL)
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
             FILES_MATCHING
             PATTERN "*.h"
-            PATTERN "version_config.h.in" EXCLUDE
+            PATTERN "config.h.in" EXCLUDE
     )
 
     install(
-            FILES "${CMAKE_CURRENT_BINARY_DIR}/generated/liara/version_config.h"
+            FILES "${CMAKE_CURRENT_BINARY_DIR}/generated/liara/config.h"
             DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/liara"
     )
 
