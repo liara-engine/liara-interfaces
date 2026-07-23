@@ -7,7 +7,7 @@
 
 #include <liara/private_utils.h>
 #include <liara/version.h>
-#include <liara/version_config.h>
+#include <liara/config.h>
 
 #ifdef __cplusplus
 extern "C" {

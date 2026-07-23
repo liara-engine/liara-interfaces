@@ -15,4 +15,3 @@ Cargo.lock
 
 /tests/zig/main
 /tests/zig/test
-/include/liara/version_config.h
