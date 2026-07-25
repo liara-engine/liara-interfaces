@@ -812,10 +812,9 @@ Across major versions, no compatibility is guaranteed. A module
 compiled against version 2.0 of the interface cannot be loaded by a
 core compiled against version 1.x, and vice versa.
 
-The compatibility matrix in the meta repository
-(`compatibility.toml`) records which exact combinations of module
-versions are tested together. Combinations not listed there are not
-guaranteed to work, even if the major versions match.
+The `manifest.json` file in each module's contains a list of all
+released versions of this module, along with the list of interface
+versions it supports.
 
 ---
 
