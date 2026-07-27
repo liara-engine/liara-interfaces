@@ -106,14 +106,14 @@ liara_core_entity_destroy(...)
 Types are nouns and prefixed with the module:
 
 ```c
-typedef struct liara_renderer_handle    liara_renderer_handle;
-typedef struct liara_core_world_handle  liara_core_world_handle;
+typedef struct liara_renderer_handle_t    liara_renderer_handle_t;
+typedef struct liara_core_world_handle_t  liara_core_world_handle_t;
 typedef struct liara_view_t             liara_view_t;
 ```
 
 Type names use a `_t` suffix when the type is a value type meant to be
 embedded in structs or passed by value (`liara_view_t`,
-`liara_transform_t`). Opaque handle types use a `_handle` suffix and
+`liara_transform_t`). Opaque handle types use a `_handle_t` suffix and
 are forward-declared structs whose definition is private to the
 implementing module.
 
@@ -177,17 +177,17 @@ definition is private:
 
 ```c
 // In liara/renderer/renderer.h
-typedef struct liara_renderer_handle liara_renderer_handle;
+typedef struct liara_renderer_handle_t liara_renderer_handle;
 
 liara_result liara_renderer_create(
     const liara_renderer_create_info_t* create_info,
-    liara_renderer_handle** out_handle
+    liara_renderer_handle_t** out_handle
 );
 
-void liara_renderer_destroy(liara_renderer_handle* handle);
+void liara_renderer_destroy(liara_renderer_handle_t* handle);
 ```
 
-The struct `liara_renderer_handle` is never defined in the public
+The struct `liara_renderer_handle_t` is never defined in the public
 header. Its definition lives inside the renderer module's private
 implementation, where the renderer is free to put whatever C++ class,
 state, or data it needs.
@@ -257,7 +257,7 @@ Arrays are passed as `(pointer, count)` pairs:
 
 ```c
 liara_result liara_renderer_submit_packet(
-    liara_renderer_handle* renderer,
+    liara_renderer_handle_t* renderer,
     const liara_drawable_t* drawables,
     size_t drawable_count
 );
@@ -312,7 +312,7 @@ not return values:
 ```c
 liara_result liara_renderer_create(
     const liara_renderer_create_info_t* create_info,
-    liara_renderer_handle** out_handle
+    liara_renderer_handle_t** out_handle
 );
 ```
 
@@ -347,7 +347,7 @@ the memory:
 ```c
 liara_result liara_renderer_create(
     const liara_renderer_create_info_t* create_info,  // Caller allocates and frees.
-    liara_renderer_handle** out_handle
+    liara_renderer_handle_t** out_handle
 );
 ```
 
@@ -361,7 +361,7 @@ Functions that produce a handle (`liara_renderer_create`,
 is freed by the corresponding destroy function:
 
 ```c
-liara_renderer_handle* renderer = NULL;
+liara_renderer_handle_t* renderer = NULL;
 liara_renderer_create(&info, &renderer);
 // ... use renderer ...
 liara_renderer_destroy(renderer);
@@ -386,7 +386,7 @@ typedef struct liara_allocator_t {
 liara_result liara_renderer_create(
     const liara_renderer_create_info_t* create_info,
     const liara_allocator_t* allocator,  // May be NULL for default.
-    liara_renderer_handle** out_handle
+    liara_renderer_handle_t** out_handle
 );
 ```
 
@@ -414,7 +414,7 @@ explicit:
  * The caller must not free the returned pointer.
  */
 const liara_transform_t* liara_core_entity_get_transform(
-    liara_core_world_handle* world,
+    liara_core_world_handle_t* world,
     liara_entity_t entity
 );
 ```
@@ -438,7 +438,7 @@ typedef void (*liara_renderer_error_callback)(
 );
 
 liara_result liara_renderer_set_error_callback(
-    liara_renderer_handle* renderer,
+    liara_renderer_handle_t* renderer,
     liara_renderer_error_callback callback,
     void* user_data
 );
@@ -480,101 +480,189 @@ This format is identical to Vulkan's `VK_MAKE_VERSION` and provides
 1024 majors, 1024 minors, and 4096 patches. More than enough for any
 realistic timeline.
 
-### The Interface Version Macro
+### Version Encoding
 
-The current interface version is declared in `liara/abi_version.h`:
+A version is a single `uint32_t` packing three components, following
+Vulkan's approach: **10 bits major, 10 bits minor, 12 bits patch**
+(major and minor 0–1023, patch 0–4095). The bit layout, masks, and
+shifts are defined in `liara/version.h`, along with `LIARA_STATIC_ASSERT`
+guards ensuring the components never overflow their fields.
+
+Two forms build a packed version:
+
+- `LIARA_MAKE_VERSION_UNSAFE(major, minor, patch)` — a macro, usable
+in constant expressions (static_assert, case labels, array sizes).
+It performs no range checking; the caller guarantees the ranges.
+
+- `liara_try_make_version(major, minor, patch, out_version)` — a
+checked static inline function returning a `liara_result`; it
+rejects out-of-range components and a NULL output. Preferred
+outside constant contexts.
+
+### The ABI Version
+
+The current ABI version is not hand-written as literals. It is
+declared in `liara/abi_version.h` as an `enum` whose members are
+fed from CMake-generated macros (`LIARA_PRIVATE_CMAKE_VERSION_*`,
+produced into `config.h` from the `liara-interfaces` project version):
 
 ```c
-#define LIARA_ABI_VERSION_MAJOR  1
-#define LIARA_ABI_VERSION_MINOR  0
-#define LIARA_ABI_VERSION_PATCH  0
+enum {
+    LIARA_ABI_VERSION_MAJOR = LIARA_PRIVATE_CMAKE_VERSION_MAJOR,
+    LIARA_ABI_VERSION_MINOR = LIARA_PRIVATE_CMAKE_VERSION_MINOR,
+    LIARA_ABI_VERSION_PATCH = LIARA_PRIVATE_CMAKE_VERSION_PATCH,
+};
 
 #define LIARA_ABI_VERSION \
-    LIARA_MAKE_VERSION( \
-        LIARA_ABI_VERSION_MAJOR, \
-        LIARA_ABI_VERSION_MINOR, \
-        LIARA_ABI_VERSION_PATCH)
+    (uint32_t)LIARA_MAKE_VERSION_UNSAFE( \
+        LIARA_ABI_VERSION_MAJOR, LIARA_ABI_VERSION_MINOR, LIARA_ABI_VERSION_PATCH)
 ```
+A single source of truth (the project version) drives both the released
+package version and the compiled-in ABI constant, so they can never drift.
+Every module that consumes the interface captures LIARA_ABI_VERSION at its
+own compile time.
 
-Every module that consumes the interface compiles against a specific
-version of these macros. The version it observed at compile time is
-captured in its binary.
+### Module Self-Description
 
-### The Module Version Function
-
-Every module exports a function that reports the interface version it
-implements:
+Every module exposes a single entry point describing itself:
 
 ```c
-// Required entry point for every module.
-uint32_t liara_<module>_get_interface_version(void);
+typedef struct liara_module_info_t {
+    uint32_t    struct_version;   // = LIARA_MODULE_INFO_VERSION_1
+    uint32_t    abi_version;      // the ABI the module was compiled against
+    uint32_t    module_version;   // the module's own version
+    const char* name;             // human-readable module name
+} liara_module_info_t;
+
+#define LIARA_MODULE_INFO_VERSION_1 1u
+
+const liara_module_info_t* liara_<module>_info(void);
 ```
 
-The implementation simply returns `LIARA_ABI_VERSION` as
-captured at the module's compile time:
+The distinction between the two version fields matters. `abi_version` is the
+interface contract the module was built against — the field a host checks
+first, before trusting anything else the module reports. `module_version` is
+the module's independent semantic version, tracked per repository and surfaced
+to users; it plays no role in compatibility.
+
+Contract of `liara_<module>_info()`:
+
+- Returns a pointer to a **static instance with process lifetime**. The caller
+does not own it and must never free it. The function never returns NULL.
+
+- `name` points to a static string literal, borrowed for the module's lifetime;
+the caller must not free it.
+
+- The struct is a **versioned struct** (section 8, "Versioned Structs"): `struct_version`
+is its first field, and appending fields in a later minor version keeps older callers
+binary-compatible.
+
+- The struct carries **data only**. Function pointers are never added to it — dispatch
+across the boundary goes through named `extern "C"` functions, not through a table
+(see the "vtable structs" anti-pattern, section 14).
+
+For a fast pre-check that reads nothing but the ABI word, a scalar accessor is also
+provided and kept even when info() exists:
 
 ```c
-uint32_t liara_<module>_get_interface_version(void) {
-    return LIARA_ABI_VERSION;
-}
+uint32_t liara_<module>_abi_version(void);
 ```
 
-### Version Negotiation at Load
+A host composing modules reads each module's `info()`, checks `abi_version` against
+its own `LIARA_ABI_VERSION`, and wires together only compatible modules. This is the
+machine-readable counterpart to the `abi_compatibility` lists published in each
+module's `manifest.json`.
 
-When the core loads a module (today: at static link, by directly
-calling its entry point; tomorrow: at dynamic load, by `dlsym`), it
-checks compatibility:
+### Compatibility Rule
+
+Compatibility is decided by comparing a provided version against a required one.
+The canonical helper lives in `liara/abi_version.h`:
 
 ```c
-uint32_t module_version = liara_<module>_get_interface_version();
-uint32_t expected_version = LIARA_ABI_VERSION;
-
-if (LIARA_VERSION_MAJOR(module_version) != LIARA_VERSION_MAJOR(expected_version)) {
-    // Hard failure: refuse to load.
-}
-if (LIARA_VERSION_MINOR(module_version) < LIARA_VERSION_MINOR(expected_version)) {
-    // Warning: module is older minor than core expects.
-    // Some functions added in newer minors may be unavailable.
-}
-// Patch differences are silent.
+// Does `provided` satisfy what `required` asks for?
+bool liara_version_provides(uint32_t provided, uint32_t required);
 ```
 
-The semantics:
+The rule it implements:
 
-- **Major mismatch is fatal.** The module and the core have
-  fundamentally incompatible expectations about the interface.
-- **Minor mismatch is a warning.** A newer module loaded by an older
-  core: the older core may not invoke functions the module provides,
-  but everything it does invoke works. An older module loaded by a
-  newer core: the core must check `module_version` before calling
-  functions added in versions newer than the module reports.
-- **Patch differences are invisible.** Patch versions never change
-  behavior; they are documentation or comment changes.
+- **Different major → never compatible.** Major encodes breaking change;
+no minor or patch can bridge it.
+
+- **Required is a 0.0.x version → exact equality required.** Pre-0.1 is
+the Phase 0 playground (see `ROADMAP.md` §3): nothing is promised, so
+only an identical version satisfies. This is the one place the rule departs
+from ordinary semver, and it is deliberate.
+
+- **Otherwise → provided.minor >= required.minor.** Minor bumps are additive,
+so a newer provider satisfies an older requirement; patch is ignored.
+
+The argument order is load-bearing and easy to get wrong, which is why the
+parameters are named `provided` and `required` rather than two anonymous
+`uint32_t`. A convenience wrapper removes the ordering hazard entirely at
+the most common call site:
+
+```c
+// Is `module_abi` compatible with the ABI this caller was compiled against?
+bool liara_abi_is_compatible(uint32_t module_abi);
+```
+
+### Negotiation Outcome
+
+A boolean answers "compatible or not", but a host often needs to distinguish
+how compatible, to warn rather than refuse. The negotiation therefore reports
+a four-state outcome:
+
+```c
+typedef enum liara_version_compat {
+    LIARA_VERSION_COMPAT_EXACT        = 0,  // identical
+    LIARA_VERSION_COMPAT_COMPATIBLE   = 1,  // provider newer minor, fully usable
+    LIARA_VERSION_COMPAT_DEGRADED     = 2,  // provider older minor: some newer functions unavailable
+    LIARA_VERSION_COMPAT_INCOMPATIBLE = 3,  // major mismatch, or 0.0.x inequality
+} liara_version_compat;
+```
+
+- `EXACT` / `COMPATIBLE` — proceed. Under `COMPATIBLE`, the provider is a newer
+minor than required: everything the host calls exists.
+
+- `DEGRADED` — proceed with care. The provider is an *older* minor than the host
+expects; functions added in newer minors may be absent, and the host must check
+before calling them. This is the state that gives the "minor mismatch is a warning"
+policy its concrete meaning.
+
+- `INCOMPATIBLE` — refuse. Either the majors differ, or a 0.0.x requirement was not met exactly.
+
+- **Patch differences never affect the outcome.** Patch is documentation and comments only.
+
+Composition is the **host's** job (the launcher, later the editor), not the core's: the
+core neither loads nor version-checks sibling modules. Today the host calls each module's
+entry point directly at static-link time; under future dynamic loading the same host
+resolves the entry point via `dlsym`/`GetProcAddress`. The logic is identical; only the
+lookup changes.
 
 ### What Counts as a Breaking Change
 
 The detailed rules for what triggers a major bump:
 
-| Change                                                | Bump |
-|-------------------------------------------------------|------|
-| Removing a function                                   | MAJOR |
-| Renaming a function                                   | MAJOR |
-| Changing a function's parameter types                 | MAJOR |
+| Change                                                                                                          | Bump  |
+|-----------------------------------------------------------------------------------------------------------------|-------|
+| Removing a function                                                                                             | MAJOR |
+| Renaming a function                                                                                             | MAJOR |
+| Changing a function's parameter types                                                                           | MAJOR |
 | Changing a function's return type (except `void` → `liara_result` for a function newly able to fail, see below) | MAJOR |
-| Changing the meaning of a parameter                   | MAJOR |
-| Removing a struct field                               | MAJOR |
-| Renaming a struct field                               | MAJOR |
-| Changing a struct field's type                        | MAJOR |
-| Reordering struct fields                              | MAJOR |
-| Changing the value of an existing enum constant       | MAJOR |
-| Removing an enum constant                             | MAJOR |
-| Adding a new enum constant in the middle of an enum   | MAJOR |
-| Changing the value of an existing macro               | MAJOR |
-| Adding a function                                     | MINOR |
-| Adding a new enum constant at the end of an enum      | MINOR |
-| Adding a new struct                                   | MINOR |
-| Adding a new field at the end of an explicitly-versioned struct (see below) | MINOR |
-| Documentation, comment, whitespace changes            | PATCH |
+| Changing the meaning of a parameter                                                                             | MAJOR |
+| Removing a struct field                                                                                         | MAJOR |
+| Renaming a struct field                                                                                         | MAJOR |
+| Changing a struct field's type                                                                                  | MAJOR |
+| Reordering struct fields                                                                                        | MAJOR |
+| Changing the value of an existing enum constant                                                                 | MAJOR |
+| Removing an enum constant                                                                                       | MAJOR |
+| Adding a new enum constant in the middle of an enum                                                             | MAJOR |
+| Changing the value of an existing macro                                                                         | MAJOR |
+| Adding a function                                                                                               | MINOR |
+| Adding a new enum constant at the end of an enum                                                                | MINOR |
+| Adding a new struct                                                                                             | MINOR |
+| Adding a new field at the end of an explicitly-versioned struct (see below)                                     | MINOR |
+| Documentation, comment, whitespace changes                                                                      | PATCH |
 
 ### Versioned Structs (Optional Pattern)
 
@@ -722,7 +810,7 @@ Example:
 liara_result liara_renderer_create(
     const liara_renderer_create_info_t* create_info,
     const liara_allocator_t* allocator,
-    liara_renderer_handle** out_handle
+    liara_renderer_handle_t** out_handle
 );
 ```
 
@@ -746,6 +834,9 @@ implementation. The tests verify:
   checks. They catch accidental layout changes.
 - **Macro evaluation tests**: version macros and other compile-time
   computations produce the expected values.
+- **Cross-language callability tests**: the headers are also exercised
+  from Zig and Rust to confirm the interface is consumable through a
+  bare C FFI, not only from C and C++.
 
 These tests run in CI on every change. A change that affects layout
 or compilation is caught before it merges.
@@ -812,7 +903,7 @@ Across major versions, no compatibility is guaranteed. A module
 compiled against version 2.0 of the interface cannot be loaded by a
 core compiled against version 1.x, and vice versa.
 
-The `manifest.json` file in each module's contains a list of all
+The `manifest.json` file in each module contains a list of all
 released versions of this module, along with the list of interface
 versions it supports.
 
