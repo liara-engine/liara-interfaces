@@ -43,7 +43,7 @@ LIARA_STATIC_ASSERT(LIARA_VERSION_MAJOR_BITS + LIARA_VERSION_MINOR_BITS + LIARA_
  * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
  */
 #ifndef LIARA_STRINGIFY
-#define LIARA_STRINGIFY(x) #x
+    #define LIARA_STRINGIFY(x) #x
 #endif
 
 /*
@@ -58,7 +58,7 @@ LIARA_STATIC_ASSERT(LIARA_VERSION_MAJOR_BITS + LIARA_VERSION_MINOR_BITS + LIARA_
  * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
  */
 #ifndef LIARA_TOSTRING
-#define LIARA_TOSTRING(x) LIARA_STRINGIFY(x)
+    #define LIARA_TOSTRING(x) LIARA_STRINGIFY(x)
 #endif
 
 /**
