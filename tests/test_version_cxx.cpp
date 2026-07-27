@@ -1,4 +1,6 @@
+// NOLINTBEGIN(readability-identifier-naming)
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+// NOLINTEND(readability-identifier-naming)
 #include <liara/abi_version.h>
 #include <liara/result.h>
 #include <liara/version.h>
