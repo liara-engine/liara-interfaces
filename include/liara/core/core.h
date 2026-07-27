@@ -1,11 +1,11 @@
 #pragma once
 
+#include <liara/modules.h>
+#include <liara/private_utils.h>
 #include <liara/core/core_export.h>
 #include <liara/result.h>
 
 #include <stdint.h>
-
-#include "liara/modules.h"
 
 #ifdef __cplusplus
 extern "C" {
