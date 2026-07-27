@@ -2,8 +2,24 @@
 // Regenerate after any intentional struct change and commit the result.
 #pragma once
 
+#include <liara/modules.h>
+
 #include <assert.h>    // static_assert (C11)
-#include <stddef.h>    // offsetof
 #include <stdalign.h>  // alignof (C11)
+#include <stddef.h>    // offsetof
 
-
+static_assert(sizeof(liara_module_info_t) == 40u, "ABI: sizeof(liara_module_info_t) changed");
+static_assert(alignof(liara_module_info_t) == 8u, "ABI: alignof(liara_module_info_t) changed");
+static_assert(offsetof(liara_module_info_t, struct_version) == 0u,
+              "ABI: offsetof(liara_module_info_t.struct_version) changed");
+static_assert(offsetof(liara_module_info_t, abi_version) == 4u,
+              "ABI: offsetof(liara_module_info_t.abi_version) changed");
+static_assert(offsetof(liara_module_info_t, module_version) == 8u,
+              "ABI: offsetof(liara_module_info_t.module_version) changed");
+static_assert(offsetof(liara_module_info_t, reserved) == 12u, "ABI: offsetof(liara_module_info_t.reserved) changed");
+static_assert(offsetof(liara_module_info_t, module_name) == 16u,
+              "ABI: offsetof(liara_module_info_t.module_name) changed");
+static_assert(offsetof(liara_module_info_t, abi_version_str) == 24u,
+              "ABI: offsetof(liara_module_info_t.abi_version_str) changed");
+static_assert(offsetof(liara_module_info_t, module_version_str) == 32u,
+              "ABI: offsetof(liara_module_info_t.module_version_str) changed");
