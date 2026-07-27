@@ -12,6 +12,36 @@ extern "C" {
     #define LIARA_STATIC_ASSERT(cond, msg) _Static_assert(cond, msg)
 #endif
 
+#if defined(__cplusplus) && __cplusplus >= 201402L
+    #define LIARA_API_DEPRECATED(msg) [[deprecated(msg)]]
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
+    #define LIARA_API_DEPRECATED(msg) [[deprecated(msg)]]
+#elif defined(_MSC_VER)
+    #define LIARA_API_DEPRECATED(msg) __declspec(deprecated(msg))
+#elif defined(__clang__) || defined(__GNUC__)
+    #define LIARA_API_DEPRECATED(msg) __attribute__((deprecated(msg)))
+#else
+    #define LIARA_API_DEPRECATED(msg)
+#endif
+
+#ifdef _WIN32
+    #if defined(LIARA_SHARED)
+        #if defined(LIARA_BUILD)
+            #define LIARA_API __declspec(dllexport)
+        #else
+            #define LIARA_API __declspec(dllimport)
+        #endif
+    #else
+        #define LIARA_API
+    #endif
+#else
+    #ifdef LIARA_SHARED
+        #define LIARA_API __attribute__((visibility("default")))
+    #else
+        #define LIARA_API
+    #endif
+#endif
+
 #ifdef __cplusplus
 }
 #endif
