@@ -1,5 +1,8 @@
 #pragma once
 
+#include <liara/modules.h>
+#include <liara/private_utils.h>
+#include <liara/renderer/renderer_export.h>
 #include <liara/result.h>
 
 #include <stddef.h>
@@ -8,6 +11,19 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * @brief Returns information about the Liara renderer module.
+ *
+ * This function returns a pointer to a `liara_module_info_t` structure containing information about the Liara renderer
+ * module, including its version, ABI version, and name. The returned pointer is valid for the lifetime of the program
+ * and should not be modified or freed by the caller.
+ *
+ * @return A pointer to a `liara_module_info_t` structure containing information about the Liara renderer module.
+ *
+ * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
+ */
+LIARA_RENDERER_API const liara_module_info_t* liara_renderer_info(void);
 
 /**
  * @brief Returns the current version of the Liara renderer ABI interface.
@@ -19,9 +35,11 @@ extern "C" {
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-uint32_t liara_renderer_abi_version(void);
+LIARA_RENDERER_API uint32_t liara_renderer_abi_version(void);
 
+// TODO: Remove this function (marked as deprecated in v0.2.0)
 /**
+ * @deprecated This function is deprecated and will be removed in future versions. Use `liara_renderer_info` instead.
  * @brief Returns the current version of the Liara renderer.
  *
  * This function returns the current version of the Liara renderer as a 32-bit unsigned integer. The version is encoded
@@ -31,7 +49,9 @@ uint32_t liara_renderer_abi_version(void);
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-uint32_t liara_renderer_version(void);
+LIARA_API_DEPRECATED(
+    "This function is deprecated and will be removed in future versions. Use liara_renderer_info instead.")
+LIARA_RENDERER_API uint32_t liara_renderer_version(void);
 
 /**
  * @brief Opaque structure representing a Liara renderer instance.
@@ -57,7 +77,7 @@ typedef struct liara_renderer_t liara_renderer_handle_t;
  * @threadsafety This function is thread-safe as long as it is not called concurrently with `liara_renderer_destroy` on
  * the same renderer instance. @endthreadsafety
  */
-liara_result liara_renderer_create(liara_renderer_handle_t** out_renderer);
+LIARA_RENDERER_API liara_result liara_renderer_create(liara_renderer_handle_t** out_renderer);
 
 /**
  * @brief Destroys a Liara renderer instance.
@@ -75,7 +95,7 @@ liara_result liara_renderer_create(liara_renderer_handle_t** out_renderer);
  * @threadsafety This function is thread-safe as long as it is not called concurrently with `liara_renderer_create` on
  * the same renderer instance. @endthreadsafety
  */
-liara_result liara_renderer_destroy(const liara_renderer_handle_t* renderer);
+LIARA_RENDERER_API liara_result liara_renderer_destroy(const liara_renderer_handle_t* renderer);
 
 /**
  * @brief Prints a message using the Liara renderer.
@@ -95,7 +115,9 @@ liara_result liara_renderer_destroy(const liara_renderer_handle_t* renderer);
  *
  * @note This function is just for demonstration purposes and can be removed at any time, without notice.
  */
-liara_result liara_renderer_print(const liara_renderer_handle_t* renderer, const char* message, size_t message_length);
+LIARA_RENDERER_API liara_result liara_renderer_print(const liara_renderer_handle_t* renderer,
+                                                     const char* message,
+                                                     size_t message_length);
 
 /**
  * @brief Prints a message with a newline using the Liara renderer.
@@ -115,9 +137,9 @@ liara_result liara_renderer_print(const liara_renderer_handle_t* renderer, const
  *
  * @note This function is just for demonstration purposes and can be removed at any time, without notice.
  */
-liara_result liara_renderer_println(const liara_renderer_handle_t* renderer,
-                                    const char* message,
-                                    size_t message_length);
+LIARA_RENDERER_API liara_result liara_renderer_println(const liara_renderer_handle_t* renderer,
+                                                       const char* message,
+                                                       size_t message_length);
 
 /**
  * @brief Sets the text color for the Liara renderer.
@@ -130,7 +152,7 @@ liara_result liara_renderer_println(const liara_renderer_handle_t* renderer,
  *
  * @note This function is just for demonstration purposes and can be removed at any time, without notice.
  */
-void liara_renderer_set_text_color(const liara_renderer_handle_t* renderer, uint32_t color);
+LIARA_RENDERER_API void liara_renderer_set_text_color(const liara_renderer_handle_t* renderer, uint32_t color);
 
 /**
  * @brief Sets the background color for the Liara renderer.
@@ -143,7 +165,7 @@ void liara_renderer_set_text_color(const liara_renderer_handle_t* renderer, uint
  *
  * @note This function is just for demonstration purposes and can be removed at any time, without notice.
  */
-void liara_renderer_set_background_color(const liara_renderer_handle_t* renderer, uint32_t color);
+LIARA_RENDERER_API void liara_renderer_set_background_color(const liara_renderer_handle_t* renderer, uint32_t color);
 
 #ifdef __cplusplus
 }

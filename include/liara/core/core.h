@@ -1,13 +1,30 @@
 #pragma once
 
-#include <liara/renderer/renderer.h>
+#include <liara/core/core_export.h>
 #include <liara/result.h>
 
 #include <stdint.h>
 
+#include "liara/modules.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef struct liara_renderer_t liara_renderer_handle_t;
+
+/**
+ * @brief Returns information about the Liara core module.
+ *
+ * This function returns a pointer to a `liara_module_info_t` structure containing information about the Liara core
+ * module, including its version, ABI version, and name. The returned pointer is valid for the lifetime of the program
+ * and should not be modified or freed by the caller.
+ *
+ * @return A pointer to a `liara_module_info_t` structure containing information about the Liara core module.
+ *
+ * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
+ */
+LIARA_CORE_API const liara_module_info_t* liara_core_info(void);
 
 /**
  * @brief Returns the current version of the Liara core ABI interface.
@@ -19,9 +36,11 @@ extern "C" {
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-uint32_t liara_core_abi_version(void);
+LIARA_CORE_API uint32_t liara_core_abi_version(void);
 
+// TODO: Remove this function (marked as deprecated in v0.2.0)
 /**
+ * @deprecated This function is deprecated and will be removed in future versions. Use `liara_core_info` instead.
  * @brief Returns the current version of the Liara core.
  *
  * This function returns the current version of the Liara core as a 32-bit unsigned integer. The version is encoded
@@ -31,7 +50,8 @@ uint32_t liara_core_abi_version(void);
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-uint32_t liara_core_version(void);
+LIARA_API_DEPRECATED("This function is deprecated and will be removed in future versions. Use liara_core_info instead.")
+LIARA_CORE_API uint32_t liara_core_version(void);
 
 /**
  * @brief Opaque structure representing a Liara core instance.
@@ -58,7 +78,7 @@ typedef struct liara_core_t liara_core_handle_t;
  * @threadsafety This function is thread-safe as long as it is not called concurrently with `liara_core_destroy` on
  * the same core instance. @endthreadsafety
  */
-liara_result liara_core_create(liara_renderer_handle_t* renderer_handle, liara_core_handle_t** out_core);
+LIARA_CORE_API liara_result liara_core_create(liara_renderer_handle_t* renderer_handle, liara_core_handle_t** out_core);
 
 /**
  * @brief Destroys a Liara core instance.
@@ -72,7 +92,7 @@ liara_result liara_core_create(liara_renderer_handle_t* renderer_handle, liara_c
  * - `LIARA_RESULT_SUCCESS`: The core was destroyed successfully.
  * - `LIARA_RESULT_NULL_POINTER`: The `core` parameter is a null pointer.
  */
-liara_result liara_core_destroy(const liara_core_handle_t* core_handle);
+LIARA_CORE_API liara_result liara_core_destroy(const liara_core_handle_t* core_handle);
 
 /**
  * @brief Enumeration representing the run modes of the Liara core.
@@ -121,9 +141,9 @@ enum liara_core_run_mode {
  * @threadsafety This function is thread-safe as long as it is not called concurrently with other functions that modify
  * the core's state. @endthreadsafety
  */
-void liara_core_set_run_mode(liara_core_handle_t* core_handle,
-                             enum liara_core_run_mode run_mode,
-                             float fixed_time_step);
+LIARA_CORE_API void liara_core_set_run_mode(liara_core_handle_t* core_handle,
+                                            enum liara_core_run_mode run_mode,
+                                            float fixed_time_step);
 
 /**
  * @brief Runs the Liara core's update loop.
@@ -136,7 +156,7 @@ void liara_core_set_run_mode(liara_core_handle_t* core_handle,
  * @threadsafety This function is thread-safe as long as it is not called concurrently with other functions that modify
  * the core's state. @endthreadsafety
  */
-void liara_core_run(liara_core_handle_t* core_handle);
+LIARA_CORE_API void liara_core_run(liara_core_handle_t* core_handle);
 
 /**
  * @brief Stops the Liara core's update loop.
@@ -149,7 +169,7 @@ void liara_core_run(liara_core_handle_t* core_handle);
  * @threadsafety This function is thread-safe as long as it is not called concurrently with other functions that modify
  * the core's state. @endthreadsafety
  */
-void liara_core_stop(liara_core_handle_t* core_handle);
+LIARA_CORE_API void liara_core_stop(liara_core_handle_t* core_handle);
 
 /**
  * @brief Updates the Liara core in manual run mode.
@@ -164,7 +184,7 @@ void liara_core_stop(liara_core_handle_t* core_handle);
  * @threadsafety This function is thread-safe as long as it is not called concurrently with other functions that modify
  * the core's state. @endthreadsafety
  */
-void liara_core_update(liara_core_handle_t* core_handle, float delta_time);
+LIARA_CORE_API void liara_core_update(liara_core_handle_t* core_handle, float delta_time);
 
 /**
  * @brief Sets the late update callback for the Liara core.
@@ -179,8 +199,8 @@ void liara_core_update(liara_core_handle_t* core_handle, float delta_time);
  * @threadsafety This function is thread-safe as long as it is not called concurrently with other functions that modify
  * the core's state. @endthreadsafety
  */
-void liara_core_set_late_update_callback(liara_core_handle_t* core_handle,
-                                         void (*callback)(liara_core_handle_t* core, float delta_time));
+LIARA_CORE_API void liara_core_set_late_update_callback(liara_core_handle_t* core_handle,
+                                                        void (*callback)(liara_core_handle_t* core, float delta_time));
 
 #ifdef __cplusplus
 }
