@@ -46,6 +46,18 @@ LIARA_STATIC_ASSERT(LIARA_ABI_VERSION_PATCH <= LIARA_VERSION_PATCH_MASK, "Patch 
     (uint32_t)LIARA_MAKE_VERSION_UNSAFE(LIARA_ABI_VERSION_MAJOR, LIARA_ABI_VERSION_MINOR, LIARA_ABI_VERSION_PATCH)
 
 /**
+ * @brief String representation of the current version of the Liara ABI interface.
+ *
+ * This macro defines a string representation of the current version of the Liara ABI interface by combining the major,
+ * minor, and patch version numbers defined above. It can be used for logging, debugging, or displaying version
+ * information to users.
+ *
+ * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
+ */
+#define LIARA_ABI_VERSION_STR \
+    LIARA_TOSTRING(LIARA_PRIVATE_CMAKE_VERSION_MAJOR) "." LIARA_TOSTRING(LIARA_PRIVATE_CMAKE_VERSION_MINOR) "." LIARA_TOSTRING(LIARA_PRIVATE_CMAKE_VERSION_PATCH)
+
+/**
  * @brief Inline function to get the current version of the Liara ABI interface.
  *
  * This function is a wrapper around the LIARA_ABI_VERSION macro for other languages that may not support macros
@@ -57,6 +69,19 @@ LIARA_STATIC_ASSERT(LIARA_ABI_VERSION_PATCH <= LIARA_VERSION_PATCH_MASK, "Patch 
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
 static inline uint32_t liara_abi_version(void) { return LIARA_ABI_VERSION; }
+
+/**
+ * @brief Inline function to get the string representation of the current version of the Liara ABI interface.
+ *
+ * This function is a wrapper around the LIARA_ABI_VERSION_STR macro for other languages that may not support macros
+ * or for better type safety in C. It returns a string representation of the current version of the Liara ABI interface
+ * by combining the major, minor, and patch version numbers defined above.
+ *
+ * @return A string literal representing the current version of the Liara ABI interface.
+ *
+ * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
+ */
+static inline const char* liara_abi_version_str(void) { return LIARA_ABI_VERSION_STR; }
 
 /**
  * @brief Inline function to check if a version number satisfies the requirements of another version number.
