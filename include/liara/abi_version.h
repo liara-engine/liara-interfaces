@@ -145,10 +145,12 @@ static inline bool liara_version_satisfies(const uint32_t required, const uint32
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
+static inline liara_version_compat_t liara_abi_is_compatible(uint32_t module_abi);
 LIARA_API_DEPRECATED("Use liara_abi_is_compatible() instead")
 
 static inline bool liara_abi_version_satisfies(const uint32_t required_version) {
-    return liara_version_satisfies(required_version, LIARA_ABI_VERSION);
+
+    return liara_abi_is_compatible(required_version) != LIARA_VERSION_COMPAT_INCOMPATIBLE;
 }
 
 /**
