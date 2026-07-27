@@ -31,6 +31,36 @@ extern "C" {
 LIARA_STATIC_ASSERT(LIARA_VERSION_MAJOR_BITS + LIARA_VERSION_MINOR_BITS + LIARA_VERSION_PATCH_BITS <= 32U,
                     "Version components exceed 32 bits");
 
+/*
+ * @brief Macro to stringify a value.
+ *
+ * This macro converts the given value into a string literal. It is useful for generating string representations of
+ * version numbers or other constants.
+ *
+ * @param[in] x The value to be converted into a string literal.
+ * @return A string literal representing the value of @c x.
+ *
+ * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
+ */
+#ifndef LIARA_STRINGIFY
+#define LIARA_STRINGIFY(x) #x
+#endif
+
+/*
+ * @brief Macro to convert a value into a string literal.
+ *
+ * This macro is a wrapper around the LIARA_STRINGIFY macro. It is provided for convenience and can be used to generate
+ * string representations of version numbers or other constants.
+ *
+ * @param[in] x The value to be converted into a string literal.
+ * @return A string literal representing the value of @c x.
+ *
+ * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
+ */
+#ifndef LIARA_TOSTRING
+#define LIARA_TOSTRING(x) LIARA_STRINGIFY(x)
+#endif
+
 /**
  * @brief Create a version number from major, minor, and patch components, with NO safety checks.
  *
