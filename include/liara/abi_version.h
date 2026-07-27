@@ -5,9 +5,9 @@
 
 #pragma once
 
+#include <liara/config.h>
 #include <liara/private_utils.h>
 #include <liara/version.h>
-#include <liara/config.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -70,8 +70,8 @@ static inline uint32_t liara_abi_version(void) { return LIARA_ABI_VERSION; }
  *          It's the caller's responsibility to be aware of the versioning scheme used and to ensure that compatibility
  *          checks are performed appropriately for the specific versions in use.
  *
- * @param required[in] The required version number to satisfy.
- * @param available[in] The available version number to check against the required version.
+ * @param[in] required The required version number to satisfy.
+ * @param[in] available The available version number to check against the required version.
  * @return True if the available version satisfies the required version, false otherwise.
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
@@ -94,7 +94,7 @@ static inline bool liara_version_satisfies(const uint32_t required, const uint32
  *          It's the caller's responsibility to be aware of the versioning scheme used and to ensure that compatibility
  *          checks are performed appropriately for the specific versions in use.
  *
- * @param required_version[in] The required version number to satisfy.
+ * @param[in] required_version The required version number to satisfy.
  * @return True if the current ABI version satisfies the requirements of the specified version, false otherwise.
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
