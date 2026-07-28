@@ -4,7 +4,7 @@
  */
 
 #pragma once
-#include <stdint.h>
+#include LIARA_INCLUDE_STD(stdint)
 
 #ifdef __cplusplus
 extern "C" {
