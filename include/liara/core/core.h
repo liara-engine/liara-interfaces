@@ -12,15 +12,6 @@ extern "C" {
 
 LIARA_TYPEDEF(struct liara_module_info_t, liara_module_info_t);
 LIARA_TYPEDEF(struct liara_renderer_t, liara_renderer_handle_t);
-
-// TODO: Remove (marked as deprecated in v0.1.1)
-/**
- * @deprecated: This type is deprecated and will be removed in future versions. Use `liara_result_t` instead. \
- */
-LIARA_TYPEDEF_DEPRECATED(
-    int32_t,
-    liara_result,
-    "This type is deprecated and will be removed in future versions. Use `liara_result_t` instead.");
 LIARA_TYPEDEF(int32_t, liara_result_t);
 
 /**
@@ -57,54 +48,24 @@ LIARA_CORE_API const liara_module_info_t* liara_core_info(void);
  */
 LIARA_CORE_API uint32_t liara_core_abi_version(void);
 
-// TODO: Remove this function (marked as deprecated in v0.1.1)
 /**
- * @deprecated This function is deprecated and will be removed in future versions. Use `liara_core_info` instead.
- * @brief Returns the current version of the Liara core.
- *
- * This function returns the current version of the Liara core as a 32-bit unsigned integer. The version is encoded
- * using the same scheme as the Liara ABI version, with major, minor, and patch components.
- *
- * @return A 32-bit unsigned integer representing the current version of the Liara core.
- *
- * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
- */
-LIARA_API_DEPRECATED("This function is deprecated and will be removed in future versions. Use liara_core_info instead.")
-LIARA_CORE_API uint32_t liara_core_version(void);
-
-// TODO: Update this function to use `liara_result_t` instead of `liara_result` in v0.2.0
-/**
- * @deprecated This function is deprecated and its signature will use `liara_result_t` instead of `liara_result` in
- * v0.2.0. Please update your code accordingly.
  * @brief Creates a new Liara core instance.
  *
  * This function allocates and initializes a new Liara core instance. The created core is returned through the
  * `out_core` parameter. The caller is responsible for destroying the core using `liara_core_destroy`.
  *
- * @param[in] renderer_handle A pointer to the renderer instance to be used by the core.
  * @param[out] out_core A pointer to a pointer that will receive the newly created core instance.
  *
- * @return A `liara_result` indicating the success or failure of the operation. Possible return values include:
+ * @return A `liara_result_t` indicating the success or failure of the operation. Possible return values include:
  * - `LIARA_RESULT_SUCCESS`: The core was created successfully.
- * - `LIARA_RESULT_NULL_POINTER`: The `out_core` or `renderer_handle` parameter is a null pointer.
- *
- * @note The core does not call into `renderer_handle` itself; per ARCHITECTURE.md \S5 and MODULES.md \S10, the
- *       core never directly calls the renderer. This parameter can't be dropped without changing this already-frozen
- *       signature, so it is accepted and validated but otherwise unused by the core. To actually get pixels on
- *       screen, the host extracts a render packet each tick via `liara_core_get_render_packet` and hands it to the
- *       renderer via `liara_renderer_submit_frame`.
+ * - `LIARA_RESULT_NULL_POINTER`: The `out_core` parameter is a null pointer.
  *
  * @threadsafety This function is thread-safe as long as it is not called concurrently with `liara_core_destroy` on
  * the same core instance. @endthreadsafety
  */
-LIARA_API_DEPRECATED("This function is deprecated and its signature will use `liara_result_t` instead of "
-                     "`liara_result` in v0.2.0. Please update your code accordingly.")
-LIARA_CORE_API liara_result liara_core_create(liara_renderer_handle_t* renderer_handle, liara_core_handle_t** out_core);
+LIARA_CORE_API liara_result_t liara_core_create(liara_core_handle_t** out_core);
 
-// TODO: Update this function to use `liara_result_t` instead of `liara_result` in v0.2.0
 /**
- * @deprecated This function is deprecated and its signature will use `liara_result_t` instead of `liara_result` in
- * v0.2.0. Please update your code accordingly.
  * @brief Destroys a Liara core instance.
  *
  * This function deallocates and cleans up the resources associated with a Liara core instance. After calling this
@@ -112,13 +73,11 @@ LIARA_CORE_API liara_result liara_core_create(liara_renderer_handle_t* renderer_
  *
  * @param[in] core_handle A pointer to the core instance to be destroyed.
  *
- * @return A `liara_result` indicating the success or failure of the operation. Possible return values include:
+ * @return A `liara_result_t` indicating the success or failure of the operation. Possible return values include:
  * - `LIARA_RESULT_SUCCESS`: The core was destroyed successfully.
  * - `LIARA_RESULT_NULL_POINTER`: The `core` parameter is a null pointer.
  */
-LIARA_API_DEPRECATED("This function is deprecated and its signature will use `liara_result_t` instead of "
-                     "`liara_result` in v0.2.0. Please update your code accordingly.")
-LIARA_CORE_API liara_result liara_core_destroy(const liara_core_handle_t* core_handle);
+LIARA_CORE_API liara_result_t liara_core_destroy(const liara_core_handle_t* core_handle);
 
 /**
  * @brief Enumeration representing the run modes of the Liara core.

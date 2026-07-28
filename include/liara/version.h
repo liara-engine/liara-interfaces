@@ -89,10 +89,7 @@ LIARA_STATIC_ASSERT(LIARA_VERSION_MAJOR_BITS + LIARA_VERSION_MINOR_BITS + LIARA_
                         | (LIARA_STATIC_CAST(uint32_t, minor) << LIARA_VERSION_MINOR_SHIFT) \
                         | (LIARA_STATIC_CAST(uint32_t, patch) << LIARA_VERSION_PATCH_SHIFT))))
 
-// TODO: Update this function to use `liara_result_t` instead of `liara_result` in v0.2.0
 /**
- * @deprecated This function is deprecated and its signature will use `liara_result_t` instead of `liara_result` in
- * v0.2.0. Please update your code accordingly.
  * @brief Inline function to create a version number from major, minor, and patch components.
  *
  * This function combines the major, minor, and patch version numbers into a single 32-bit unsigned integer.
@@ -103,7 +100,7 @@ LIARA_STATIC_ASSERT(LIARA_VERSION_MAJOR_BITS + LIARA_VERSION_MINOR_BITS + LIARA_
  *
  * If the input values are valid, the combined version is stored in the output parameter @c out_version.
  * If any of the input values are out of range or if @c out_version is LIARA_NULL, the function returns an appropriate
- * liara_result error code and does not modify @c out_version.
+ * liara_result_t error code and does not modify @c out_version.
  *
  * The allocation of the output parameter is the responsibility of the caller, and it must be a valid pointer to a
  * uint32_t.
@@ -118,13 +115,10 @@ LIARA_STATIC_ASSERT(LIARA_VERSION_MAJOR_BITS + LIARA_VERSION_MINOR_BITS + LIARA_
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-LIARA_API_DEPRECATED("This function is deprecated and its signature will use `liara_result_t` instead of "
-                     "`liara_result` in v0.2.0. Please update your code accordingly.")
-
-static inline liara_result liara_try_make_version(const uint32_t major,
-                                                  const uint32_t minor,
-                                                  const uint32_t patch,
-                                                  uint32_t* out_version) {
+static inline liara_result_t liara_try_make_version(const uint32_t major,
+                                                    const uint32_t minor,
+                                                    const uint32_t patch,
+                                                    uint32_t* out_version) {
     if (out_version == LIARA_NULL) { return LIARA_RESULT_NULL_POINTER; }
     if (major > LIARA_VERSION_MAJOR_MASK) { return LIARA_RESULT_OUT_OF_RANGE; }
     if (minor > LIARA_VERSION_MINOR_MASK) { return LIARA_RESULT_OUT_OF_RANGE; }
@@ -213,152 +207,6 @@ static inline uint32_t liara_version_minor(const uint32_t v) { return LIARA_VERS
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
 static inline uint32_t liara_version_patch(const uint32_t v) { return LIARA_VERSION_PATCH(v); }
-
-/**
- * @deprecated This function is deprecated and will be removed in future versions. Use `liara_version_compare` instead.
- * @brief Inline function to compare two version numbers for equality, with an option to ignore the patch version.
- *
- * This function compares two version numbers for equality. If the `ignore_patch` parameter is set to a non-zero value,
- * the comparison will only consider the major and minor version components, ignoring the patch version.
- *
- * @param[in] v1 The first version number to compare.
- * @param[in] v2 The second version number to compare.
- * @param[in] ignore_patch If non-zero, ignore the patch version in the comparison.
- * @return Non-zero if the versions are considered equal based on the specified criteria, zero otherwise.
- *
- * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
- */
-LIARA_API_DEPRECATED(
-    "This function is deprecated and will be removed in future versions. Use liara_version_compare instead.")
-
-static inline bool liara_version_eq(const uint32_t v1, const uint32_t v2, const bool ignore_patch) {
-    if (ignore_patch) {
-        return LIARA_VERSION_MAJOR(v1) == LIARA_VERSION_MAJOR(v2) && LIARA_VERSION_MINOR(v1) == LIARA_VERSION_MINOR(v2);
-    }
-    return v1 == v2;
-}
-
-/**
- * @deprecated This function is deprecated and will be removed in future versions. Use `liara_version_compare` instead.
- * @brief Inline function to compare two version numbers for inequality, with an option to ignore the patch version.
- *
- * This function compares two version numbers for inequality. If the `ignore_patch` parameter is set to a non-zero
- * value, the comparison will only consider the major and minor version components, ignoring the patch version.
- *
- * @param[in] v1 The first version number to compare.
- * @param[in] v2 The second version number to compare.
- * @param[in] ignore_patch If non-zero, ignore the patch version in the comparison.
- * @return Non-zero if the versions are considered not equal based on the specified criteria, zero otherwise.
- *
- * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
- */
-LIARA_API_DEPRECATED(
-    "This function is deprecated and will be removed in future versions. Use liara_version_compare instead.")
-
-static inline bool liara_version_neq(const uint32_t v1, const uint32_t v2, const bool ignore_patch) {
-    return !liara_version_eq(v1, v2, ignore_patch) != 0;
-}
-
-/**
- * @deprecated This function is deprecated and will be removed in future versions. Use `liara_version_compare` instead.
- * @brief Inline function to compare two version numbers to determine if the first is less than the second, with an
- * option to ignore the patch version.
- *
- * This function compares two version numbers to determine if the first is less than the second. If the `ignore_patch`
- * parameter is set to a non-zero value, the comparison will only consider the major and minor version components,
- * ignoring the patch version.
- *
- * @param[in] v1 The first version number to compare.
- * @param[in] v2 The second version number to compare.
- * @param[in] ignore_patch If non-zero, ignore the patch version in the comparison.
- * @return Non-zero if the first version is considered less than the second based on the specified criteria, zero
- * otherwise.
- *
- * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
- */
-LIARA_API_DEPRECATED(
-    "This function is deprecated and will be removed in future versions. Use liara_version_compare instead.")
-
-static inline bool liara_version_lt(const uint32_t v1, const uint32_t v2, const bool ignore_patch) {
-    if (ignore_patch) {
-        if (LIARA_VERSION_MAJOR(v1) < LIARA_VERSION_MAJOR(v2)) { return true; }
-        if (LIARA_VERSION_MAJOR(v1) > LIARA_VERSION_MAJOR(v2)) { return false; }
-        return LIARA_VERSION_MINOR(v1) < LIARA_VERSION_MINOR(v2);
-    }
-    return v1 < v2;
-}
-
-/**
- * @deprecated This function is deprecated and will be removed in future versions. Use `liara_version_compare` instead.
- * @brief Inline function to compare two version numbers to determine if the first is less than or equal to the second,
- * with an option to ignore the patch version.
- *
- * This function compares two version numbers to determine if the first is less than or equal to the second. If the
- * `ignore_patch` parameter is set to a non-zero value, the comparison will only consider the major and minor version
- * components, ignoring the patch version.
- *
- * @param[in] v1 The first version number to compare.
- * @param[in] v2 The second version number to compare.
- * @param[in] ignore_patch If non-zero, ignore the patch version in the comparison.
- * @return Non-zero if the first version is considered less than or equal to the second based on the specified criteria,
- * zero otherwise.
- *
- * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
- */
-LIARA_API_DEPRECATED(
-    "This function is deprecated and will be removed in future versions. Use liara_version_compare instead.")
-
-static inline bool liara_version_lte(const uint32_t v1, const uint32_t v2, const bool ignore_patch) {
-    return (liara_version_lt(v1, v2, ignore_patch) || liara_version_eq(v1, v2, ignore_patch)) != 0;
-}
-
-/**
- * @deprecated This function is deprecated and will be removed in future versions. Use `liara_version_compare` instead.
- * @brief Inline function to compare two version numbers to determine if the first is greater than the second, with an
- * option to ignore the patch version.
- *
- * This function compares two version numbers to determine if the first is greater than the second. If the
- * `ignore_patch` parameter is set to a non-zero value, the comparison will only consider the major and minor version
- * components, ignoring the patch version.
- *
- * @param[in] v1 The first version number to compare.
- * @param[in] v2 The second version number to compare.
- * @param[in] ignore_patch If non-zero, ignore the patch version in the comparison.
- * @return Non-zero if the first version is considered greater than the second based on the specified criteria, zero
- * otherwise.
- *
- * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
- */
-LIARA_API_DEPRECATED(
-    "This function is deprecated and will be removed in future versions. Use liara_version_compare instead.")
-
-static inline bool liara_version_gt(const uint32_t v1, const uint32_t v2, const bool ignore_patch) {
-    return !liara_version_lte(v1, v2, ignore_patch) != 0;
-}
-
-/**
- * @deprecated This function is deprecated and will be removed in future versions. Use `liara_version_compare` instead.
- * @brief Inline function to compare two version numbers to determine if the first is greater than or equal to the
- * second, with an option to ignore the patch version.
- *
- * This function compares two version numbers to determine if the first is greater than or equal to the second. If the
- * `ignore_patch` parameter is set to a non-zero value, the comparison will only consider the major and minor version
- * components, ignoring the patch version.
- *
- * @param[in] v1 The first version number to compare.
- * @param[in] v2 The second version number to compare.
- * @param[in] ignore_patch If non-zero, ignore the patch version in the comparison.
- * @return Non-zero if the first version is considered greater than or equal to the second based on the specified
- * criteria, zero otherwise.
- *
- * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
- */
-LIARA_API_DEPRECATED(
-    "This function is deprecated and will be removed in future versions. Use liara_version_compare instead.")
-
-static inline bool liara_version_gte(const uint32_t v1, const uint32_t v2, const bool ignore_patch) {
-    return !liara_version_lt(v1, v2, ignore_patch) != 0;
-}
 
 /**
  * @brief Inline function to compare two version numbers and return a signed integer indicating their relative order,

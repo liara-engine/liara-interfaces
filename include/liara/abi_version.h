@@ -99,61 +99,6 @@ static inline uint32_t liara_abi_version(void) { return LIARA_ABI_VERSION; }
  */
 static inline const char* liara_abi_version_str(void) { return LIARA_ABI_VERSION_STR; }
 
-// TODO: Remove this function (marked as deprecated in 0.1.1)
-/**
- * @deprecated This function is deprecated and will be removed in future versions. Use liara_version_provides() instead.
- * @brief Inline function to check if a version number satisfies the requirements of another version number.
- *
- * This function checks if a version number satisfies the requirements of another version number based on their major
- * and minor version components. Satisfaction is defined as having the same major version and a minor version that is
- * greater than or equal to the specified version's minor version for post 0.1 versions. For pre-0.1 versions,
- * satisfaction is defined as having the same major, minor, and patch versions.
- *
- * @warning This function does not respect the strict semantic versioning rules for pre-0.1 versions.
- *          It's the caller's responsibility to be aware of the versioning scheme used and to ensure that compatibility
- *          checks are performed appropriately for the specific versions in use.
- *
- * @param[in] required The required version number to satisfy.
- * @param[in] available The available version number to check against the required version.
- * @return True if the available version satisfies the required version, false otherwise.
- *
- * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
- */
-LIARA_API_DEPRECATED("Use liara_version_provides() instead")
-
-static inline bool liara_version_satisfies(const uint32_t required, const uint32_t available) {
-    if (LIARA_VERSION_MAJOR(required) != LIARA_VERSION_MAJOR(available)) { return false; }
-    if (LIARA_VERSION_MAJOR(required) == 0 && LIARA_VERSION_MINOR(required) == 0) { return required == available; }
-    return LIARA_VERSION_MINOR(available) >= LIARA_VERSION_MINOR(required);
-}
-
-// TODO: Remove this function (marked as deprecated in 0.1.1)
-static inline liara_version_compat_t liara_abi_is_compatible(uint32_t module_abi);
-/**
- * @deprecated This function is deprecated and will be removed in future versions. Use liara_abi_is_compatible()
- * instead.
- * @brief Inline function to check if the current ABI version satisfies the requirements of a specified version.
- *
- * This function checks if the current ABI version satisfies the requirements of a specified version.
- * Satisfaction is defined as having the same major version and a minor version that is greater than or equal to
- * the specified version's minor version for post 0.1 versions. For pre-0.1 versions, satisfaction is defined as
- * having the same major, minor, and patch versions.
- *
- * @warning This function does not respect the strict semantic versioning rules for pre-0.1 versions.
- *          It's the caller's responsibility to be aware of the versioning scheme used and to ensure that compatibility
- *          checks are performed appropriately for the specific versions in use.
- *
- * @param[in] required_version The required version number to satisfy.
- * @return True if the current ABI version satisfies the requirements of the specified version, false otherwise.
- *
- * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
- */
-LIARA_API_DEPRECATED("Use liara_abi_is_compatible() instead")
-
-static inline bool liara_abi_version_satisfies(const uint32_t required_version) {
-    return liara_abi_is_compatible(required_version) != LIARA_VERSION_COMPAT_INCOMPATIBLE;
-}
-
 /**
  * @brief Inline function to determine the compatibility of a provided version with a required version.
  *
