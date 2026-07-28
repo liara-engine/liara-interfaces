@@ -1,12 +1,22 @@
 #pragma once
 
-#include <stdint.h>
+#include <liara/private_utils.h>
+
+#include LIARA_INCLUDE_STD(stdint)
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef int32_t liara_result;
+// TODO: Remove (marked as deprecated in v0.1.1)
+/**
+ * @deprecated: This type is deprecated and will be removed in future versions. Use `liara_result_t` instead. \
+ */
+LIARA_TYPEDEF_DEPRECATED(
+    int32_t,
+    liara_result,
+    "This type is deprecated and will be removed in future versions. Use `liara_result_t` instead.");
+LIARA_TYPEDEF(int32_t, liara_result_t);
 
 #define LIARA_RESULT_LIST(X)                                                      \
     /* 0 : Success */                                                             \
@@ -48,7 +58,10 @@ enum liara_result_codes {
 #undef LIARA_X
 };
 
+// TODO: Update this function to use `liara_result_t` instead of `liara_result` in v0.2.0
 /**
+ * @deprecated This function is deprecated and its signature will use `liara_result_t` instead of `liara_result` in
+ * v0.2.0. Please update your code accordingly.
  * @brief Convert a liara_result code to a human-readable string.
  *
  * This function takes a liara_result code and returns a string representation of the code. If the code is not
@@ -59,6 +72,9 @@ enum liara_result_codes {
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
+LIARA_API_DEPRECATED("This function is deprecated and its signature will use liara_result_t instead of liara_result in "
+                     "v0.2.0. Please update your code accordingly.")
+
 static inline const char* liara_result_to_string(const liara_result result) {
     switch (result) {
 #define LIARA_X(name, value) \

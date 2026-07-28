@@ -56,7 +56,9 @@ typedef enum liara_version_compat {
  * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
  */
 #define LIARA_ABI_VERSION \
-    (uint32_t)LIARA_MAKE_VERSION_UNSAFE(LIARA_ABI_VERSION_MAJOR, LIARA_ABI_VERSION_MINOR, LIARA_ABI_VERSION_PATCH)
+    LIARA_STATIC_CAST(    \
+        uint32_t,         \
+        LIARA_MAKE_VERSION_UNSAFE(LIARA_ABI_VERSION_MAJOR, LIARA_ABI_VERSION_MINOR, LIARA_ABI_VERSION_PATCH))
 
 /**
  * @brief String representation of the current version of the Liara ABI interface.
@@ -126,6 +128,7 @@ static inline bool liara_version_satisfies(const uint32_t required, const uint32
 }
 
 // TODO: Remove this function (marked as deprecated in 0.1.1)
+static inline liara_version_compat_t liara_abi_is_compatible(uint32_t module_abi);
 /**
  * @deprecated This function is deprecated and will be removed in future versions. Use liara_abi_is_compatible()
  * instead.
@@ -145,11 +148,9 @@ static inline bool liara_version_satisfies(const uint32_t required, const uint32
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-static inline liara_version_compat_t liara_abi_is_compatible(uint32_t module_abi);
 LIARA_API_DEPRECATED("Use liara_abi_is_compatible() instead")
 
 static inline bool liara_abi_version_satisfies(const uint32_t required_version) {
-
     return liara_abi_is_compatible(required_version) != LIARA_VERSION_COMPAT_INCOMPATIBLE;
 }
 
