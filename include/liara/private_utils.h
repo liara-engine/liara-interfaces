@@ -43,5 +43,31 @@ extern "C" {
 #endif
 
 #ifdef __cplusplus
+    #define LIARA_STATIC_CAST(type, value) static_cast<type>((value))
+#else
+    #define LIARA_STATIC_CAST(type, value) ((type)(value))
+#endif
+
+#ifdef __cplusplus
+    #define LIARA_NULL nullptr
+#else
+    #define LIARA_NULL ((void*)0)
+#endif
+
+#ifdef __cplusplus
+    #define LIARA_INCLUDE_STD(name) <c##name>
+#else
+    #define LIARA_INCLUDE_STD(name) <name.h>
+#endif
+
+#ifdef __cplusplus
+    #define LIARA_TYPEDEF(type, name) using name = type
+    #define LIARA_TYPEDEF_DEPRECATED(type, name, msg) using name LIARA_API_DEPRECATED(msg) = type
+#else
+    #define LIARA_TYPEDEF(type, name) typedef type name
+    #define LIARA_TYPEDEF_DEPRECATED(type, name, msg) typedef type name LIARA_API_DEPRECATED(msg)
+#endif
+
+#ifdef __cplusplus
 }
 #endif
