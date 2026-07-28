@@ -4,8 +4,13 @@
 #include <liara/renderer/packet.h>
 #include <liara/renderer/renderer_export.h>
 
-#include LIARA_INCLUDE_STD(stddef)
-#include LIARA_INCLUDE_STD(stdint)
+#ifndef __cplusplus
+    #include <stddef.h>
+    #include <stdint.h>
+#else
+    #include <cstddef>
+    #include <cstdint>
+#endif
 
 #ifdef __cplusplus
 extern "C" {

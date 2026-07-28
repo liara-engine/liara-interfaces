@@ -10,9 +10,13 @@
 
 #ifndef __cplusplus
     #include <stdbool.h>
+    #include <stddef.h>
+    #include <stdint.h>
+#else
+    #include <cstddef>
+    #include <cstdint>
 #endif
-#include LIARA_INCLUDE_STD(stddef)
-#include LIARA_INCLUDE_STD(stdint)
+
 
 #ifdef __cplusplus
 extern "C" {

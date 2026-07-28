@@ -55,12 +55,6 @@ extern "C" {
 #endif
 
 #ifdef __cplusplus
-    #define LIARA_INCLUDE_STD(name) <c##name>
-#else
-    #define LIARA_INCLUDE_STD(name) <name.h>
-#endif
-
-#ifdef __cplusplus
     #define LIARA_TYPEDEF(type, name)                 using name = type
     #define LIARA_TYPEDEF_DEPRECATED(type, name, msg) using name LIARA_API_DEPRECATED(msg) = type
 #else
