@@ -37,7 +37,7 @@ LIARA_RENDERER_API const liara_module_info_t* liara_renderer_info(void);
  */
 LIARA_RENDERER_API uint32_t liara_renderer_abi_version(void);
 
-// TODO: Remove this function (marked as deprecated in v0.2.0)
+// TODO: Remove this function (marked as deprecated in v0.1.1)
 /**
  * @deprecated This function is deprecated and will be removed in future versions. Use `liara_renderer_info` instead.
  * @brief Returns the current version of the Liara renderer.

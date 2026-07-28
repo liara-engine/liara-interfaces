@@ -38,7 +38,7 @@ LIARA_CORE_API const liara_module_info_t* liara_core_info(void);
  */
 LIARA_CORE_API uint32_t liara_core_abi_version(void);
 
-// TODO: Remove this function (marked as deprecated in v0.2.0)
+// TODO: Remove this function (marked as deprecated in v0.1.1)
 /**
  * @deprecated This function is deprecated and will be removed in future versions. Use `liara_core_info` instead.
  * @brief Returns the current version of the Liara core.
