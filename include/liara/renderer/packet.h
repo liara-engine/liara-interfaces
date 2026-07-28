@@ -8,13 +8,8 @@
 
 #include <liara/private_utils.h>
 
-#ifndef __cplusplus
-    #include <stddef.h>
-    #include <stdint.h>
-#else
-    #include <cstddef>
-    #include <cstdint>
-#endif
+#include <stddef.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {

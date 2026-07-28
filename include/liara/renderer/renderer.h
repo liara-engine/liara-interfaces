@@ -4,13 +4,8 @@
 #include <liara/renderer/packet.h>
 #include <liara/renderer/renderer_export.h>
 
-#ifndef __cplusplus
-    #include <stddef.h>
-    #include <stdint.h>
-#else
-    #include <cstddef>
-    #include <cstdint>
-#endif
+#include <stddef.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
