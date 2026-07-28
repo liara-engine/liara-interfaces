@@ -11,8 +11,10 @@
 #ifndef __cplusplus
     #include <stdbool.h>
 #endif
-#include LIARA_INCLUDE_STD(stddef)
-#include LIARA_INCLUDE_STD(stdint)
+
+#include <stddef.h>
+#include <stdint.h>
+
 
 #ifdef __cplusplus
 extern "C" {

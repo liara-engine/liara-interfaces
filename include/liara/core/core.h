@@ -1,9 +1,8 @@
 #pragma once
 
-#include <liara/modules.h>
-#include <liara/private_utils.h>
 #include <liara/core/core_export.h>
-#include <liara/result.h>
+#include <liara/private_utils.h>
+#include <liara/renderer/packet.h>
 
 #include <stdint.h>
 
@@ -11,7 +10,27 @@
 extern "C" {
 #endif
 
-typedef struct liara_renderer_t liara_renderer_handle_t;
+LIARA_TYPEDEF(struct liara_module_info_t, liara_module_info_t);
+LIARA_TYPEDEF(struct liara_renderer_t, liara_renderer_handle_t);
+
+// TODO: Remove (marked as deprecated in v0.1.1)
+/**
+ * @deprecated: This type is deprecated and will be removed in future versions. Use `liara_result_t` instead. \
+ */
+LIARA_TYPEDEF_DEPRECATED(
+    int32_t,
+    liara_result,
+    "This type is deprecated and will be removed in future versions. Use `liara_result_t` instead.");
+LIARA_TYPEDEF(int32_t, liara_result_t);
+
+/**
+ * @brief Opaque structure representing a Liara core instance.
+ *
+ * This structure is used to encapsulate the internal state and resources associated with a Liara core. The actual
+ * implementation details are hidden from the user, and the structure should only be manipulated through the provided
+ * API functions.
+ */
+LIARA_TYPEDEF(struct liara_core_t, liara_core_handle_t);
 
 /**
  * @brief Returns information about the Liara core module.
@@ -53,16 +72,10 @@ LIARA_CORE_API uint32_t liara_core_abi_version(void);
 LIARA_API_DEPRECATED("This function is deprecated and will be removed in future versions. Use liara_core_info instead.")
 LIARA_CORE_API uint32_t liara_core_version(void);
 
+// TODO: Update this function to use `liara_result_t` instead of `liara_result` in v0.2.0
 /**
- * @brief Opaque structure representing a Liara core instance.
- *
- * This structure is used to encapsulate the internal state and resources associated with a Liara core. The actual
- * implementation details are hidden from the user, and the structure should only be manipulated through the provided
- * API functions.
- */
-typedef struct liara_core_t liara_core_handle_t;
-
-/**
+ * @deprecated This function is deprecated and its signature will use `liara_result_t` instead of `liara_result` in
+ * v0.2.0. Please update your code accordingly.
  * @brief Creates a new Liara core instance.
  *
  * This function allocates and initializes a new Liara core instance. The created core is returned through the
@@ -75,12 +88,23 @@ typedef struct liara_core_t liara_core_handle_t;
  * - `LIARA_RESULT_SUCCESS`: The core was created successfully.
  * - `LIARA_RESULT_NULL_POINTER`: The `out_core` or `renderer_handle` parameter is a null pointer.
  *
+ * @note The core does not call into `renderer_handle` itself; per ARCHITECTURE.md \S5 and MODULES.md \S10, the
+ *       core never directly calls the renderer. This parameter can't be dropped without changing this already-frozen
+ *       signature, so it is accepted and validated but otherwise unused by the core. To actually get pixels on
+ *       screen, the host extracts a render packet each tick via `liara_core_get_render_packet` and hands it to the
+ *       renderer via `liara_renderer_submit_frame`.
+ *
  * @threadsafety This function is thread-safe as long as it is not called concurrently with `liara_core_destroy` on
  * the same core instance. @endthreadsafety
  */
+LIARA_API_DEPRECATED("This function is deprecated and its signature will use `liara_result_t` instead of "
+                     "`liara_result` in v0.2.0. Please update your code accordingly.")
 LIARA_CORE_API liara_result liara_core_create(liara_renderer_handle_t* renderer_handle, liara_core_handle_t** out_core);
 
+// TODO: Update this function to use `liara_result_t` instead of `liara_result` in v0.2.0
 /**
+ * @deprecated This function is deprecated and its signature will use `liara_result_t` instead of `liara_result` in
+ * v0.2.0. Please update your code accordingly.
  * @brief Destroys a Liara core instance.
  *
  * This function deallocates and cleans up the resources associated with a Liara core instance. After calling this
@@ -92,6 +116,8 @@ LIARA_CORE_API liara_result liara_core_create(liara_renderer_handle_t* renderer_
  * - `LIARA_RESULT_SUCCESS`: The core was destroyed successfully.
  * - `LIARA_RESULT_NULL_POINTER`: The `core` parameter is a null pointer.
  */
+LIARA_API_DEPRECATED("This function is deprecated and its signature will use `liara_result_t` instead of "
+                     "`liara_result` in v0.2.0. Please update your code accordingly.")
 LIARA_CORE_API liara_result liara_core_destroy(const liara_core_handle_t* core_handle);
 
 /**
@@ -201,6 +227,34 @@ LIARA_CORE_API void liara_core_update(liara_core_handle_t* core_handle, float de
  */
 LIARA_CORE_API void liara_core_set_late_update_callback(liara_core_handle_t* core_handle,
                                                         void (*callback)(liara_core_handle_t* core, float delta_time));
+
+/**
+ * @brief Retrieves the render packet built during the core's most recent update.
+ *
+ * This is the core's half of the render packet pattern described in ARCHITECTURE.md \S6. It is the host's
+ * responsibility to call this after each `liara_core_update` tick (typically from a late update callback, see
+ * `liara_core_set_late_update_callback`) and to hand the resulting packet to a renderer via
+ * `liara_renderer_submit_frame`. The core never calls the renderer itself (MODULES.md \S10): the data path is
+ * always core -> host -> renderer.
+ *
+ * @param[in] core_handle A pointer to the core instance whose render packet is to be retrieved.
+ * @param[out] out_packet A pointer to a `liara_render_packet_t` that will receive a copy of the packet.
+ *
+ * @return A `liara_result_t` indicating the success or failure of the operation. Possible return values include:
+ * - `LIARA_RESULT_SUCCESS`: The render packet was retrieved successfully.
+ * - `LIARA_RESULT_NULL_POINTER`: The `core_handle` or `out_packet` parameter is a null pointer.
+ * - `LIARA_RESULT_INVALID_STATE`: The core instance is in an invalid state (e.g., already destroyed).
+ *
+ * @warning The `out_packet->drawables` pointer refers to memory owned by the core and is only valid until the next
+ *          call to `liara_core_update` or `liara_core_run` (or until `core_handle` is destroyed). The host must
+ *          finish consuming the packet (typically by passing it to `liara_renderer_submit_frame`) before triggering
+ *          the next tick; it must not retain the pointer across ticks.
+ *
+ * @threadsafety This function is thread-safe as long as it is not called concurrently with other functions that
+ * modify the core's state. @endthreadsafety
+ */
+LIARA_CORE_API liara_result_t liara_core_get_render_packet(const liara_core_handle_t* core_handle,
+                                                           liara_render_packet_t* out_packet);
 
 #ifdef __cplusplus
 }

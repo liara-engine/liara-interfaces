@@ -2,7 +2,7 @@
 
 #include <liara/private_utils.h>
 
-#include LIARA_INCLUDE_STD(stdint)
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
