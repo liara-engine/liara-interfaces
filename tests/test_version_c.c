@@ -15,7 +15,7 @@ int main(void) {
 
     /* Successful creation */
     v = 0xDEADBEEF;
-    liara_result res = liara_try_make_version(1U, 2U, 3U, &v);
+    liara_result_t res = liara_try_make_version(1U, 2U, 3U, &v);
     if (res != LIARA_RESULT_SUCCESS) { return liara_fail("liara_try_make_version: expected success"); }
     if (LIARA_VERSION_MAJOR(v) != 1U) { return liara_fail("major component mismatch"); }
     if (LIARA_VERSION_MINOR(v) != 2U) { return liara_fail("minor component mismatch"); }
