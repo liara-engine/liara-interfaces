@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.1](https://github.com/liara-engine/liara-interfaces/compare/v0.1.0...v0.1.1) (2026-07-28)
+
+
+### Features
+
+* interfaces result t and version compare ([#9](https://github.com/liara-engine/liara-interfaces/issues/9)) ([ca6c8eb](https://github.com/liara-engine/liara-interfaces/commit/ca6c8ebb8269c543c51ac45bb0e2152b7944a165))
+* **renderer:** add render packet ([#10](https://github.com/liara-engine/liara-interfaces/issues/10)) ([1992902](https://github.com/liara-engine/liara-interfaces/commit/1992902b442932cefcbe360d69589a92f2bd23af))
+* Standardize macros, improve documentation, and enhance ABI features ([#7](https://github.com/liara-engine/liara-interfaces/issues/7)) ([6be3e0a](https://github.com/liara-engine/liara-interfaces/commit/6be3e0afec1613c772d84212f1ae20a57716eb31))
+
 ## [0.1.0](https://github.com/liara-engine/liara-interfaces/compare/v0.0.1...v0.1.0) (2026-07-18)
 
 
