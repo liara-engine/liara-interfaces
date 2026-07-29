@@ -1,3 +1,4 @@
+#include <liara/result.h>
 #include <liara/version.h>
 
 #include <stdint.h>
@@ -6,7 +7,7 @@
 #include <string.h>
 
 static int liara_fail(const char* msg) {
-    fprintf(stderr, "FAIL: %s\n", msg);
+    (void)fprintf(stderr, "FAIL: %s\n", msg);
     return EXIT_FAILURE;
 }
 
@@ -29,17 +30,17 @@ int main(void) {
     v = 0xBEEFDEAD;
     res = liara_try_make_version(LIARA_VERSION_MAJOR_MASK + 1U, 0U, 0U, &v);
     if (res != LIARA_RESULT_OUT_OF_RANGE) { return liara_fail("major out-of-range not detected"); }
-    if (v != 0xBEEFDEADu) { return liara_fail("out_version modified on major out-of-range"); }
+    if (v != 0xBEEFDEADU) { return liara_fail("out_version modified on major out-of-range"); }
 
     v = 0xBEEFDEAD;
     res = liara_try_make_version(0U, LIARA_VERSION_MINOR_MASK + 1U, 0U, &v);
     if (res != LIARA_RESULT_OUT_OF_RANGE) { return liara_fail("minor out-of-range not detected"); }
-    if (v != 0xBEEFDEADu) { return liara_fail("out_version modified on minor out-of-range"); }
+    if (v != 0xBEEFDEADU) { return liara_fail("out_version modified on minor out-of-range"); }
 
     v = 0xBEEFDEAD;
     res = liara_try_make_version(0U, 0U, LIARA_VERSION_PATCH_MASK + 1U, &v);
     if (res != LIARA_RESULT_OUT_OF_RANGE) { return liara_fail("patch out-of-range not detected"); }
-    if (v != 0xBEEFDEADu) { return liara_fail("out_version modified on patch out-of-range"); }
+    if (v != 0xBEEFDEADU) { return liara_fail("out_version modified on patch out-of-range"); }
 
     /* LIARA_MAKE_VERSION_UNSAFE and extraction macros/inline functions */
     uint32_t u = LIARA_MAKE_VERSION_UNSAFE(5U, 6U, 7U);

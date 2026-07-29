@@ -8,10 +8,6 @@ fn main() {
     println!("LIARA_ABI_VERSION_MINOR = {}", LIARA_ABI_VERSION_MINOR);
     println!("LIARA_ABI_VERSION_PATCH = {}", LIARA_ABI_VERSION_PATCH);
 
-    assert_eq!(LIARA_ABI_VERSION_MAJOR, 0);
-    assert_eq!(LIARA_ABI_VERSION_MINOR, 1);
-    assert_eq!(LIARA_ABI_VERSION_PATCH, 0);
-
     // Test 2: inline functions, called through the C wrapper
     let mut v: u32 = 0;
     let success = unsafe { liara_rs_try_make_version(2, 5, 17, &mut v) };

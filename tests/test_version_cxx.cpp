@@ -22,7 +22,7 @@ TEST_CASE("liara_try_make_version: success and extraction") {
 }
 
 TEST_CASE("liara_try_make_version: null pointer and out of range") {
-    uint32_t sentinel = 0xC0FFEEu;
+    uint32_t sentinel = 0xC0FFEEU;
     uint32_t v = sentinel;
 
     CHECK(liara_try_make_version(1U, 2U, 3U, nullptr) == LIARA_RESULT_NULL_POINTER);

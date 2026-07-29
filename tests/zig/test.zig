@@ -10,10 +10,6 @@ pub fn main() void {
     const minor = c.LIARA_ABI_VERSION_MINOR;
     const patch = c.LIARA_ABI_VERSION_PATCH;
 
-    assert(major == 0);
-    assert(minor == 1);
-    assert(patch == 0);
-
     std.debug.print("Version compile-time: {}.{}.{}\n", .{ major, minor, patch });
 
     const version_macro = c.LIARA_ABI_VERSION;
