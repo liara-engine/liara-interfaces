@@ -179,7 +179,7 @@ definition is private:
 // In liara/renderer/renderer.h
 typedef struct liara_renderer_handle_t liara_renderer_handle;
 
-liara_result liara_renderer_create(
+liara_result_t liara_renderer_create(
     const liara_renderer_create_info_t* create_info,
     liara_renderer_handle_t** out_handle
 );
@@ -240,10 +240,10 @@ slices from other languages.
 
 ```c
 // Good: identifier
-liara_result liara_core_get_setting(const char* key, ...);
+liara_result_t liara_core_get_setting(const char* key, ...);
 
 // Good: arbitrary text
-liara_result liara_core_log_message(const char* text, size_t length, ...);
+liara_result_t liara_core_log_message(const char* text, size_t length, ...);
 ```
 
 Strings passed across the boundary are **borrowed for the duration of
@@ -256,7 +256,7 @@ copy it.
 Arrays are passed as `(pointer, count)` pairs:
 
 ```c
-liara_result liara_renderer_submit_packet(
+liara_result_t liara_renderer_submit_packet(
     liara_renderer_handle_t* renderer,
     const liara_drawable_t* drawables,
     size_t drawable_count
@@ -282,25 +282,29 @@ typedef struct liara_render_packet_t {
 
 ### The Result Type
 
-Functions that can fail return a `liara_result`:
+Functions that can fail return a `liara_result_t`:
 
 ```c
-typedef int32_t liara_result;
-
-#define LIARA_RESULT_SUCCESS               0
-#define LIARA_RESULT_OUT_OF_MEMORY        -1
-#define LIARA_RESULT_INVALID_ARGUMENT     -2
-#define LIARA_RESULT_VERSION_MISMATCH     -3
-#define LIARA_RESULT_NOT_FOUND            -4
-#define LIARA_RESULT_ALREADY_EXISTS       -5
-#define LIARA_RESULT_INTERNAL_ERROR       -6
-// ... (additions are minor-version bumps)
+typedef int32_t liara_result_t;
 ```
+
+Result codes are defined as an `enum` (using X-macros for maintainability):
+
+```c
+typedef enum {
+    LIARA_RESULT_SUCCESS = 0,
+    LIARA_RESULT_<ERROR_NAME_N> = -<N>,
+    // ...
+} liara_result_t;
+```
+
+Codes are sorted by category. For exemple, -2 to -99 are reserved for generic errors (out of memory, invalid
+argument, etc.).
 
 `LIARA_RESULT_SUCCESS` is always zero, so `if (result)` reads as "if
 there was an error", consistent with most C error handling.
 
-Functions that cannot fail return `void`. Returning `liara_result`
+Functions that cannot fail return `void`. Returning `liara_result_t`
 unconditionally adds noise; functions should accurately advertise
 whether they can fail.
 
@@ -310,7 +314,7 @@ Functions that produce values pass them through output parameters,
 not return values:
 
 ```c
-liara_result liara_renderer_create(
+liara_result_t liara_renderer_create(
     const liara_renderer_create_info_t* create_info,
     liara_renderer_handle_t** out_handle
 );
@@ -325,12 +329,12 @@ NULL`); functions assume their out parameters are valid pointers.
 Implementations may use exceptions, panics, or longjmp internally,
 but these must not cross the boundary. A C++ implementation that
 catches its exceptions at the boundary and translates them to
-`liara_result` is conforming; an implementation that lets a C++
+`liara_result_t` is conforming; an implementation that lets a C++
 exception propagate out of an interface function is non-conforming
 and undefined.
 
 The renderer in particular is required to handle Vulkan errors and
-GPU exceptions internally and report them as `liara_result` values
+GPU exceptions internally and report them as `liara_result_t` values
 or, for asynchronous failures, as callbacks (see section 7).
 
 ---
@@ -345,7 +349,7 @@ When a function takes a struct by pointer for input, the caller owns
 the memory:
 
 ```c
-liara_result liara_renderer_create(
+liara_result_t liara_renderer_create(
     const liara_renderer_create_info_t* create_info,  // Caller allocates and frees.
     liara_renderer_handle_t** out_handle
 );
@@ -383,7 +387,7 @@ typedef struct liara_allocator_t {
     void* user_data;
 } liara_allocator_t;
 
-liara_result liara_renderer_create(
+liara_result_t liara_renderer_create(
     const liara_renderer_create_info_t* create_info,
     const liara_allocator_t* allocator,  // May be NULL for default.
     liara_renderer_handle_t** out_handle
@@ -432,12 +436,12 @@ that the module passes back when invoking:
 
 ```c
 typedef void (*liara_renderer_error_callback)(
-    liara_result error,
+    liara_result_t error,
     const char* message,
     void* user_data
 );
 
-liara_result liara_renderer_set_error_callback(
+liara_result_t liara_renderer_set_error_callback(
     liara_renderer_handle_t* renderer,
     liara_renderer_error_callback callback,
     void* user_data
@@ -468,7 +472,7 @@ and patch components:
 
 ```c
 // In liara/version.h
-#define LIARA_MAKE_VERSION(major, minor, patch) \
+#define LIARA_MAKE_VERSION_UNSAFE(major, minor, patch) \
     (((uint32_t)(major) << 22) | ((uint32_t)(minor) << 12) | (uint32_t)(patch))
 
 #define LIARA_VERSION_MAJOR(version)  (((uint32_t)(version) >> 22) & 0x3FFu)
@@ -495,7 +499,7 @@ in constant expressions (static_assert, case labels, array sizes).
 It performs no range checking; the caller guarantees the ranges.
 
 - `liara_try_make_version(major, minor, patch, out_version)` — a
-checked static inline function returning a `liara_result`; it
+checked static inline function returning a `liara_result_t`; it
 rejects out-of-range components and a NULL output. Preferred
 outside constant contexts.
 
@@ -532,6 +536,7 @@ typedef struct liara_module_info_t {
     uint32_t    abi_version;      // the ABI the module was compiled against
     uint32_t    module_version;   // the module's own version
     const char* name;             // human-readable module name
+    // ...
 } liara_module_info_t;
 
 #define LIARA_MODULE_INFO_VERSION_1 1u
@@ -580,7 +585,7 @@ The canonical helper lives in `liara/abi_version.h`:
 
 ```c
 // Does `provided` satisfy what `required` asks for?
-bool liara_version_provides(uint32_t provided, uint32_t required);
+liara_version_compat_t liara_version_provides(uint32_t provided, uint32_t required);
 ```
 
 The rule it implements:
@@ -603,7 +608,7 @@ the most common call site:
 
 ```c
 // Is `module_abi` compatible with the ABI this caller was compiled against?
-bool liara_abi_is_compatible(uint32_t module_abi);
+liara_version_compat_t liara_abi_is_compatible(uint32_t module_abi);
 ```
 
 ### Negotiation Outcome
@@ -618,7 +623,7 @@ typedef enum liara_version_compat {
     LIARA_VERSION_COMPAT_COMPATIBLE   = 1,  // provider newer minor, fully usable
     LIARA_VERSION_COMPAT_DEGRADED     = 2,  // provider older minor: some newer functions unavailable
     LIARA_VERSION_COMPAT_INCOMPATIBLE = 3,  // major mismatch, or 0.0.x inequality
-} liara_version_compat;
+} liara_version_compat_t;
 ```
 
 - `EXACT` / `COMPATIBLE` — proceed. Under `COMPATIBLE`, the provider is a newer
@@ -643,26 +648,26 @@ lookup changes.
 
 The detailed rules for what triggers a major bump:
 
-| Change                                                                                                          | Bump  |
-|-----------------------------------------------------------------------------------------------------------------|-------|
-| Removing a function                                                                                             | MAJOR |
-| Renaming a function                                                                                             | MAJOR |
-| Changing a function's parameter types                                                                           | MAJOR |
-| Changing a function's return type (except `void` → `liara_result` for a function newly able to fail, see below) | MAJOR |
-| Changing the meaning of a parameter                                                                             | MAJOR |
-| Removing a struct field                                                                                         | MAJOR |
-| Renaming a struct field                                                                                         | MAJOR |
-| Changing a struct field's type                                                                                  | MAJOR |
-| Reordering struct fields                                                                                        | MAJOR |
-| Changing the value of an existing enum constant                                                                 | MAJOR |
-| Removing an enum constant                                                                                       | MAJOR |
-| Adding a new enum constant in the middle of an enum                                                             | MAJOR |
-| Changing the value of an existing macro                                                                         | MAJOR |
-| Adding a function                                                                                               | MINOR |
-| Adding a new enum constant at the end of an enum                                                                | MINOR |
-| Adding a new struct                                                                                             | MINOR |
-| Adding a new field at the end of an explicitly-versioned struct (see below)                                     | MINOR |
-| Documentation, comment, whitespace changes                                                                      | PATCH |
+| Change                                                                                                            | Bump  |
+|-------------------------------------------------------------------------------------------------------------------|-------|
+| Removing a function                                                                                               | MAJOR |
+| Renaming a function                                                                                               | MAJOR |
+| Changing a function's parameter types                                                                             | MAJOR |
+| Changing a function's return type (except `void` → `liara_result_t` for a function newly able to fail, see below) | MAJOR |
+| Changing the meaning of a parameter                                                                               | MAJOR |
+| Removing a struct field                                                                                           | MAJOR |
+| Renaming a struct field                                                                                           | MAJOR |
+| Changing a struct field's type                                                                                    | MAJOR |
+| Reordering struct fields                                                                                          | MAJOR |
+| Changing the value of an existing enum constant                                                                   | MAJOR |
+| Removing an enum constant                                                                                         | MAJOR |
+| Adding a new enum constant in the middle of an enum                                                               | MAJOR |
+| Changing the value of an existing macro                                                                           | MAJOR |
+| Adding a function                                                                                                 | MINOR |
+| Adding a new enum constant at the end of an enum                                                                  | MINOR |
+| Adding a new struct                                                                                               | MINOR |
+| Adding a new field at the end of an explicitly-versioned struct (see below)                                       | MINOR |
+| Documentation, comment, whitespace changes                                                                        | PATCH |
 
 ### Versioned Structs (Optional Pattern)
 
@@ -807,7 +812,7 @@ Example:
  * @threadsafety This function is not thread-safe; only one thread
  *               may call it at a time. @endthreadsafety
  */
-liara_result liara_renderer_create(
+liara_result_t liara_renderer_create(
     const liara_renderer_create_info_t* create_info,
     const liara_allocator_t* allocator,
     liara_renderer_handle_t** out_handle
@@ -954,7 +959,7 @@ Before submitting interface changes, verify:
 - [ ] Header uses only types from `<stdint.h>`, `<stddef.h>`,
       `<stdbool.h>`, and other interface headers.
 - [ ] All new symbols use the correct prefix.
-- [ ] Functions that can fail return `liara_result`; functions that
+- [ ] Functions that can fail return `liara_result_t`; functions that
       cannot return `void`.
 - [ ] Output parameters use the `out_` prefix.
 - [ ] Pointer ownership and lifetime are documented for every
