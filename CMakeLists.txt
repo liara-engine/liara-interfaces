@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.29)
 
+include(GNUInstallDirs)
+
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/.release-please-manifest.json" RELEASE_PLEASE_MANIFEST)
 string(JSON PROJECT_VERSION GET ${RELEASE_PLEASE_MANIFEST} ".")
 message(STATUS "LiaraInterfaces version: ${PROJECT_VERSION}")
@@ -41,6 +43,7 @@ if(LIARA_INTERFACES_IS_TOP_LEVEL)
 endif()
 
 add_library(liara_interfaces INTERFACE)
+set_target_properties(liara_interfaces PROPERTIES EXPORT_NAME Interfaces)
 add_library(Liara::Interfaces ALIAS liara_interfaces)
 
 target_include_directories(liara_interfaces INTERFACE
@@ -55,7 +58,6 @@ if(LIARA_INTERFACES_BUILD_TESTS)
 endif()
 
 if(LIARA_INTERFACES_INSTALL)
-    include(GNUInstallDirs)
     include(CMakePackageConfigHelpers)
 
     install(DIRECTORY include/
