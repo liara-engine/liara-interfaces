@@ -1,7 +1,6 @@
 #pragma once
 
 #include <liara/private_utils.h>
-#include <liara/renderer/packet.h>
 #include <liara/renderer/renderer_export.h>
 
 #include <stddef.h>
@@ -12,7 +11,7 @@ extern "C" {
 #endif
 
 LIARA_TYPEDEF(struct liara_module_info_t, liara_module_info_t);
-LIARA_TYPEDEF(struct liara_core_t, liara_core_handle_t);
+LIARA_TYPEDEF(struct liara_render_packet_t, liara_render_packet_t);
 LIARA_TYPEDEF(int32_t, liara_result_t);
 
 /**

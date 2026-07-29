@@ -2,7 +2,6 @@
 
 #include <liara/core/core_export.h>
 #include <liara/private_utils.h>
-#include <liara/renderer/packet.h>
 
 #include <stdint.h>
 
@@ -11,7 +10,7 @@ extern "C" {
 #endif
 
 LIARA_TYPEDEF(struct liara_module_info_t, liara_module_info_t);
-LIARA_TYPEDEF(struct liara_renderer_t, liara_renderer_handle_t);
+LIARA_TYPEDEF(struct liara_render_packet_t, liara_render_packet_t);
 LIARA_TYPEDEF(int32_t, liara_result_t);
 
 /**
