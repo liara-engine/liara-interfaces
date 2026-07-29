@@ -57,11 +57,17 @@ extern "C" {
 #ifdef __cplusplus
     #define LIARA_TYPEDEF(type, name)                 using name = type
     #define LIARA_TYPEDEF_DEPRECATED(type, name, msg) using name LIARA_API_DEPRECATED(msg) = type
-    #define LIARA_TYPEDEF_STRUCT(name, ...) using name = struct name { __VA_ARGS__ }
+    #define LIARA_TYPEDEF_STRUCT(name, ...) \
+        using name = struct name {          \
+            __VA_ARGS__                     \
+        }
 #else
     #define LIARA_TYPEDEF(type, name)                 typedef type name
     #define LIARA_TYPEDEF_DEPRECATED(type, name, msg) typedef type name LIARA_API_DEPRECATED(msg)
-    #define LIARA_TYPEDEF_STRUCT(name, ...) typedef struct name { __VA_ARGS__ } name
+    #define LIARA_TYPEDEF_STRUCT(name, ...) \
+        typedef struct name {               \
+            __VA_ARGS__                     \
+        } name
 #endif
 
 #ifdef __cplusplus
