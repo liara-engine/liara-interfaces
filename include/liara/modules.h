@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <liara/private_utils.h>
+
 #include <stdint.h>
 
 #ifdef __cplusplus

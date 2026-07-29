@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <liara/private_utils.h>
+
 #include <stddef.h>
 #include <stdint.h>
 
