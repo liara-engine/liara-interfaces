@@ -31,7 +31,7 @@ freely until the first tagged release.
 - **Day-to-day workflow**: meta repository's
   [`docs/CONTRIBUTING.md`](https://liara-engine.liara-engine-documentation.workers.dev/liara/latest/book/CONTRIBUTING).
 - **API reference** (Doxygen, deployed once Phase 0 completes):
-  [liara-engine.github.io/liara-interfaces](https://liara-engine.liara-engine-documentation.workers.dev/).
+  [liara-engine.liara-engine-documentation.workers.dev](https://liara-engine.liara-engine-documentation.workers.dev/).
 
 ---
 
