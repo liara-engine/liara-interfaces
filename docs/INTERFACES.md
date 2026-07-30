@@ -772,6 +772,31 @@ inline) and minimal at compile time. The benefit is that the
 entire interface is consumable from any language with a C FFI,
 not just C and C++.
 
+### Compatibility Macros (`liara/private_utils.h`)
+
+`liara/private_utils.h` is where the C/C++ and compiler/platform
+`#ifdef` ladders live so the rest of the headers don't repeat them.
+It currently provides things like `LIARA_STATIC_ASSERT` (C11
+`_Static_assert` vs. C++ `static_assert`), `LIARA_API_DEPRECATED`
+(`[[deprecated]]` vs. `__declspec`/`__attribute__`), `LIARA_API`
+(export/import/visibility for the `-dynamic` shared-library preset),
+`LIARA_STATIC_CAST`, `LIARA_NULL`, and the `LIARA_TYPEDEF*` family for
+declaring a typedef (optionally deprecated, optionally a struct
+definition) once for both languages. Any other header that needs to
+spell something differently depending on the language or standard
+version routes it through a macro here rather than re-deriving the
+`#ifdef` locally.
+
+This is deliberately not an exhaustive list, and this section is not
+meant to be kept in lockstep with the header: new compatibility
+macros get added to `private_utils.h` as new portability gaps turn
+up, without requiring an edit here every time. What doesn't change is
+that these macros still live at the interface boundary, so the usual
+rules apply to them like to any other symbol in this repository:
+adding one is a MINOR change, changing an existing macro's expansion
+is a MAJOR change (section 8), and the header must keep compiling as
+both C11 and C++20 (section 2).
+
 ---
 
 ## 10. Documentation
@@ -848,7 +873,76 @@ or compilation is caught before it merges.
 
 ---
 
-## 12. Process for Modifying an Interface
+## 12. Continuous Integration for the ABI
+
+The checks described in section 11 are not implemented in this
+repository. They are reusable workflows maintained in the
+`liara-engine/.github` repository (`.github/workflows/reusable-abi-*.yml`,
+backed by scripts under `scripts/`), and this repository's
+`.github/workflows/ci.yml` calls them pinned to a released tag (e.g.
+`@v0`). Bumping to a newer version of the shared checks means bumping
+that ref, not just merging something to `.github`'s `main`.
+
+On every push and pull request against `main`, four jobs run in
+parallel, followed by an aggregator:
+
+- **`abi-header-portability`** — compiles every public header
+  standalone (included twice, to also catch include-guard bugs) as
+  both C and C++ across several language standards, warnings as
+  errors. This is what actually enforces "valid C, includable from
+  C++" (section 2).
+- **`abi-interface-rules`** — a libclang-based lint of the structural
+  rules from this document: `extern "C"` wrapping, symbol prefixing
+  (section 3), fixed-width types only (section 4), `out_`-prefixed
+  output parameters (section 5), and forbidden includes (section 2).
+- **`abi-layout-freeze`** — regenerates and checks the golden layout
+  header (see below), then compiles it across a gcc/clang/MSVC
+  matrix to catch layout drift between platforms.
+- **`abi-snapshot`** — serializes the public ABI surface to JSON,
+  diffs it against the base branch, and classifies the diff using the
+  table in section 8 to compute the required version bump. A guard
+  step then checks that the PR's declared Conventional Commit type
+  (its title, plus a `BREAKING CHANGE` footer) covers at least that
+  bump, and fails the PR if it doesn't.
+- **`abi-report`** (pull requests only, after the other four) —
+  collects their results into a single sticky PR comment. Adding a
+  new pipeline step upstream needs no change to this repository; the
+  report is driven entirely by the artifacts the other jobs publish.
+
+### Regenerating the Golden Layout Header
+
+`tests/abi/abi_layout.generated.h` is the "golden" file the
+`abi-layout-freeze` job checks against: `static_assert`s on the
+`sizeof`/`alignof`/`offsetof` of every public POD struct, generated
+by `abi_layout_asserts.py`. Regenerate it whenever a change would
+alter one of those numbers — a struct added or removed, a field
+added, removed, reordered, or retyped. If you forget, CI catches it:
+the `--check` step fails with "ABI layout assertions are out of
+date" because it re-derives the header in memory and compares it
+byte-for-byte against what's committed.
+
+To regenerate locally, run the same script CI runs (it lives in the
+sibling `liara-engine/.github` checkout, e.g. `../../.github` from
+this workspace) without `--check`, and commit the result alongside
+the struct change in the same PR:
+
+```bash
+python3 ../../.github/scripts/abi_layout_asserts.py \
+    --include-dir include \
+    --output tests/abi/abi_layout.generated.h \
+    --clang clang-18
+```
+
+**Never run `clang-format` on this file.** The CI check is an exact
+textual comparison between the script's output and the committed
+file, so reformatting it breaks the check on the next regeneration.
+Treat it as generated output, not source:
+after any bulk-format pass, re-run the generator (or diff against
+what CI expects) to make sure it still matches.
+
+---
+
+## 13. Process for Modifying an Interface
 
 Changing an interface is a deliberate act with explicit steps.
 
@@ -894,7 +988,7 @@ their version pin in their next release.
 
 ---
 
-## 13. Compatibility Across Versions
+## 14. Compatibility Across Versions
 
 Within a major version, the interface guarantees that:
 
@@ -914,7 +1008,7 @@ versions it supports.
 
 ---
 
-## 14. Anti-Patterns to Avoid
+## 15. Anti-Patterns to Avoid
 
 The following patterns have appeared in early drafts of interfaces in
 this project or in similar projects, and are explicitly forbidden.
@@ -950,7 +1044,7 @@ behavior across a major version boundary.
 
 ---
 
-## 15. Summary Checklist for New Interface Code
+## 16. Summary Checklist for New Interface Code
 
 Before submitting interface changes, verify:
 
