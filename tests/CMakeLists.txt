@@ -5,6 +5,7 @@ target_link_libraries(test_interfaces_cxx PRIVATE
         Liara::Interfaces
         doctest::doctest)
 add_test(NAME test_interfaces_cxx COMMAND test_interfaces_cxx)
+set_tests_properties(test_interfaces_cxx PROPERTIES LABELS "unit")
 
 add_executable(test_interfaces_c test_version_c.c)
 target_link_libraries(test_interfaces_c PRIVATE Liara::Interfaces)
@@ -13,6 +14,7 @@ set_target_properties(test_interfaces_c PROPERTIES
         C_STANDARD_REQUIRED ON
         C_EXTENSIONS        OFF)
 add_test(NAME test_interfaces_c COMMAND test_interfaces_c)
+set_tests_properties(test_interfaces_c PROPERTIES LABELS "unit")
 
 find_program(ZIG_EXECUTABLE NAMES zig)
 if(ZIG_EXECUTABLE)
@@ -26,6 +28,7 @@ if(ZIG_EXECUTABLE)
                 -target x86_64-linux-gnu
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/zig
         )
+        set_tests_properties(test_zig_linux PROPERTIES LABELS "unit;cross-lang")
     elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
         add_test(NAME test_zig_windows
                 COMMAND
@@ -36,6 +39,7 @@ if(ZIG_EXECUTABLE)
                 -target x86_64-windows-gnu
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/zig
         )
+        set_tests_properties(test_zig_windows PROPERTIES LABELS "unit;cross-lang")
     endif()
 endif()
 
@@ -49,4 +53,5 @@ if(RUST_EXECUTABLE)
             ${RUST_EXECUTABLE} run
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/rust
     )
+    set_tests_properties(test_rust PROPERTIES LABELS "unit;cross-lang")
 endif()

@@ -11,6 +11,7 @@ static int liara_fail(const char* msg) {
     return EXIT_FAILURE;
 }
 
+// NOLINTBEGIN(readability-magic-numbers)
 int main(void) {
     uint32_t v = 0xDEADBEEF;
 
@@ -76,3 +77,5 @@ int main(void) {
     puts("OK");
     return EXIT_SUCCESS;
 }
+
+// NOLINTEND(readability-magic-numbers)
