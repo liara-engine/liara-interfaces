@@ -8,6 +8,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   abi-header-portability:
     uses: liara-engine/.github/.github/workflows/reusable-abi-header-portability.yml@v0
