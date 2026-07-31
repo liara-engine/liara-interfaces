@@ -1,6 +1,6 @@
 ---
 # Liara Engine - clang-format configuration
-# See docs/INTERFACE.md for explanations of each section.
+# See docs/INTERFACES.md for explanations of each section.
 
 BasedOnStyle: LLVM
 Language: C
