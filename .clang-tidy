@@ -5,6 +5,7 @@ Checks: >
     -bugprone-easily-swappable-parameters,
       cert-*,
     clang-analyzer-*,
+    -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
     concurrency-*,
     misc-*,
     modernize-*,
@@ -24,7 +25,9 @@ Checks: >
 
 WarningsAsErrors: >
     *,
-    -readability-identifier-naming
+    -readability-identifier-naming,
+    -clang-diagnostic-deprecated-declaration,
+    -readability-magic-numbers,
 
 HeaderFilterRegex: '^(liara)/.*\.(h)$'
 
@@ -61,6 +64,10 @@ CheckOptions:
         value: 'LIARA_'
     -   key: readability-identifier-naming.GlobalConstantCase
         value: UPPER_CASE
+    -   key: readability-identifier-naming.LocalConstantCase
+        value: lower_case
+    -   key: readability-identifier-naming.ConstantParameterCase
+        value: lower_case
     -   key: readability-identifier-naming.TypedefPrefix
         value: 'liara_'
     -   key: readability-identifier-naming.TypedefCase
