@@ -24,24 +24,6 @@ extern "C" {
     #define LIARA_API_DEPRECATED(msg)
 #endif
 
-#ifdef _WIN32
-    #if defined(LIARA_SHARED)
-        #if defined(LIARA_BUILD)
-            #define LIARA_API __declspec(dllexport)
-        #else
-            #define LIARA_API __declspec(dllimport)
-        #endif
-    #else
-        #define LIARA_API
-    #endif
-#else
-    #ifdef LIARA_SHARED
-        #define LIARA_API __attribute__((visibility("default")))
-    #else
-        #define LIARA_API
-    #endif
-#endif
-
 #ifdef __cplusplus
     #define LIARA_STATIC_CAST(type, value) static_cast<type>((value))
 #else
