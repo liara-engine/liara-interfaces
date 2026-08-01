@@ -6,6 +6,58 @@
 
 ---
 
+## Table of Contents
+
+- [1. Why These Rules Exist](#1-why-these-rules-exist)
+- [2. The Boundary: What Counts as an Interface](#2-the-boundary-what-counts-as-an-interface)
+- [3. Naming Conventions](#3-naming-conventions)
+  - [3.1 Prefixes](#31-prefixes)
+  - [3.2 Symbol Naming](#32-symbol-naming)
+  - [3.3 Why Lowercase, Why Prefixed](#33-why-lowercase-why-prefixed)
+- [4. Type Conventions](#4-type-conventions)
+  - [4.1 Fixed-Width Integers Only](#41-fixed-width-integers-only)
+  - [4.2 Opaque Handles](#42-opaque-handles)
+  - [4.3 POD Structs for Data](#43-pod-structs-for-data)
+  - [4.4 Strings](#44-strings)
+  - [4.5 Arrays](#45-arrays)
+- [5. Error Handling](#5-error-handling)
+  - [5.1 The Result Type](#51-the-result-type)
+  - [5.2 Output Parameters](#52-output-parameters)
+  - [5.3 No Exceptions, No Longjmp](#53-no-exceptions-no-longjmp)
+- [6. Memory Ownership](#6-memory-ownership)
+  - [6.1 Caller Allocates Inputs](#61-caller-allocates-inputs)
+  - [6.2 Module Allocates Its Own State](#62-module-allocates-its-own-state)
+  - [6.3 Caller-Supplied Allocator (Optional)](#63-caller-supplied-allocator-optional)
+  - [6.4 Borrowed References](#64-borrowed-references)
+- [7. Callbacks](#7-callbacks)
+- [8. Versioning](#8-versioning)
+  - [8.1 The Version Format](#81-the-version-format)
+  - [8.2 Version Encoding](#82-version-encoding)
+  - [8.3 The ABI Version](#83-the-abi-version)
+  - [8.4 Module Self-Description](#84-module-self-description)
+  - [8.5 Compatibility Rule](#85-compatibility-rule)
+  - [8.6 Negotiation Outcome](#86-negotiation-outcome)
+  - [8.7 What Counts as a Breaking Change](#87-what-counts-as-a-breaking-change)
+  - [8.8 Versioned Structs (Optional Pattern)](#88-versioned-structs-optional-pattern)
+- [9. Header Organization](#9-header-organization)
+  - [9.1 File-Per-Concept](#91-file-per-concept)
+  - [9.2 Include Discipline](#92-include-discipline)
+  - [9.3 Include Guards](#93-include-guards)
+  - [9.4 `extern "C"` Wrapping](#94-extern-c-wrapping)
+  - [9.5 Macros vs. Functions for Cross-Language Consumability](#95-macros-vs-functions-for-cross-language-consumability)
+  - [9.6 Compatibility Macros (`liara/private_utils.h`)](#96-compatibility-macros-liaraprivate_utilsh)
+  - [9.7 Export Macros](#97-export-macros)
+- [10. Documentation](#10-documentation)
+- [11. Testing](#11-testing)
+- [12. Continuous Integration for the ABI](#12-continuous-integration-for-the-abi)
+  - [12.1 Regenerating the Golden Layout Header](#121-regenerating-the-golden-layout-header)
+- [13. Process for Modifying an Interface](#13-process-for-modifying-an-interface)
+- [14. Compatibility Across Versions](#14-compatibility-across-versions)
+- [15. Anti-Patterns to Avoid](#15-anti-patterns-to-avoid)
+- [16. Summary Checklist for New Interface Code](#16-summary-checklist-for-new-interface-code)
+
+---
+
 ## 1. Why These Rules Exist
 
 The interfaces in this repository are the contract between modules. Every module of the engine — the core, the renderer, the editor, hypothetical third-party reimplementations — communicates through these headers. A change to an interface ripples through every consumer.
@@ -48,7 +100,7 @@ The headers may **not** use:
 
 Names in interfaces are **prefixed**, **lowercase**, and **underscore-separated**. The prefix identifies the module the symbol belongs to.
 
-### Prefixes
+### 3.1 Prefixes
 
 | Prefix             | Module                |
 |--------------------|-----------------------|
@@ -60,7 +112,7 @@ Names in interfaces are **prefixed**, **lowercase**, and **underscore-separated*
 
 The `liara_` prefix is reserved for types and functions that are not specific to any single module: the version macros, the result type, the math types, the allocator interface, and similar fundamentals.
 
-### Symbol Naming
+### 3.2 Symbol Naming
 
 Functions are `verb_noun` and prefixed with the module:
 
@@ -96,7 +148,7 @@ LIARA_VERSION_MAJOR
 LIARA_MAKE_VERSION(major, minor, patch)
 ```
 
-### Why Lowercase, Why Prefixed
+### 3.3 Why Lowercase, Why Prefixed
 
 C has a single global namespace. Without prefixes, two libraries that expose a function called `create` will collide at link time. The prefix is verbose, but it is the price of namespace safety in C.
 
@@ -106,7 +158,7 @@ Lowercase is the standard convention in C ecosystems (POSIX, Vulkan, SDL, libcur
 
 ## 4. Type Conventions
 
-### Fixed-Width Integers Only
+### 4.1 Fixed-Width Integers Only
 
 Where size matters (struct layouts, serialization, ABI), only fixed-width types are used. Plain `int`, `long`, and `short` are forbidden in interface signatures because their size varies across platforms.
 
@@ -122,7 +174,7 @@ long timestamp;
 
 The exception is `bool`, which is allowed and is treated as implementation-defined size. Code that needs a specific size for booleans uses `uint8_t` instead.
 
-### Opaque Handles
+### 4.2 Opaque Handles
 
 Objects owned by a module are exposed to other modules as opaque handles. The handle is a pointer to a forward-declared struct whose definition is private:
 
@@ -146,7 +198,7 @@ This pattern accomplishes three things:
 - The size and layout of the implementation may change between versions without breaking consumers, because consumers only ever see the pointer.
 - Lifetime is explicit: handles are created by `_create` functions and destroyed by `_destroy` functions, with no implicit destruction.
 
-### POD Structs for Data
+### 4.3 POD Structs for Data
 
 Plain-old-data structs are used for data that crosses the boundary without ownership concerns: render packets, transforms, events, configuration. These structs:
 
@@ -167,7 +219,7 @@ typedef struct liara_transform_t {
 
 The position is `double[3]` rather than a `liara_vec3d_t` to keep the struct trivially memcpy-able and to avoid forcing consumers to know about a math type they may not otherwise need.
 
-### Strings
+### 4.4 Strings
 
 Strings are `const char*` with explicit length parameters where applicable. Null-terminated strings are accepted for short, fixed identifiers (asset names, tags). Anything that may contain user-provided text is passed as a `(pointer, length)` pair to avoid ambiguity about embedded nulls and to support non-null-terminated slices from other languages.
 
@@ -181,7 +233,7 @@ liara_result_t liara_core_log_message(const char* text, size_t length, ...);
 
 Strings passed across the boundary are **borrowed for the duration of the call**. The implementation must not retain the pointer after the call returns. If the implementation needs to keep the string, it must copy it.
 
-### Arrays
+### 4.5 Arrays
 
 Arrays are passed as `(pointer, count)` pairs:
 
@@ -209,7 +261,7 @@ typedef struct liara_render_packet_t {
 
 ## 5. Error Handling
 
-### The Result Type
+### 5.1 The Result Type
 
 Functions that can fail return a `liara_result_t`:
 
@@ -233,7 +285,7 @@ Codes are sorted by category. For exemple, -2 to -99 are reserved for generic er
 
 Functions that cannot fail return `void`. Returning `liara_result_t` unconditionally adds noise; functions should accurately advertise whether they can fail.
 
-### Output Parameters
+### 5.2 Output Parameters
 
 Functions that produce values pass them through output parameters, not return values:
 
@@ -246,7 +298,7 @@ liara_result_t liara_renderer_create(
 
 The `out_` prefix on parameters is mandatory. Output parameters may not be `NULL` (it is undefined behavior to call with `out_handle == NULL`); functions assume their out parameters are valid pointers.
 
-### No Exceptions, No Longjmp
+### 5.3 No Exceptions, No Longjmp
 
 Implementations may use exceptions, panics, or longjmp internally, but these must not cross the boundary. A C++ implementation that catches its exceptions at the boundary and translates them to `liara_result_t` is conforming; an implementation that lets a C++ exception propagate out of an interface function is non-conforming and undefined.
 
@@ -258,7 +310,7 @@ The renderer in particular is required to handle Vulkan errors and GPU exception
 
 Ownership rules are explicit and uniform.
 
-### Caller Allocates Inputs
+### 6.1 Caller Allocates Inputs
 
 When a function takes a struct by pointer for input, the caller owns the memory:
 
@@ -271,7 +323,7 @@ liara_result_t liara_renderer_create(
 
 The implementation reads from the struct during the call and does not retain the pointer.
 
-### Module Allocates Its Own State
+### 6.2 Module Allocates Its Own State
 
 Functions that produce a handle (`liara_renderer_create`, `liara_core_world_create`) allocate the underlying state. The state is freed by the corresponding destroy function:
 
@@ -284,7 +336,7 @@ liara_renderer_destroy(renderer);
 
 The module is free to use any allocator internally. The caller does not see and does not care.
 
-### Caller-Supplied Allocator (Optional)
+### 6.3 Caller-Supplied Allocator (Optional)
 
 For modules where the caller wants control over allocation (typical in games), the create function may accept a caller-supplied allocator:
 
@@ -306,7 +358,7 @@ If the caller passes `NULL`, the module uses its default allocator (typically `m
 
 This pattern is **optional per module**. Modules where allocation is not performance-critical may not bother. The renderer, the ECS, and the asset manager are expected to support custom allocators; the logger and settings are not.
 
-### Borrowed References
+### 6.4 Borrowed References
 
 When a function gives the caller a pointer that the caller does not own (e.g., a pointer to internal data), the documentation makes this explicit:
 
@@ -355,7 +407,7 @@ Rules for callbacks:
 
 ## 8. Versioning
 
-### The Version Format
+### 8.1 The Version Format
 
 A version is a single 32-bit integer with bit-packed major, minor, and patch components:
 
@@ -371,7 +423,7 @@ A version is a single 32-bit integer with bit-packed major, minor, and patch com
 
 This format is identical to Vulkan's `VK_MAKE_VERSION` and provides 1024 majors, 1024 minors, and 4096 patches. More than enough for any realistic timeline.
 
-### Version Encoding
+### 8.2 Version Encoding
 
 A version is a single `uint32_t` packing three components, following Vulkan's approach: **10 bits major, 10 bits minor, 12 bits patch** (major and minor 0–1023, patch 0–4095). The bit layout, masks, and shifts are defined in `liara/version.h`, along with `LIARA_STATIC_ASSERT` guards ensuring the components never overflow their fields.
 
@@ -380,7 +432,7 @@ Two forms build a packed version:
 - `LIARA_MAKE_VERSION_UNSAFE(major, minor, patch)` — a macro, usable in constant expressions (static_assert, case labels, array sizes). It performs no range checking; the caller guarantees the ranges.
 - `liara_try_make_version(major, minor, patch, out_version)` — a checked static inline function returning a `liara_result_t`; it rejects out-of-range components and a NULL output. Preferred outside constant contexts.
 
-### The ABI Version
+### 8.3 The ABI Version
 
 The current ABI version is not hand-written as literals. It is declared in `liara/abi_version.h` as an `enum` whose members are fed from CMake-generated macros (`LIARA_PRIVATE_CMAKE_VERSION_*`, produced into `config.h` from the `liara-interfaces` project version):
 
@@ -397,7 +449,7 @@ enum {
 ```
 A single source of truth (the project version) drives both the released package version and the compiled-in ABI constant, so they can never drift. Every module that consumes the interface captures LIARA_ABI_VERSION at its own compile time.
 
-### Module Self-Description
+### 8.4 Module Self-Description
 
 Every module exposes a single entry point describing itself:
 
@@ -435,7 +487,7 @@ uint32_t liara_<module>_abi_version(void);
 
 A host composing modules reads each module's `info()`, checks `abi_version` against its own `LIARA_ABI_VERSION`, and wires together only compatible modules. This is the machine-readable counterpart to the `abi_compatibility` lists published in each module's `manifest.json`.
 
-### Compatibility Rule
+### 8.5 Compatibility Rule
 
 Compatibility is decided by comparing a provided version against a required one. The canonical helper lives in `liara/abi_version.h`:
 
@@ -457,7 +509,7 @@ The argument order is load-bearing and easy to get wrong, which is why the param
 liara_version_compat_t liara_abi_is_compatible(uint32_t module_abi);
 ```
 
-### Negotiation Outcome
+### 8.6 Negotiation Outcome
 
 A boolean answers "compatible or not", but a host often needs to distinguish how compatible, to warn rather than refuse. The negotiation therefore reports a four-state outcome:
 
@@ -477,7 +529,7 @@ typedef enum liara_version_compat {
 
 Composition is the **host's** job (the launcher, later the editor), not the core's: the core neither loads nor version-checks sibling modules. Today the host calls each module's entry point directly at static-link time; under future dynamic loading the same host resolves the entry point via `dlsym`/`GetProcAddress`. The logic is identical; only the lookup changes.
 
-### What Counts as a Breaking Change
+### 8.7 What Counts as a Breaking Change
 
 The detailed rules for what triggers a major bump:
 
@@ -502,7 +554,7 @@ The detailed rules for what triggers a major bump:
 | Adding a new field at the end of an explicitly-versioned struct (see below)                                       | MINOR |
 | Documentation, comment, whitespace changes                                                                        | PATCH |
 
-### Versioned Structs (Optional Pattern)
+### 8.8 Versioned Structs (Optional Pattern)
 
 For structs that are likely to grow, an explicit versioning pattern is used:
 
@@ -523,23 +575,23 @@ This pattern is used selectively, only on structs where the expectation of growt
 
 ## 9. Header Organization
 
-### File-Per-Concept
+### 9.1 File-Per-Concept
 
 Each header in `include/liara/` covers one concept. Headers do not aggregate unrelated concepts; if you find yourself wanting to put two unrelated things in the same header, create two headers.
 
 The module subdirectories (`liara/core/`, `liara/renderer/`) reflect which module owns the symbols, not which module consumes them. `liara/renderer/packet.h` defines render packet structures; both the core (which produces packets) and the renderer (which consumes them) include this header.
 
-### Include Discipline
+### 9.2 Include Discipline
 
 Each header is **standalone**: it includes everything it needs and defines everything it declares. A consumer should be able to include exactly one header to use one concept, without needing to know about include order.
 
 Forward declarations are used to avoid pulling in transitively unnecessary headers, but a header that uses a type's definition (not just a pointer to the type) includes the header that defines the type.
 
-### Include Guards
+### 9.3 Include Guards
 
 All headers use `#pragma once`. This is supported by every modern compiler and is shorter and less error-prone than traditional include guards. Although the headers are C-callable, `#pragma once` is universally supported in C compilers as well.
 
-### `extern "C"` Wrapping
+### 9.4 `extern "C"` Wrapping
 
 Every header is wrapped in `extern "C"` blocks for C++ consumers:
 
@@ -561,7 +613,7 @@ extern "C" {
 
 This allows C++ consumers to include the header normally and have C linkage applied. It is mandatory; CI verifies its presence.
 
-### Macros vs. Functions for Cross-Language Consumability
+### 9.5 Macros vs. Functions for Cross-Language Consumability
 
 Macros do not cross language FFI boundaries. A consumer language that parses C headers (Rust via bindgen, Zig via translate-c, Python via ctypes with manual binding) typically does not see macros, or sees only the simplest constant ones. When a header would naturally use a macro for a small computation or a packed value, prefer instead:
 
@@ -571,13 +623,13 @@ Macros do not cross language FFI boundaries. A consumer language that parses C h
 
 The cost of `static inline` functions is zero at runtime (they inline) and minimal at compile time. The benefit is that the entire interface is consumable from any language with a C FFI, not just C and C++.
 
-### Compatibility Macros (`liara/private_utils.h`)
+### 9.6 Compatibility Macros (`liara/private_utils.h`)
 
-`liara/private_utils.h` is where the C/C++ and compiler/platform `#ifdef` ladders live so the rest of the headers don't repeat them. It currently provides things like `LIARA_STATIC_ASSERT` (C11 `_Static_assert` vs. C++ `static_assert`), `LIARA_API_DEPRECATED` (`[[deprecated]]` vs. `__declspec`/`__attribute__`), `LIARA_API` (export/import/visibility for the `-dynamic` shared-library preset), `LIARA_STATIC_CAST`, `LIARA_NULL`, and the `LIARA_TYPEDEF*` family for declaring a typedef (optionally deprecated, optionally a struct definition) once for both languages. Any other header that needs to spell something differently depending on the language or standard version routes it through a macro here rather than re-deriving the `#ifdef` locally.
+`liara/private_utils.h` is where the C/C++ and compiler/platform `#ifdef` ladders live so the rest of the headers don't repeat them. It currently provides things like `LIARA_STATIC_ASSERT` (C11 `_Static_assert` vs. C++ `static_assert`), `LIARA_API_DEPRECATED` (`[[deprecated]]` vs. `__declspec`/`__attribute__`), `LIARA_STATIC_CAST`, `LIARA_NULL`, and the `LIARA_TYPEDEF*` family for declaring a typedef (optionally deprecated, optionally a struct definition) once for both languages. Any other header that needs to spell something differently depending on the language or standard version routes it through a macro here rather than re-deriving the `#ifdef` locally.
 
 This is deliberately not an exhaustive list, and this section is not meant to be kept in lockstep with the header: new compatibility macros get added to `private_utils.h` as new portability gaps turn up, without requiring an edit here every time. What doesn't change is that these macros still live at the interface boundary, so the usual rules apply to them like to any other symbol in this repository: adding one is a MINOR change, changing an existing macro's expansion is a MAJOR change (section 8), and the header must keep compiling as both C11 and C++20 (section 2).
 
-### Export Macros
+### 9.7 Export Macros
 
 Every declaration that a module implements carries that module's export macro: `LIARA_<MODULE>_API`, declared in `liara/<module>/<module>_export.h`. Each expands to `__declspec(dllexport)` or `__declspec(dllimport)` on Windows and to` __attribute__((visibility("default")))` elsewhere, selected by two macros the build defines: `LIARA_<MODULE>_SHARED` (the module is built or consumed as a shared library) and `LIARA_<MODULE>_BUILD` (this translation unit is building the module, not consuming it). Modules compile with hidden default visibility, so a symbol that does not carry the macro does not leave the library at all.
 
@@ -656,7 +708,7 @@ On every push and pull request against `main`, four jobs run in parallel, follow
 - **`abi-snapshot`** — serializes the public ABI surface to JSON, diffs it against the base branch, and classifies the diff using the table in section 8 to compute the required version bump. A guard step then checks that the PR's declared Conventional Commit type (its title, plus a `BREAKING CHANGE` footer) covers at least that bump, and fails the PR if it doesn't.
 - **`abi-report`** (pull requests only, after the other four) — collects their results into a single sticky PR comment. Adding a new pipeline step upstream needs no change to this repository; the report is driven entirely by the artifacts the other jobs publish.
 
-### Regenerating the Golden Layout Header
+### 12.1 Regenerating the Golden Layout Header
 
 `tests/abi/abi_layout.generated.h` is the "golden" file the `abi-layout-freeze` job checks against: `static_assert`s on the `sizeof`/`alignof`/`offsetof` of every public POD struct, generated by `abi_layout_asserts.py`. Regenerate it whenever a change would alter one of those numbers — a struct added or removed, a field added, removed, reordered, or retyped. If you forget, CI catches it: the `--check` step fails with "ABI layout assertions are out of date" because it re-derives the header in memory and compares it byte-for-byte against what's committed.
 
@@ -755,3 +807,7 @@ Before submitting interface changes, verify:
 - [ ] If the change is major, consumer module PRs are opened simultaneously.
 
 This checklist is repeated in the PR template for the `liara-interfaces` repository.
+
+---
+
+[Back to top](#interfaces)
