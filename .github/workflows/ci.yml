@@ -13,6 +13,12 @@ permissions:
   pull-requests: write
 
 jobs:
+  lint:
+    uses: liara-engine/.github/.github/workflows/reusable-lint.yml@preview-24
+    with:
+      module: liara-interfaces
+      github-repo-version: preview-24
+
   abi-header-portability:
     uses: liara-engine/.github/.github/workflows/reusable-abi-header-portability.yml@preview-24
     with:
@@ -45,7 +51,7 @@ jobs:
 
   report:
 #    needs: [ build-and-test, lint, abi-header-portability, abi-interface-rules, abi-layout-freeze, abi-snapshot ]
-    needs: [ abi-header-portability, abi-interface-rules, abi-layout-freeze, abi-snapshot ]
+    needs: [ lint, abi-header-portability, abi-interface-rules, abi-layout-freeze, abi-snapshot ]
     if: ${{ always() && github.event_name == 'pull_request' }}
     permissions:
       contents: read
