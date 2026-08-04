@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.2.0](https://github.com/liara-engine/liara-interfaces/compare/v0.1.1...v0.2.0) (2026-08-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* portability ([#19](https://github.com/liara-engine/liara-interfaces/issues/19))
+* **private_utils:** remove redundant API visibility macros for cleaner code
+* liara_result replaced by liara_result_t, all functions deprecated in v0.1.1 removed
+
+### Features
+
+* add LIARA_TYPEDEF_STRUCT macro for struct type definitions ([19f9c58](https://github.com/liara-engine/liara-interfaces/commit/19f9c58b8d7e12556048adfcc2a45a80c135e47d))
+* **manifest:** add new version entry for 0.2.0 with ABI compatibility ([094e375](https://github.com/liara-engine/liara-interfaces/commit/094e375a46271f564bef9562aeb28478e9a83410))
+* portability ([#19](https://github.com/liara-engine/liara-interfaces/issues/19)) ([b95993b](https://github.com/liara-engine/liara-interfaces/commit/b95993b840e3be08eaf5093b11461093416d15db))
+
+
+### Bug Fixes
+
+* **clang-tidy:** refine checks and add readability rules for better code quality ([665dc77](https://github.com/liara-engine/liara-interfaces/commit/665dc7799d6e2d68b388a7779dd699c4d48beaab))
+* **cmake:** GNUInstallDirs and set export name for liara_interfaces ([2ed2375](https://github.com/liara-engine/liara-interfaces/commit/2ed2375783eeaf144db374d03e27c3a03494b476))
+* include private_utils.h in packet and modules headers ([b4b278a](https://github.com/liara-engine/liara-interfaces/commit/b4b278af5c8d2ab1bd610c467aea483d0e64e9bb))
+
+
+### Code Refactoring
+
+* **private_utils:** remove redundant API visibility macros for cleaner code ([df4676b](https://github.com/liara-engine/liara-interfaces/commit/df4676ba94a924cf3ab6c56f380efd8ff0acfbe7))
+* replace deprecated liara_result with liara_result_t in core and renderer APIs ([#11](https://github.com/liara-engine/liara-interfaces/issues/11)) ([d5f4fd4](https://github.com/liara-engine/liara-interfaces/commit/d5f4fd4234d9f0a5a62665133314e915cf296d84))
+
 ## [0.1.1](https://github.com/liara-engine/liara-interfaces/compare/v0.1.0...v0.1.1) (2026-07-28)
 
 
