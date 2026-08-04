@@ -1,7 +1,7 @@
 #pragma once
 
 #include <liara/core/core_export.h>
-#include <liara/private_utils.h>
+#include <liara/internal/portability.h>
 
 #include <stdint.h>
 
@@ -124,6 +124,9 @@ enum liara_core_run_mode {
  *
  * @threadsafety This function is thread-safe as long as it is not called concurrently with other functions that modify
  * the core's state. @endthreadsafety
+ *
+ * @warning Provisional. The application loop belongs to the host; these
+ * entry points exist to make the Phase 0 demo runnable and are removed in ABI 1.0.x
  */
 LIARA_CORE_API void liara_core_set_run_mode(liara_core_handle_t* core_handle,
                                             enum liara_core_run_mode run_mode,
@@ -139,6 +142,9 @@ LIARA_CORE_API void liara_core_set_run_mode(liara_core_handle_t* core_handle,
  *
  * @threadsafety This function is thread-safe as long as it is not called concurrently with other functions that modify
  * the core's state. @endthreadsafety
+ *
+ * @warning Provisional. The application loop belongs to the host; these
+ * entry points exist to make the Phase 0 demo runnable and are removed in ABI 1.0.x
  */
 LIARA_CORE_API void liara_core_run(liara_core_handle_t* core_handle);
 
@@ -152,6 +158,9 @@ LIARA_CORE_API void liara_core_run(liara_core_handle_t* core_handle);
  *
  * @threadsafety This function is thread-safe as long as it is not called concurrently with other functions that modify
  * the core's state. @endthreadsafety
+ *
+ * @warning Provisional. The application loop belongs to the host; these
+ * entry points exist to make the Phase 0 demo runnable and are removed in ABI 1.0.x
  */
 LIARA_CORE_API void liara_core_stop(liara_core_handle_t* core_handle);
 

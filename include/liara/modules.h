@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <liara/private_utils.h>
+#include <liara/internal/portability.h>
 
 #include <stdint.h>
 
