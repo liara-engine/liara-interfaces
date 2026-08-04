@@ -6,7 +6,7 @@
 #pragma once
 
 #include <liara/config.h>
-#include <liara/private_utils.h>
+#include <liara/internal/portability.h>
 #include <liara/version.h>
 
 #ifdef __cplusplus
@@ -84,7 +84,7 @@ typedef enum liara_version_compat {
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-static inline uint32_t liara_abi_version(void) { return LIARA_ABI_VERSION; }
+LIARA_CONSTEXPR_FN uint32_t liara_abi_version(void) { return LIARA_ABI_VERSION; }
 
 /**
  * @brief Inline function to get the string representation of the current version of the Liara ABI interface.
@@ -111,7 +111,7 @@ static inline const char* liara_abi_version_str(void) { return LIARA_ABI_VERSION
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-static inline liara_version_compat_t liara_version_provides(const uint32_t provided, const uint32_t required) {
+LIARA_CONSTEXPR_FN liara_version_compat_t liara_version_provides(const uint32_t provided, const uint32_t required) {
     if (provided == required) { return LIARA_VERSION_COMPAT_EXACT; }
     if (LIARA_VERSION_MAJOR(provided) != LIARA_VERSION_MAJOR(required)) { return LIARA_VERSION_COMPAT_INCOMPATIBLE; }
     if (LIARA_VERSION_MAJOR(provided) == 0 && LIARA_VERSION_MINOR(provided) == 0) {
@@ -134,7 +134,7 @@ static inline liara_version_compat_t liara_version_provides(const uint32_t provi
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-static inline liara_version_compat_t liara_abi_is_compatible(const uint32_t module_abi) {
+LIARA_CONSTEXPR_FN liara_version_compat_t liara_abi_is_compatible(const uint32_t module_abi) {
     return liara_version_provides(module_abi, LIARA_ABI_VERSION);
 }
 

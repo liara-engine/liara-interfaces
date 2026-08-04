@@ -1,7 +1,7 @@
 #pragma once
 
 #include <liara/core/core_export.h>
-#include <liara/private_utils.h>
+#include <liara/internal/portability.h>
 
 #include <stdint.h>
 

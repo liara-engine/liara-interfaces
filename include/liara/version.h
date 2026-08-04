@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <liara/private_utils.h>
+#include <liara/internal/portability.h>
 #include <liara/result.h>
 
 #ifndef __cplusplus
@@ -177,7 +177,7 @@ static inline liara_result_t liara_try_make_version(const uint32_t major,
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-static inline uint32_t liara_version_major(const uint32_t v) { return LIARA_VERSION_MAJOR(v); }
+LIARA_CONSTEXPR_FN uint32_t liara_version_major(const uint32_t v) { return LIARA_VERSION_MAJOR(v); }
 
 /**
  * @brief Inline function to extract the minor version component from a combined version number.
@@ -191,7 +191,7 @@ static inline uint32_t liara_version_major(const uint32_t v) { return LIARA_VERS
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-static inline uint32_t liara_version_minor(const uint32_t v) { return LIARA_VERSION_MINOR(v); }
+LIARA_CONSTEXPR_FN uint32_t liara_version_minor(const uint32_t v) { return LIARA_VERSION_MINOR(v); }
 
 /**
  * @brief Inline function to extract the patch version component from a combined version number.
@@ -205,7 +205,7 @@ static inline uint32_t liara_version_minor(const uint32_t v) { return LIARA_VERS
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-static inline uint32_t liara_version_patch(const uint32_t v) { return LIARA_VERSION_PATCH(v); }
+LIARA_CONSTEXPR_FN uint32_t liara_version_patch(const uint32_t v) { return LIARA_VERSION_PATCH(v); }
 
 /**
  * @brief Inline function to compare two version numbers and return a signed integer indicating their relative order,
@@ -226,7 +226,7 @@ static inline uint32_t liara_version_patch(const uint32_t v) { return LIARA_VERS
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
-static inline int8_t liara_version_compare(const uint32_t v1, const uint32_t v2, const bool ignore_patch) {
+LIARA_CONSTEXPR_FN int8_t liara_version_compare(const uint32_t v1, const uint32_t v2, const bool ignore_patch) {
     uint32_t a = v1;
     uint32_t b = v2;
 
