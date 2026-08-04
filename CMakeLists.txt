@@ -62,14 +62,15 @@ if(LIARA_INTERFACES_INSTALL)
 
     install(DIRECTORY include/
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+            COMPONENT liara-interfaces-dev
             FILES_MATCHING
             PATTERN "*.h"
             PATTERN "config.h.in" EXCLUDE
     )
 
-    install(
-            FILES "${CMAKE_CURRENT_BINARY_DIR}/generated/liara/config.h"
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/generated/liara/config.h"
             DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/liara"
+            COMPONENT liara-interfaces-dev
     )
 
     install(TARGETS liara_interfaces EXPORT LiaraInterfacesTargets)
@@ -78,6 +79,7 @@ if(LIARA_INTERFACES_INSTALL)
             FILE LiaraInterfacesTargets.cmake
             NAMESPACE Liara::
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LiaraInterfaces
+            COMPONENT liara-interfaces-dev
     )
 
     write_basic_package_version_file(
@@ -97,5 +99,6 @@ if(LIARA_INTERFACES_INSTALL)
             "${CMAKE_CURRENT_BINARY_DIR}/LiaraInterfacesConfig.cmake"
             "${CMAKE_CURRENT_BINARY_DIR}/LiaraInterfacesConfigVersion.cmake"
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LiaraInterfaces
+            COMPONENT liara-interfaces-dev
     )
 endif()
