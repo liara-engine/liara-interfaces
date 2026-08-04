@@ -74,6 +74,24 @@ typedef enum liara_version_compat {
     "." LIARA_TOSTRING(LIARA_PRIVATE_CMAKE_VERSION_MINOR) "." LIARA_TOSTRING(LIARA_PRIVATE_CMAKE_VERSION_PATCH)
 
 /**
+ * @brief String representation of the Liara ABI version compatibility enumeration.
+ *
+ * This macro provides a string representation of the Liara ABI version compatibility enumeration values. It can be used
+ * for logging, debugging, or displaying compatibility information to users.
+ *
+ * @param[in] compat The compatibility enumeration value to convert to a string.
+ * @return A string literal representing the compatibility state.
+ *
+ * @threadsafety This macro is thread-safe as it does not modify any shared state. @endthreadsafety
+ */
+#define LIARA_VERSION_COMPAT_STR(compat)                              \
+    ((compat) == LIARA_VERSION_COMPAT_EXACT          ? "EXACT"        \
+     : (compat) == LIARA_VERSION_COMPAT_COMPATIBLE   ? "COMPATIBLE"   \
+     : (compat) == LIARA_VERSION_COMPAT_DEGRADED     ? "DEGRADED"     \
+     : (compat) == LIARA_VERSION_COMPAT_INCOMPATIBLE ? "INCOMPATIBLE" \
+                                                     : "UNKNOWN")
+
+/**
  * @brief Inline function to get the current version of the Liara ABI interface.
  *
  * This function is a wrapper around the LIARA_ABI_VERSION macro for other languages that may not support macros
@@ -100,23 +118,45 @@ LIARA_CONSTEXPR_FN uint32_t liara_abi_version(void) { return LIARA_ABI_VERSION; 
 static inline const char* liara_abi_version_str(void) { return LIARA_ABI_VERSION_STR; }
 
 /**
+ * @brief Inline function to get the string representation of a Liara ABI version compatibility enumeration value.
+ *
+ * This function is a wrapper around the LIARA_VERSION_COMPAT_STR macro for other languages that may not support macros
+ * or for better type safety in C. It returns a string representation of the provided compatibility enumeration value.
+ *
+ * @param[in] compat The compatibility enumeration value to convert to a string.
+ * @return A string literal representing the compatibility state.
+ *
+ * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
+ */
+static inline const char* liara_version_compat_str(const liara_version_compat_t compat) {
+    return LIARA_VERSION_COMPAT_STR(compat);
+}
+
+/**
  * @brief Inline function to determine the compatibility of a provided version with a required version.
  *
  * This function checks the compatibility of a provided version with a required version based on their major and minor
  * version components. It returns an enumeration value indicating the level of compatibility between the two versions.
  *
- * @param[in] provided The provided version number to check for compatibility.
- * @param[in] required The required version number to check against the provided version.
- * @return An enumeration value indicating the level of compatibility between the provided and required versions.
+ * The rule, in order: identical versions are EXACT; differing majors are INCOMPATIBLE; a 0.0.x
+ * version on either side demands exact equality and is otherwise INCOMPATIBLE; an older provided
+ * minor is DEGRADED; anything else is COMPATIBLE.
+ *
+ * @param[in] provided The version being offered — typically a module's reported ABI version.
+ * @param[in] required The version being asked for — typically the caller's LIARA_ABI_VERSION.
+ * @return The compatibility state between the two versions.
  *
  * @threadsafety This function is thread-safe as it does not modify any shared state. @endthreadsafety
  */
 LIARA_CONSTEXPR_FN liara_version_compat_t liara_version_provides(const uint32_t provided, const uint32_t required) {
     if (provided == required) { return LIARA_VERSION_COMPAT_EXACT; }
     if (LIARA_VERSION_MAJOR(provided) != LIARA_VERSION_MAJOR(required)) { return LIARA_VERSION_COMPAT_INCOMPATIBLE; }
-    if (LIARA_VERSION_MAJOR(provided) == 0 && LIARA_VERSION_MINOR(provided) == 0) {
-        return provided == required ? LIARA_VERSION_COMPAT_EXACT : LIARA_VERSION_COMPAT_INCOMPATIBLE;
+
+    if ((LIARA_VERSION_MAJOR(provided) == 0U && LIARA_VERSION_MINOR(provided) == 0U)
+        || (LIARA_VERSION_MINOR(required) == 0U && LIARA_VERSION_MINOR(required) == 0U)) {
+        return LIARA_VERSION_COMPAT_INCOMPATIBLE;
     }
+
     if (LIARA_VERSION_MINOR(provided) < LIARA_VERSION_MINOR(required)) { return LIARA_VERSION_COMPAT_DEGRADED; }
     return LIARA_VERSION_COMPAT_COMPATIBLE;
 }
