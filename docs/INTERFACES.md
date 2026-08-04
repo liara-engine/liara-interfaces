@@ -496,11 +496,12 @@ Compatibility is decided by comparing a provided version against a required one.
 liara_version_compat_t liara_version_provides(uint32_t provided, uint32_t required);
 ```
 
-The rule it implements:
+The rule it implements, applied in order:
 
+- **Identical versions → `EXACT`.** No further test is needed.
 - **Different major → never compatible.** Major encodes breaking change; no minor or patch can bridge it.
-- **Required is a 0.0.x version → exact equality required.** Pre-0.1 is the Phase 0 playground (see `ROADMAP.md` §3): nothing is promised, so only an identical version satisfies. This is the one place the rule departs from ordinary semver, and it is deliberate.
-- **Otherwise → provided.minor >= required.minor.** Minor bumps are additive, so a newer provider satisfies an older requirement; patch is ignored.
+- **Either side is a 0.0.x version → exact equality required, otherwise `INCOMPATIBLE`.** Pre-0.1 is the Phase 0 playground: nothing is promised in either direction, so a 0.0.x version neither satisfies nor is satisfied by anything but itself. This is the one place the rule departs from ordinary semver, and it is deliberate. It is also the strictest reading: the alternative — treating a 0.0.x requirement as an ordinary minor comparison — would let a playground version silently pass for a released one.
+- **Otherwise → `provided.minor >= required.minor` is `COMPATIBLE`, below it is `DEGRADED`.** Minor bumps are additive, so a newer provider satisfies an older requirement.
 
 The argument order is load-bearing and easy to get wrong, which is why the parameters are named `provided` and `required` rather than two anonymous `uint32_t`. A convenience wrapper removes the ordering hazard entirely at the most common call site:
 
@@ -525,7 +526,7 @@ typedef enum liara_version_compat {
 - `EXACT` / `COMPATIBLE` — proceed. Under `COMPATIBLE`, the provider is a newer minor than required: everything the host calls exists.
 - `DEGRADED` — proceed with care. The provider is an *older* minor than the host expects; functions added in newer minors may be absent, and the host must check before calling them. This is the state that gives the "minor mismatch is a warning" policy its concrete meaning.
 - `INCOMPATIBLE` — refuse. Either the majors differ, or a 0.0.x requirement was not met exactly.
-- **Patch differences never affect the outcome.** Patch is documentation and comments only.
+- **Patch differences never affect the outcome, except under the 0.0.x rule.** Above 0.0.x, patch is documentation and comments only and is ignored entirely. Under the 0.0.x rule, equality is exact and therefore includes the patch component — which is the point: in the playground, two patches apart is as good as unrelated.
 
 Composition is the **host's** job (the launcher, later the editor), not the core's: the core neither loads nor version-checks sibling modules. Today the host calls each module's entry point directly at static-link time; under future dynamic loading the same host resolves the entry point via `dlsym`/`GetProcAddress`. The logic is identical; only the lookup changes.
 
@@ -623,11 +624,11 @@ Macros do not cross language FFI boundaries. A consumer language that parses C h
 
 The cost of `static inline` functions is zero at runtime (they inline) and minimal at compile time. The benefit is that the entire interface is consumable from any language with a C FFI, not just C and C++.
 
-### 9.6 Compatibility Macros (`liara/private_utils.h`)
+### 9.6 Internal Macros (`liara/internal/`)
 
-`liara/private_utils.h` is where the C/C++ and compiler/platform `#ifdef` ladders live so the rest of the headers don't repeat them. It currently provides things like `LIARA_STATIC_ASSERT` (C11 `_Static_assert` vs. C++ `static_assert`), `LIARA_API_DEPRECATED` (`[[deprecated]]` vs. `__declspec`/`__attribute__`), `LIARA_STATIC_CAST`, `LIARA_NULL`, and the `LIARA_TYPEDEF*` family for declaring a typedef (optionally deprecated, optionally a struct definition) once for both languages. Any other header that needs to spell something differently depending on the language or standard version routes it through a macro here rather than re-deriving the `#ifdef` locally.
+Headers under `liara/internal/` are part of this repository's own implementation. They exist so the public headers can spell portability differences in one place, and they carry no stability promise of their own beyond the versioning rules of section 8. A module includes them transitively, by including a public header; it never includes them directly, and never uses the macros they define in its own implementation code. A macro that a module legitimately needs is not internal, and belongs in a public header instead.
 
-This is deliberately not an exhaustive list, and this section is not meant to be kept in lockstep with the header: new compatibility macros get added to `private_utils.h` as new portability gaps turn up, without requiring an edit here every time. What doesn't change is that these macros still live at the interface boundary, so the usual rules apply to them like to any other symbol in this repository: adding one is a MINOR change, changing an existing macro's expansion is a MAJOR change (section 8), and the header must keep compiling as both C11 and C++20 (section 2).
+- `liara/internal/portability.h` is where the C/C++ and compiler/platform `#ifdef` ladders live so the rest of the headers don't repeat them. It currently provides things like `LIARA_STATIC_ASSERT` (C11 `_Static_assert` vs. C++ `static_assert`), `LIARA_API_DEPRECATED` (`[[deprecated]]` vs. `__declspec`/`__attribute__`), `LIARA_STATIC_CAST`, `LIARA_NULL`, and the `LIARA_TYPEDEF*` family for declaring a typedef (optionally deprecated, optionally a struct definition) once for both languages. Any other header that needs to spell something differently depending on the language or standard version routes it through a macro here rather than re-deriving the `#ifdef` locally.
 
 ### 9.7 Export Macros
 
@@ -718,7 +719,7 @@ To regenerate locally, run the same script CI runs (it lives in the sibling `lia
 python3 ../../.github/scripts/abi_layout_asserts.py \
     --include-dir include \
     --output tests/abi/abi_layout.generated.h \
-    --clang clang-18
+    --clang clang-20
 ```
 
 **Never run `clang-format` on this file.** The CI check is an exact textual comparison between the script's output and the committed file, so reformatting it breaks the check on the next regeneration. Treat it as generated output, not source: after any bulk-format pass, re-run the generator (or diff against what CI expects) to make sure it still matches.
