@@ -47,28 +47,36 @@ if(LIARA_ZIG_EXECUTABLE)
         )
         set_tests_properties(test_zig_linux PROPERTIES LABELS "unit;cross-lang")
     elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-        add_test(NAME test_zig_windows
-                COMMAND
-                ${LIARA_ZIG_EXECUTABLE} run test.zig
-                -I${PROJECT_SOURCE_DIR}/include
-                -I${CMAKE_CURRENT_BINARY_DIR}/../generated
-                -lc
-                -target x86_64-windows-gnu
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/zig
-        )
-        set_tests_properties(test_zig_windows PROPERTIES LABELS "unit;cross-lang")
+        if(NOT LIARA_INTERFACES_REQUIRE_CROSS_LANGUAGE_TESTS)
+            message(STATUS "Zig executable found, but cross-language tests are skipped on Windows unless LIARA_INTERFACES_REQUIRE_CROSS_LANGUAGE_TESTS is explicitly set to ON.")
+        else()
+            add_test(NAME test_zig_windows
+                    COMMAND
+                    ${LIARA_ZIG_EXECUTABLE} run test.zig
+                    -I${PROJECT_SOURCE_DIR}/include
+                    -I${CMAKE_CURRENT_BINARY_DIR}/../generated
+                    -lc
+                    -target x86_64-windows-gnu
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/zig
+            )
+            set_tests_properties(test_zig_windows PROPERTIES LABELS "unit;cross-lang")
+        endif()
     endif()
 endif()
 
 find_program(LIARA_CARGO_EXECUTABLE NAMES cargo)
 if(LIARA_CARGO_EXECUTABLE)
-    add_test(NAME test_rust
-            COMMAND
-            ${CMAKE_COMMAND} -E env
-            LIARA_INCLUDE_DIR=${PROJECT_SOURCE_DIR}/include
-            LIARA_GENERATED_INCLUDE_DIR=${CMAKE_CURRENT_BINARY_DIR}/../generated
-            ${LIARA_CARGO_EXECUTABLE} run
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/rust
-    )
-    set_tests_properties(test_rust PROPERTIES LABELS "unit;cross-lang")
+    if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows" AND NOT LIARA_INTERFACES_REQUIRE_CROSS_LANGUAGE_TESTS)
+        message(STATUS "Cargo executable found, but cross-language tests are skipped on Windows unless LIARA_INTERFACES_REQUIRE_CROSS_LANGUAGE_TESTS is explicitly set to ON.")
+    else()
+        add_test(NAME test_rust
+                COMMAND
+                ${CMAKE_COMMAND} -E env
+                LIARA_INCLUDE_DIR=${PROJECT_SOURCE_DIR}/include
+                LIARA_GENERATED_INCLUDE_DIR=${CMAKE_CURRENT_BINARY_DIR}/../generated
+                ${LIARA_CARGO_EXECUTABLE} run
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/rust
+        )
+        set_tests_properties(test_rust PROPERTIES LABELS "unit;cross-lang")
+    endif()
 endif()
