@@ -7,10 +7,8 @@
 #include <liara/version.h>
 
 #include <cstdint>
-#include <format>
-#include <span>
-
 #include <doctest/doctest.h>
+#include <format>
 
 TEST_CASE("liara_try_make_version: success and extraction") {
     uint32_t v = 0U;
@@ -77,8 +75,7 @@ TEST_CASE("max values roundtrip") {
 
 TEST_CASE("liara_version_provides") {
     /* liara_version_provides: the compatibility rule of INTERFACES.md 8.5 */
-    struct
-    {
+    struct {
         uint32_t provided;
         uint32_t required;
         liara_version_compat_t expected;
