@@ -88,3 +88,6 @@ CheckOptions:
 
     -   key: bugprone-argument-comment.StrictMode
         value: 'true'
+
+    -   key: readability-function-cognitive-complexity.IgnoreMacros
+        value: 'true'

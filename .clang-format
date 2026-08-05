@@ -3,7 +3,7 @@
 # See docs/INTERFACES.md for explanations of each section.
 
 BasedOnStyle: LLVM
-Language: C
+Language: Cpp
 
 # === INDENTATION & SPACING ===
 IndentWidth: 4

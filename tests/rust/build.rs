@@ -28,7 +28,8 @@ fn main() {
         .file("wrapper.c")
         .include(&include_dir)
         .include(&generated_include_dir)
-        .flag_if_supported("-std=c11")
+        .flag_if_supported("-std=c11") // On Linux
+        .flag_if_supported("/std:c11") // On Windows
         .compile("liara_rs_wrapper");
 
     // Generate Rust bindings for wrapper.h (which transitively pulls in abi_version.h).
