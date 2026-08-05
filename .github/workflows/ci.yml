@@ -14,46 +14,46 @@ permissions:
 
 jobs:
   build-and-test:
-    uses: liara-engine/.github/.github/workflows/reusable-build-and-test.yml@preview-24
+    uses: liara-engine/.github/.github/workflows/reusable-build-and-test.yml@v1
     with:
       module: liara-interfaces
-      github-repo-version: preview-24
+      github-repo-version: v1
 
   lint:
-    uses: liara-engine/.github/.github/workflows/reusable-lint.yml@preview-24
+    uses: liara-engine/.github/.github/workflows/reusable-lint.yml@v1
     with:
       module: liara-interfaces
-      github-repo-version: preview-24
+      github-repo-version: v1
 
   abi-header-portability:
-    uses: liara-engine/.github/.github/workflows/reusable-abi-header-portability.yml@preview-24
+    uses: liara-engine/.github/.github/workflows/reusable-abi-header-portability.yml@v1
     with:
       include-dir: include
       c-standards: '11;17;23'
       cxx-standards: '17;20;23'
-      github-repo-version: preview-24
+      github-repo-version: v1
 
   abi-interface-rules:
-    uses: liara-engine/.github/.github/workflows/reusable-abi-interface-rules.yml@preview-24
+    uses: liara-engine/.github/.github/workflows/reusable-abi-interface-rules.yml@v1
     with:
       include-dir: include
       std: 'c++20'
       prefix: 'liara'
-      github-repo-version: preview-24
+      github-repo-version: v1
 
   abi-layout-freeze:
-    uses: liara-engine/.github/.github/workflows/reusable-abi-layout-freeze.yml@preview-24
+    uses: liara-engine/.github/.github/workflows/reusable-abi-layout-freeze.yml@v1
     with:
       include-dir: include
       golden-header: 'tests/abi/abi_layout.generated.h'
-      github-repo-version: preview-24
+      github-repo-version: v1
 
   abi-snapshot:
-    uses: liara-engine/.github/.github/workflows/reusable-abi-snapshot.yml@preview-24
+    uses: liara-engine/.github/.github/workflows/reusable-abi-snapshot.yml@v1
     with:
       include-dir: include
       std: 'c++20'
-      github-repo-version: preview-24
+      github-repo-version: v1
 
   report:
     needs: [ build-and-test, lint, abi-header-portability, abi-interface-rules, abi-layout-freeze, abi-snapshot ]
@@ -61,8 +61,8 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: liara-engine/.github/.github/workflows/reusable-ci-report.yml@preview-24
+    uses: liara-engine/.github/.github/workflows/reusable-ci-report.yml@v1
     with:
       title: 'CI report'
       header: 'ci-report'
-      github-repo-version: preview-24
+      github-repo-version: v1
