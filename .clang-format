@@ -1,14 +1,9 @@
 ---
-# Little section needed in CI
-BasedOnStyle: LLVM
-Language: Cpp
-
----
 # Liara Engine - clang-format configuration
 # See docs/INTERFACES.md for explanations of each section.
 
 BasedOnStyle: LLVM
-Language: C
+Language: Cpp
 
 # === INDENTATION & SPACING ===
 IndentWidth: 4
