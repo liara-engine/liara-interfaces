@@ -2,10 +2,13 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 // NOLINTEND(readability-identifier-naming)
 
+#include <liara/abi_version.h>
 #include <liara/result.h>
 #include <liara/version.h>
 
 #include <cstdint>
+#include <format>
+#include <span>
 
 #include <doctest/doctest.h>
 
@@ -70,4 +73,60 @@ TEST_CASE("max values roundtrip") {
     CHECK(LIARA_VERSION_MAJOR(v) == LIARA_VERSION_MAJOR_MASK);
     CHECK(LIARA_VERSION_MINOR(v) == LIARA_VERSION_MINOR_MASK);
     CHECK(LIARA_VERSION_PATCH(v) == LIARA_VERSION_PATCH_MASK);
+}
+
+TEST_CASE("liara_version_provides") {
+    /* liara_version_provides: the compatibility rule of INTERFACES.md 8.5 */
+    struct
+    {
+        uint32_t provided;
+        uint32_t required;
+        liara_version_compat_t expected;
+        const char* label;
+    } cases[] = {
+        {.provided = LIARA_MAKE_VERSION_UNSAFE(1, 2, 3),
+         .required = LIARA_MAKE_VERSION_UNSAFE(1, 2, 3),
+         .expected = LIARA_VERSION_COMPAT_EXACT,
+         .label = "identical"              },
+        {.provided = LIARA_MAKE_VERSION_UNSAFE(1, 3, 0),
+         .required = LIARA_MAKE_VERSION_UNSAFE(1, 2, 0),
+         .expected = LIARA_VERSION_COMPAT_COMPATIBLE,
+         .label = "newer minor"            },
+        {.provided = LIARA_MAKE_VERSION_UNSAFE(1, 2, 9),
+         .required = LIARA_MAKE_VERSION_UNSAFE(1, 2, 0),
+         .expected = LIARA_VERSION_COMPAT_COMPATIBLE,
+         .label = "patch ignored above 0.0"},
+        {.provided = LIARA_MAKE_VERSION_UNSAFE(1, 1, 0),
+         .required = LIARA_MAKE_VERSION_UNSAFE(1, 2, 0),
+         .expected = LIARA_VERSION_COMPAT_DEGRADED,
+         .label = "older minor"            },
+        {.provided = LIARA_MAKE_VERSION_UNSAFE(2, 0, 0),
+         .required = LIARA_MAKE_VERSION_UNSAFE(1, 0, 0),
+         .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
+         .label = "major mismatch"         },
+        {.provided = LIARA_MAKE_VERSION_UNSAFE(0, 0, 5),
+         .required = LIARA_MAKE_VERSION_UNSAFE(0, 0, 4),
+         .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
+         .label = "0.0.x: patch counts"    },
+        {.provided = LIARA_MAKE_VERSION_UNSAFE(0, 0, 5),
+         .required = LIARA_MAKE_VERSION_UNSAFE(0, 1, 0),
+         .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
+         .label = "0.0.x provided"         },
+        {.provided = LIARA_MAKE_VERSION_UNSAFE(0, 1, 0),
+         .required = LIARA_MAKE_VERSION_UNSAFE(0, 0, 5),
+         .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
+         .label = "0.0.x required"         },
+    };
+
+    for (auto& [provided, required, expected, label] : cases) {
+        if (liara_version_compat_t const result = liara_version_provides(provided, required); result != expected) {
+            FAIL_CHECK(
+                std::format("liara_version_provides failed for case {}: provided {}, required {}, expected {}, got {}",
+                            label,
+                            provided,
+                            required,
+                            LIARA_VERSION_COMPAT_STR(expected),
+                            LIARA_VERSION_COMPAT_STR(result)));
+        }
+    }
 }

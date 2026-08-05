@@ -3,7 +3,7 @@
   "metadata": {
     "name": "Liara Engine C ABI",
     "description": "The C ABI contracts shared by every module.",
-    "latest": "0.1.1"
+    "latest": "0.2.0"
   },
   "versions": {
     "dev": {
@@ -24,6 +24,11 @@
     "0.1.1": {
       "abi_compatibility": [
         "0.1.1"
+      ]
+    },
+    "0.2.0": {
+      "abi_compatibility": [
+        "0.2.0"
       ]
     }
   }

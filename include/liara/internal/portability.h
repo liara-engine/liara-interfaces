@@ -1,5 +1,17 @@
 #pragma once
 
+/**
+ * @file portability.h
+ * @brief Portability macros for Liara interfaces.
+ *
+ * This header file defines macros and type definitions to ensure compatibility across different compilers and
+ * programming languages (C and C++). It provides static assertions, deprecation attributes, type casting, and other
+ * utilities to facilitate the development of Liara interfaces.
+ *
+ * @note This header is intended for internal use within the Liara interfaces and should not be included directly by
+ *       external applications. Use the appropriate Liara interface headers instead.
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -50,6 +62,12 @@ extern "C" {
         typedef struct name {               \
             __VA_ARGS__                     \
         } name
+#endif
+
+#ifdef __cplusplus
+    #define LIARA_CONSTEXPR_FN constexpr
+#else
+    #define LIARA_CONSTEXPR_FN static inline
 #endif
 
 #ifdef __cplusplus
