@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.1](https://github.com/liara-engine/liara-interfaces/compare/v0.2.0...v0.2.1) (2026-08-07)
+
+
+### Features
+
+* **ci:** update workflows to use v1 version of .github, complete CI with lint and test ([#18](https://github.com/liara-engine/liara-interfaces/issues/18)) ([9c66018](https://github.com/liara-engine/liara-interfaces/commit/9c660187616b0668390c61fffc4f30362c69829a))
+* enhance CI workflows and improve documentation clarity ([#23](https://github.com/liara-engine/liara-interfaces/issues/23)) ([146e51f](https://github.com/liara-engine/liara-interfaces/commit/146e51f18ded980454e62c614689ca7e72dfdd92))
+
+
+### Bug Fixes
+
+* **tests:** add conditional checks for cross-language tests on Windows ([1962f68](https://github.com/liara-engine/liara-interfaces/commit/1962f680077a19bcb52ae9094a1d29587092f8a7))
+
 ## [0.2.0](https://github.com/liara-engine/liara-interfaces/compare/v0.1.1...v0.2.0) (2026-08-04)
 
 
