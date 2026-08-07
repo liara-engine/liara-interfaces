@@ -111,4 +111,9 @@ if(LIARA_INTERFACES_INSTALL)
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LiaraInterfaces
             COMPONENT liara-interfaces-dev
     )
+
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/cmake/LiaraCompilerSettings.cmake"
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LiaraInterfaces
+            COMPONENT liara-interfaces-dev
+    )
 endif()
