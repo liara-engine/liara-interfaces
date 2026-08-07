@@ -122,16 +122,6 @@ liara_core_world_create(...)
 liara_core_entity_destroy(...)
 ```
 
-Types are nouns and prefixed with the module:
-
-```c
-typedef struct liara_renderer_handle_t    liara_renderer_handle_t;
-typedef struct liara_core_world_handle_t  liara_core_world_handle_t;
-typedef struct liara_view_t             liara_view_t;
-```
-
-Type names use a `_t` suffix when the type is a value type meant to be embedded in structs or passed by value (`liara_view_t`,`liara_transform_t`). Opaque handle types use a `_handle_t` suffix and are forward-declared structs whose definition is private to the implementing module.
-
 Constants and enum values are uppercase, prefixed:
 
 ```c
@@ -147,6 +137,16 @@ Macros are uppercase, prefixed, and used sparingly:
 LIARA_VERSION_MAJOR
 LIARA_MAKE_VERSION(major, minor, patch)
 ```
+
+An opaque handle is a pointer to an incomplete struct. Two names are involved and they are not the same name: the struct tag names the thing, and the typedef names the handle to it.
+
+```c
+LIARA_TYPEDEF(struct liara_renderer_t, liara_renderer_handle_t);
+```
+
+The tag is `<module>_t`, the typedef is `<module>_handle_t`. The struct is never defined in a public header, so a consumer can hold and pass a handle without being able to construct, copy or inspect one — which is the entire point. Adding a field to the definition on the implementation side is not an ABI change, because no consumer's compiler ever knew the size.
+
+Version words are built with `LIARA_MAKE_VERSION_UNSAFE(major, minor, patch)`. The suffix is not decoration: the macro does not range-check its arguments, and a component that overflows its field corrupts the neighboring ones silently. `liara_try_make_version()` is the checked form and is what anything handling untrusted or computed input should call.
 
 ### 3.3 Why Lowercase, Why Prefixed
 

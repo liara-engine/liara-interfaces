@@ -1,5 +1,15 @@
 cmake_minimum_required(VERSION 3.29)
 
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
+    message(FATAL_ERROR
+            "In-source builds are not supported. Build into build/<preset-name>/ instead, which is "
+            "what the presets already do:\n"
+            "    cmake --preset linux-debug-clang\n"
+            "Remove the CMakeCache.txt and CMakeFiles/ this attempt just created before retrying.")
+endif()
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(LiaraCompilerSettings)
 include(GNUInstallDirs)
 
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/.release-please-manifest.json" RELEASE_PLEASE_MANIFEST)
@@ -98,6 +108,11 @@ if(LIARA_INTERFACES_INSTALL)
     install(FILES
             "${CMAKE_CURRENT_BINARY_DIR}/LiaraInterfacesConfig.cmake"
             "${CMAKE_CURRENT_BINARY_DIR}/LiaraInterfacesConfigVersion.cmake"
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LiaraInterfaces
+            COMPONENT liara-interfaces-dev
+    )
+
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/cmake/LiaraCompilerSettings.cmake"
             DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/LiaraInterfaces
             COMPONENT liara-interfaces-dev
     )

@@ -153,7 +153,7 @@ LIARA_CONSTEXPR_FN liara_version_compat_t liara_version_provides(const uint32_t 
     if (LIARA_VERSION_MAJOR(provided) != LIARA_VERSION_MAJOR(required)) { return LIARA_VERSION_COMPAT_INCOMPATIBLE; }
 
     if ((LIARA_VERSION_MAJOR(provided) == 0U && LIARA_VERSION_MINOR(provided) == 0U)
-        || (LIARA_VERSION_MINOR(required) == 0U && LIARA_VERSION_MINOR(required) == 0U)) {
+        || (LIARA_VERSION_MAJOR(required) == 0U && LIARA_VERSION_MINOR(required) == 0U)) {
         return LIARA_VERSION_COMPAT_INCOMPATIBLE;
     }
 
