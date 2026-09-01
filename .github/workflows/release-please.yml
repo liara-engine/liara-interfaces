@@ -46,14 +46,18 @@ jobs:
         working-directory: _root/workspace
         run: cmake --build --target liara_abi_oracle --preset linux-release-clang
 
+      - name: find liara_abi_oracle
+        run: |
+          find . -name liara_abi_oracle -type f -exec ls -l {} \;
+
       - uses: actions/upload-artifact@v7
         with:
           name: liara-abi-oracle-linux-x86_64
-          path: _root/workspace/build/linux-release-clang/liara_abi_oracle
+          path: _root/workspace/build/linux-release-clang/bin/liara_abi_oracle
           if-no-files-found: error
 
       - uses: softprops/action-gh-release@v3
         with:
 #          tag_name: ${{ needs.release-please.outputs.tag_name }}
           tag_name: 0.2.3
-          files: _root/workspace/build/linux-release-clang/liara_abi_oracle
+          files: _root/workspace/build/linux-release-clang/bin/liara_abi_oracle
