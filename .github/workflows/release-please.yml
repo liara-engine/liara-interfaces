@@ -32,25 +32,28 @@ jobs:
 
       - uses: actions/checkout@v7
         with:
-          repository: '${{ github.repository_owner }}/liara'
+          repository: '${{ github.repository_owner }}/.github'
           ref: 'main'
-          sparse-checkout: 'scripts/CMakePresets.json.template'
-          path: '.github-shared-core'
+          path: .github-shared-core
 
-      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends clang-18 clang-tools-18 ninja-build
+      - uses: ./.github-shared-core/.github/actions/setup-workspace
+        with:
+          module: liara-interfaces
+          configure-preset: linux-release-clang
+          toolchain: clang
 
-      - run: cp .github-shared-core/scripts/CMakePresets.json.template CMakePresets.json
-      - run: cmake --preset linux-release-clang
-      - run: cmake --build --target liara_abi_oracle --preset linux-release-clang
+      - shell: bash
+        working-directory: _root/workspace
+        run: cmake --build --target liara_abi_oracle --preset linux-release-clang
 
       - uses: actions/upload-artifact@v7
         with:
           name: liara-abi-oracle-linux-x86_64
-          path: build/linux-release-clang/liara_abi_oracle
+          path: _root/workspace/build/linux-release-clang/liara_abi_oracle
           if-no-files-found: error
 
       - uses: softprops/action-gh-release@v3
         with:
 #          tag_name: ${{ needs.release-please.outputs.tag_name }}
           tag_name: 0.2.3
-          files: build/linux-release-clang/liara_abi_oracle
+          files: _root/workspace/build/linux-release-clang/liara_abi_oracle
