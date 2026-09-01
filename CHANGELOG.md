@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/liara-engine/liara-interfaces/compare/v0.2.2...v0.2.3) (2026-09-01)
+
+
+### Bug Fixes
+
+* **release:** update release workflow to use CMake presets ([81b4d45](https://github.com/liara-engine/liara-interfaces/commit/81b4d456d17c851511de56a093fe783225f1e1cb))
+
 ## [0.2.2](https://github.com/liara-engine/liara-interfaces/compare/v0.2.1...v0.2.2) (2026-09-01)
 
 
