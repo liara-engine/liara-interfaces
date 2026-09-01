@@ -62,6 +62,9 @@ target_include_directories(liara_interfaces INTERFACE
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
+add_executable(liara_abi_oracle tools/abi_oracle.c)
+target_link_libraries(liara_abi_oracle PRIVATE Liara::Interfaces)
+
 if(LIARA_INTERFACES_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
