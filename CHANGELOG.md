@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.2](https://github.com/liara-engine/liara-interfaces/compare/v0.2.1...v0.2.2) (2026-09-01)
+
+
+### Features
+
+* **abi_oracle:** add ABI compatibility checker ([d2aaeba](https://github.com/liara-engine/liara-interfaces/commit/d2aaeba53950738c1ccfe8841892ff0d854d7e54))
+
+
+### Bug Fixes
+
+* **manifest:** update schema URL and version for module manifest v2 ([13d19e9](https://github.com/liara-engine/liara-interfaces/commit/13d19e90879ea2b71579d3f0bb5a30e897c983e7))
+
 ## [0.2.1](https://github.com/liara-engine/liara-interfaces/compare/v0.2.0...v0.2.1) (2026-08-07)
 
 
