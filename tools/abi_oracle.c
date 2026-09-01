@@ -29,17 +29,18 @@
  * pairs learns about all of them at once.
  */
 
+#include <liara/abi_version.h>
+
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+
 #include "liara/result.h"
 #include "liara/version.h"
 
-#include <liara/abi_version.h>
-
 enum { LIARA_LINE_MAX_LENGTH = 256 };
 
-static const char *liara_verdict_name(const liara_version_compat_t compat) {
+static const char* liara_verdict_name(const liara_version_compat_t compat) {
     switch (compat) {
         case LIARA_VERSION_COMPAT_EXACT: return "EXACT";
         case LIARA_VERSION_COMPAT_COMPATIBLE: return "COMPATIBLE";
@@ -63,7 +64,7 @@ static const char *liara_verdict_name(const liara_version_compat_t compat) {
  * @return Non-zero on success, zero when the text is malformed or a
  *         component does not fit its field.
  */
-static int liara_parse_version(const char *const text, uint32_t *const out) {
+static int liara_parse_version(const char* const text, uint32_t* const out) {
     unsigned int major = 0U;
     unsigned int minor = 0U;
     unsigned int patch = 0U;
@@ -88,52 +89,52 @@ static int liara_parse_version(const char *const text, uint32_t *const out) {
  */
 static int liara_self_test(void) {
     const struct {
-        const char *provided;
-        const char *required;
+        const char* provided;
+        const char* required;
         liara_version_compat_t expected;
-        const char *why;
+        const char* why;
     } cases[] = {
-        {.provided = "1.2.3", .required = "1.2.3", .expected = LIARA_VERSION_COMPAT_EXACT, .why = "identical"},
-        {
-            .provided = "1.3.0", .required = "1.2.0", .expected = LIARA_VERSION_COMPAT_COMPATIBLE,
-            .why = "newer minor satisfies older"
-        },
-        {
-            .provided = "1.2.9", .required = "1.2.0", .expected = LIARA_VERSION_COMPAT_COMPATIBLE,
-            .why = "patch is not significant"
-        },
-        {
-            .provided = "1.1.0", .required = "1.2.0", .expected = LIARA_VERSION_COMPAT_DEGRADED,
-            .why = "older minor is degraded"
-        },
-        {
-            .provided = "2.0.0", .required = "1.0.0", .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
-            .why = "major mismatch"
-        },
-        {
-            .provided = "1.0.0", .required = "2.0.0", .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
-            .why = "major mismatch, reversed"
-        },
-        {
-            .provided = "0.0.5", .required = "0.0.5", .expected = LIARA_VERSION_COMPAT_EXACT,
-            .why = "0.0.x equal to itself"
-        },
-        {
-            .provided = "0.0.5", .required = "0.0.6", .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
-            .why = "0.0.x demands exact equality"
-        },
-        {
-            .provided = "0.0.5", .required = "0.1.0", .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
-            .why = "ADR 0005 disputed pair, provided 0.0.x"
-        },
-        {
-            .provided = "0.1.0", .required = "0.0.5", .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
-            .why = "ADR 0005 disputed pair, required 0.0.x"
-        },
-        {
-            .provided = "0.2.0", .required = "0.1.0", .expected = LIARA_VERSION_COMPAT_COMPATIBLE,
-            .why = "0.x is an ordinary minor comparison"
-        },
+        {.provided = "1.2.3",.required = "1.2.3",.expected = LIARA_VERSION_COMPAT_EXACT,.why = "identical"                                     },
+        {.provided = "1.3.0",
+         .required = "1.2.0",
+         .expected = LIARA_VERSION_COMPAT_COMPATIBLE,
+         .why = "newer minor satisfies older"           },
+        {.provided = "1.2.9",
+         .required = "1.2.0",
+         .expected = LIARA_VERSION_COMPAT_COMPATIBLE,
+         .why = "patch is not significant"              },
+        {.provided = "1.1.0",
+         .required = "1.2.0",
+         .expected = LIARA_VERSION_COMPAT_DEGRADED,
+         .why = "older minor is degraded"               },
+        {.provided = "2.0.0",
+         .required = "1.0.0",
+         .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
+         .why = "major mismatch"                        },
+        {.provided = "1.0.0",
+         .required = "2.0.0",
+         .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
+         .why = "major mismatch, reversed"              },
+        {.provided = "0.0.5",
+         .required = "0.0.5",
+         .expected = LIARA_VERSION_COMPAT_EXACT,
+         .why = "0.0.x equal to itself"                 },
+        {.provided = "0.0.5",
+         .required = "0.0.6",
+         .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
+         .why = "0.0.x demands exact equality"          },
+        {.provided = "0.0.5",
+         .required = "0.1.0",
+         .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
+         .why = "ADR 0005 disputed pair, provided 0.0.x"},
+        {.provided = "0.1.0",
+         .required = "0.0.5",
+         .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
+         .why = "ADR 0005 disputed pair, required 0.0.x"},
+        {.provided = "0.2.0",
+         .required = "0.1.0",
+         .expected = LIARA_VERSION_COMPAT_COMPATIBLE,
+         .why = "0.x is an ordinary minor comparison"   },
     };
 
     int failures = 0;
@@ -142,28 +143,32 @@ static int liara_self_test(void) {
         uint32_t required = 0U;
 
         if (!liara_parse_version(cases[i].provided, &provided) || !liara_parse_version(cases[i].required, &required)) {
-            (void) fprintf(stderr, "FAIL  %s -> %s : unparseable\n", cases[i].provided, cases[i].required);
+            (void)fprintf(stderr, "FAIL  %s -> %s : unparseable\n", cases[i].provided, cases[i].required);
             ++failures;
             continue;
         }
 
         const liara_version_compat_t actual = liara_version_provides(provided, required);
         if (actual != cases[i].expected) {
-            (void) fprintf(stderr, "FAIL  %s -> %s : expected %s, got %s (%s)\n", cases[i].provided,
-                           cases[i].required, liara_verdict_name(cases[i].expected), liara_verdict_name(actual),
-                           cases[i].why);
+            (void)fprintf(stderr,
+                          "FAIL  %s -> %s : expected %s, got %s (%s)\n",
+                          cases[i].provided,
+                          cases[i].required,
+                          liara_verdict_name(cases[i].expected),
+                          liara_verdict_name(actual),
+                          cases[i].why);
             ++failures;
         }
     }
 
-    (void) fprintf(stderr, "abi-oracle self-test: %zu cases, %d failures\n", sizeof cases / sizeof cases[0], failures);
+    (void)fprintf(stderr, "abi-oracle self-test: %zu cases, %d failures\n", sizeof cases / sizeof cases[0], failures);
     return failures == 0 ? 0 : 1;
 }
 
-int main(const int argc, char *const argv[]) {
+int main(const int argc, char* const argv[]) {
     if (argc > 1 && strcmp(argv[1], "--self-test") == 0) { return liara_self_test(); }
     if (argc > 1) {
-        (void) fprintf(stderr, "usage: %s [--self-test] < pairs\n", argv[0]);
+        (void)fprintf(stderr, "usage: %s [--self-test] < pairs\n", argv[0]);
         return 2;
     }
 
@@ -181,12 +186,12 @@ int main(const int argc, char *const argv[]) {
 
         if (sscanf(line, "%255s %255s", left, right) != 2 || !liara_parse_version(left, &provided)
             || !liara_parse_version(right, &required)) {
-            (void) printf("%s ERROR\n", line);
+            (void)printf("%s ERROR\n", line);
             malformed = 1;
             continue;
         }
 
-        (void) printf("%s %s %s\n", left, right, liara_verdict_name(liara_version_provides(provided, required)));
+        (void)printf("%s %s %s\n", left, right, liara_verdict_name(liara_version_provides(provided, required)));
     }
 
     return malformed;
