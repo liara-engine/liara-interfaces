@@ -13,6 +13,7 @@ jobs:
 
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
 
     steps:
       - uses: googleapis/release-please-action@v5
@@ -29,16 +30,24 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+      - uses: actions/checkout@v7
+        with:
+          repository: '${{ github.repository_owner }}/liara'
+          ref: 'main'
+          sparse-checkout: 'scripts/CMakePresets.json.template'
+          path: '.github-shared-core'
 
-      - run: cmake --build build --target liara_abi_oracle --config Release
+      - run: cp .github-shared-core/scripts/CMakePresets.json.template CMakePresets.json
+      - run: cmake --preset linux-release-clang
+      - run: cmake --build --target liara_abi_oracle --preset linux-release-clang
 
       - uses: actions/upload-artifact@v7
         with:
           name: liara-abi-oracle-linux-x86_64
-          path: build/liara_abi_oracle
+          path: build/linux-release-clang/liara_abi_oracle
           if-no-files-found: error
 
-      - env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload ${{ github.ref_name }} build/liara_abi_oracle#liara_abi_oracle-linux-x86_64 --clobber
+      - uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ needs.release-please.outputs.tag_name }}
+          files: build/linux-release-clang/liara_abi_oracle
