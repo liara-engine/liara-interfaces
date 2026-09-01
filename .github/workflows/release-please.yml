@@ -23,7 +23,7 @@ jobs:
 
   publish-abi-oracle:
     needs: release-please
-#    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -46,10 +46,6 @@ jobs:
         working-directory: _root/workspace
         run: cmake --build --target liara_abi_oracle --preset linux-release-clang
 
-      - name: find liara_abi_oracle
-        run: |
-          find . -name liara_abi_oracle -type f -exec ls -l {} \;
-
       - uses: actions/upload-artifact@v7
         with:
           name: liara-abi-oracle-linux-x86_64
@@ -58,6 +54,5 @@ jobs:
 
       - uses: softprops/action-gh-release@v3
         with:
-#          tag_name: ${{ needs.release-please.outputs.tag_name }}
-          tag_name: 0.2.3
+          tag_name: ${{ needs.release-please.outputs.tag_name }}
           files: _root/workspace/build/linux-release-clang/bin/liara_abi_oracle
