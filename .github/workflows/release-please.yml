@@ -23,7 +23,7 @@ jobs:
 
   publish-abi-oracle:
     needs: release-please
-    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+#    if: ${{ needs.release-please.outputs.release_created == 'true' }}
     runs-on: ubuntu-24.04
     permissions:
       contents: write
@@ -37,6 +37,8 @@ jobs:
           sparse-checkout: 'scripts/CMakePresets.json.template'
           path: '.github-shared-core'
 
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends clang-18 clang-tools-18
+
       - run: cp .github-shared-core/scripts/CMakePresets.json.template CMakePresets.json
       - run: cmake --preset linux-release-clang
       - run: cmake --build --target liara_abi_oracle --preset linux-release-clang
@@ -49,5 +51,6 @@ jobs:
 
       - uses: softprops/action-gh-release@v3
         with:
-          tag_name: ${{ needs.release-please.outputs.tag_name }}
+#          tag_name: ${{ needs.release-please.outputs.tag_name }}
+          tag_name: 0.2.3
           files: build/linux-release-clang/liara_abi_oracle
