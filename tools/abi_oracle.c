@@ -29,21 +29,23 @@
  * pairs learns about all of them at once.
  */
 
-#include <inttypes.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include "liara/result.h"
+#include "liara/version.h"
 
 #include <liara/abi_version.h>
 
-enum { LINE_MAX_LENGTH = 256 };
+enum { LIARA_LINE_MAX_LENGTH = 256 };
 
-static const char *verdict_name(const liara_version_compat_t compat) {
+static const char *liara_verdict_name(const liara_version_compat_t compat) {
     switch (compat) {
-        case LIARA_VERSION_COMPAT_EXACT:        return "EXACT";
-        case LIARA_VERSION_COMPAT_COMPATIBLE:   return "COMPATIBLE";
-        case LIARA_VERSION_COMPAT_DEGRADED:     return "DEGRADED";
+        case LIARA_VERSION_COMPAT_EXACT: return "EXACT";
+        case LIARA_VERSION_COMPAT_COMPATIBLE: return "COMPATIBLE";
+        case LIARA_VERSION_COMPAT_DEGRADED: return "DEGRADED";
         case LIARA_VERSION_COMPAT_INCOMPATIBLE: return "INCOMPATIBLE";
-        default:                                return "UNKNOWN";
+        default: return "UNKNOWN";
     }
 }
 
@@ -61,13 +63,15 @@ static const char *verdict_name(const liara_version_compat_t compat) {
  * @return Non-zero on success, zero when the text is malformed or a
  *         component does not fit its field.
  */
-static int parse_version(const char *const text, uint32_t *const out) {
+static int liara_parse_version(const char *const text, uint32_t *const out) {
     unsigned int major = 0U;
     unsigned int minor = 0U;
     unsigned int patch = 0U;
     char trailing = '\0';
 
+    // NOLINTBEGIN(cert-err34-c)
     if (sscanf(text, "%u.%u.%u%c", &major, &minor, &patch, &trailing) != 3) { return 0; }
+    // NOLINTEND(cert-err34-c)
 
     return liara_try_make_version(major, minor, patch, out) == LIARA_RESULT_SUCCESS;
 }
@@ -82,24 +86,54 @@ static int parse_version(const char *const text, uint32_t *const out) {
  *
  * @return Zero when every case matches, one otherwise.
  */
-static int self_test(void) {
+static int liara_self_test(void) {
     const struct {
         const char *provided;
         const char *required;
         liara_version_compat_t expected;
         const char *why;
     } cases[] = {
-        {"1.2.3", "1.2.3", LIARA_VERSION_COMPAT_EXACT,        "identical"},
-        {"1.3.0", "1.2.0", LIARA_VERSION_COMPAT_COMPATIBLE,   "newer minor satisfies older"},
-        {"1.2.9", "1.2.0", LIARA_VERSION_COMPAT_COMPATIBLE,   "patch is not significant"},
-        {"1.1.0", "1.2.0", LIARA_VERSION_COMPAT_DEGRADED,     "older minor is degraded"},
-        {"2.0.0", "1.0.0", LIARA_VERSION_COMPAT_INCOMPATIBLE, "major mismatch"},
-        {"1.0.0", "2.0.0", LIARA_VERSION_COMPAT_INCOMPATIBLE, "major mismatch, reversed"},
-        {"0.0.5", "0.0.5", LIARA_VERSION_COMPAT_EXACT,        "0.0.x equal to itself"},
-        {"0.0.5", "0.0.6", LIARA_VERSION_COMPAT_INCOMPATIBLE, "0.0.x demands exact equality"},
-        {"0.0.5", "0.1.0", LIARA_VERSION_COMPAT_INCOMPATIBLE, "ADR 0005 disputed pair, provided 0.0.x"},
-        {"0.1.0", "0.0.5", LIARA_VERSION_COMPAT_INCOMPATIBLE, "ADR 0005 disputed pair, required 0.0.x"},
-        {"0.2.0", "0.1.0", LIARA_VERSION_COMPAT_COMPATIBLE,   "0.x is an ordinary minor comparison"},
+        {.provided = "1.2.3", .required = "1.2.3", .expected = LIARA_VERSION_COMPAT_EXACT, .why = "identical"},
+        {
+            .provided = "1.3.0", .required = "1.2.0", .expected = LIARA_VERSION_COMPAT_COMPATIBLE,
+            .why = "newer minor satisfies older"
+        },
+        {
+            .provided = "1.2.9", .required = "1.2.0", .expected = LIARA_VERSION_COMPAT_COMPATIBLE,
+            .why = "patch is not significant"
+        },
+        {
+            .provided = "1.1.0", .required = "1.2.0", .expected = LIARA_VERSION_COMPAT_DEGRADED,
+            .why = "older minor is degraded"
+        },
+        {
+            .provided = "2.0.0", .required = "1.0.0", .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
+            .why = "major mismatch"
+        },
+        {
+            .provided = "1.0.0", .required = "2.0.0", .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
+            .why = "major mismatch, reversed"
+        },
+        {
+            .provided = "0.0.5", .required = "0.0.5", .expected = LIARA_VERSION_COMPAT_EXACT,
+            .why = "0.0.x equal to itself"
+        },
+        {
+            .provided = "0.0.5", .required = "0.0.6", .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
+            .why = "0.0.x demands exact equality"
+        },
+        {
+            .provided = "0.0.5", .required = "0.1.0", .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
+            .why = "ADR 0005 disputed pair, provided 0.0.x"
+        },
+        {
+            .provided = "0.1.0", .required = "0.0.5", .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
+            .why = "ADR 0005 disputed pair, required 0.0.x"
+        },
+        {
+            .provided = "0.2.0", .required = "0.1.0", .expected = LIARA_VERSION_COMPAT_COMPATIBLE,
+            .why = "0.x is an ordinary minor comparison"
+        },
     };
 
     int failures = 0;
@@ -107,7 +141,7 @@ static int self_test(void) {
         uint32_t provided = 0U;
         uint32_t required = 0U;
 
-        if (!parse_version(cases[i].provided, &provided) || !parse_version(cases[i].required, &required)) {
+        if (!liara_parse_version(cases[i].provided, &provided) || !liara_parse_version(cases[i].required, &required)) {
             (void) fprintf(stderr, "FAIL  %s -> %s : unparseable\n", cases[i].provided, cases[i].required);
             ++failures;
             continue;
@@ -116,7 +150,8 @@ static int self_test(void) {
         const liara_version_compat_t actual = liara_version_provides(provided, required);
         if (actual != cases[i].expected) {
             (void) fprintf(stderr, "FAIL  %s -> %s : expected %s, got %s (%s)\n", cases[i].provided,
-                           cases[i].required, verdict_name(cases[i].expected), verdict_name(actual), cases[i].why);
+                           cases[i].required, liara_verdict_name(cases[i].expected), liara_verdict_name(actual),
+                           cases[i].why);
             ++failures;
         }
     }
@@ -126,32 +161,32 @@ static int self_test(void) {
 }
 
 int main(const int argc, char *const argv[]) {
-    if (argc > 1 && strcmp(argv[1], "--self-test") == 0) { return self_test(); }
+    if (argc > 1 && strcmp(argv[1], "--self-test") == 0) { return liara_self_test(); }
     if (argc > 1) {
         (void) fprintf(stderr, "usage: %s [--self-test] < pairs\n", argv[0]);
         return 2;
     }
 
-    char line[LINE_MAX_LENGTH];
+    char line[LIARA_LINE_MAX_LENGTH];
     int malformed = 0;
 
     while (fgets(line, sizeof line, stdin) != NULL) {
         line[strcspn(line, "\r\n")] = '\0';
         if (line[0] == '\0' || line[0] == '#') { continue; }
 
-        char left[LINE_MAX_LENGTH];
-        char right[LINE_MAX_LENGTH];
+        char left[LIARA_LINE_MAX_LENGTH];
+        char right[LIARA_LINE_MAX_LENGTH];
         uint32_t provided = 0U;
         uint32_t required = 0U;
 
-        if (sscanf(line, "%255s %255s", left, right) != 2 || !parse_version(left, &provided)
-            || !parse_version(right, &required)) {
+        if (sscanf(line, "%255s %255s", left, right) != 2 || !liara_parse_version(left, &provided)
+            || !liara_parse_version(right, &required)) {
             (void) printf("%s ERROR\n", line);
             malformed = 1;
             continue;
         }
 
-        (void) printf("%s %s %s\n", left, right, verdict_name(liara_version_provides(provided, required)));
+        (void) printf("%s %s %s\n", left, right, liara_verdict_name(liara_version_provides(provided, required)));
     }
 
     return malformed;
