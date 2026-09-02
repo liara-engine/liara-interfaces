@@ -23,14 +23,14 @@ permissions:
 
 jobs:
   build:
-    uses: liara-engine/.github/.github/workflows/reusable-module-build.yml@v1
+    uses: liara-engine/.github/.github/workflows/reusable-module-build.yml@v2
     with:
       module: liara-interfaces
       needs-interfaces: false
       github-repo-version: v1
 
   format:
-    uses: liara-engine/.github/.github/workflows/reusable-lint.yml@v1
+    uses: liara-engine/.github/.github/workflows/reusable-lint.yml@v2
     with:
       module: liara-interfaces
       run-tidy: false

@@ -38,19 +38,19 @@ permissions:
 
 jobs:
   build-and-test:
-    uses: liara-engine/.github/.github/workflows/reusable-build-and-test.yml@v1
+    uses: liara-engine/.github/.github/workflows/reusable-build-and-test.yml@v2
     with:
       module: liara-interfaces
       github-repo-version: v1
 
   lint:
-    uses: liara-engine/.github/.github/workflows/reusable-lint.yml@v1
+    uses: liara-engine/.github/.github/workflows/reusable-lint.yml@v2
     with:
       module: liara-interfaces
       github-repo-version: v1
 
   abi-header-portability:
-    uses: liara-engine/.github/.github/workflows/reusable-abi-header-portability.yml@v1
+    uses: liara-engine/.github/.github/workflows/reusable-abi-header-portability.yml@v2
     with:
       include-dir: include
       c-standards: '11;17;23'
@@ -58,7 +58,7 @@ jobs:
       github-repo-version: v1
 
   abi-interface-rules:
-    uses: liara-engine/.github/.github/workflows/reusable-abi-interface-rules.yml@v1
+    uses: liara-engine/.github/.github/workflows/reusable-abi-interface-rules.yml@v2
     with:
       include-dir: include
       std: 'c++20'
@@ -66,14 +66,14 @@ jobs:
       github-repo-version: v1
 
   abi-layout-freeze:
-    uses: liara-engine/.github/.github/workflows/reusable-abi-layout-freeze.yml@v1
+    uses: liara-engine/.github/.github/workflows/reusable-abi-layout-freeze.yml@v2
     with:
       include-dir: include
       golden-header: 'tests/abi/abi_layout.generated.h'
       github-repo-version: v1
 
   abi-snapshot:
-    uses: liara-engine/.github/.github/workflows/reusable-abi-snapshot.yml@v1
+    uses: liara-engine/.github/.github/workflows/reusable-abi-snapshot.yml@v2
     with:
       include-dir: include
       std: 'c++20'
@@ -85,7 +85,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: liara-engine/.github/.github/workflows/reusable-ci-report.yml@v1
+    uses: liara-engine/.github/.github/workflows/reusable-ci-report.yml@v2
     with:
       title: 'CI report'
       header: 'ci-report'
