@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.4](https://github.com/liara-engine/liara-interfaces/compare/v0.2.3...v0.2.4) (2026-09-02)
+
+
+### Bug Fixes
+
+* **release:** add ninja-build ([730fcb6](https://github.com/liara-engine/liara-interfaces/commit/730fcb643e4d545edc565d3a0da77739018c3fd3))
+* **release:** uncomment conditional checks and clean up artifact upload steps ([31458dc](https://github.com/liara-engine/liara-interfaces/commit/31458dc159b5af2c801c3a6497af4be117ad536c))
+* **release:** update paths for liara_abi_oracle in build and upload steps ([b9dae4d](https://github.com/liara-engine/liara-interfaces/commit/b9dae4d21e10bf190d43f57e4d565d60b87defa2))
+* **release:** update release-please.yml to install clang-18 ([afd7e0c](https://github.com/liara-engine/liara-interfaces/commit/afd7e0c38d4538737e8fcc1bd1fd1a2ffcaa6a3f))
+* **release:** update repository path and adjust build steps in release workflow ([17bd47f](https://github.com/liara-engine/liara-interfaces/commit/17bd47f51aa5d22da0f84e00605b390e1eafe530))
+
 ## [0.2.3](https://github.com/liara-engine/liara-interfaces/compare/v0.2.2...v0.2.3) (2026-09-01)
 
 
