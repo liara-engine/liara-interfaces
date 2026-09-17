@@ -1,0 +1,68 @@
+---
+title: Interfaces
+description: Rules for designing, implementing and evolving the C ABI contracts between Liara's modules. Required reading before changing anything in this repository.
+sidebar:
+  label: Start here
+  order: 0
+---
+
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+The headers in this repository are the contract between modules. Every part of the engine talks through them, including the core, the renderer, the editor, and any third-party reimplementation that ever exists, so a change here ripples through every consumer at once.
+
+These pages are required reading before modifying anything in this repository. The philosophy behind them is in the meta repository's [interface boundary](https://liara-engine.liara-engine-documentation.workers.dev/liara/latest/guides/architecture/interface-boundary/) page, and the decision that produced them is [ADR 0002](https://liara-engine.liara-engine-documentation.workers.dev/liara/latest/guides/adr/0002-c-abi-as-the-inter-module-contract/).
+
+## Why the rules are rules
+
+Every rule here has a concrete reason, and it is always one of four.
+
+**ABI stability**, so that nothing breaks when two modules are built with different compilers, different standard library versions or different flags.
+
+**Cross-language portability**, so that a module can be reimplemented in Rust or Zig without contorting the binding.
+
+**Versioning discipline**, so that the interface can evolve without silently breaking a consumer.
+
+**Memory safety**, so that lifetime and ownership are never ambiguous.
+
+When a rule conflicts with convenience, the rule wins. Convenience lives behind the boundary, in C++ wrappers and helper headers, and the boundary itself stays disciplined.
+
+## What counts as an interface
+
+Anything in `include/` is an interface. Anything outside it is not.
+
+A header in that directory has to be valid C rather than merely valid C++, compiling with a C compiler and no extensions enabled, and it has to be includable from C, from C++, or from any language with a C FFI.
+
+That is enforced rather than trusted. CI compiles every public header standalone, and included twice to catch include-guard bugs, under C11, C17 and C23 and under C++17, C++20 and C++23, across GCC, Clang and MSVC, with warnings as errors.
+
+### What a header may use
+
+Fixed-width integers from `<stdint.h>`, sizes and pointer differences from `<stddef.h>`, and the boolean type from `<stdbool.h>`. That is the whole list.
+
+### What it may not
+
+No C++ at all: no `std::`, no class, no template, no reference, no namespace.
+
+No platform header. No `<windows.h>`, no `<unistd.h>`, no `<vulkan.h>`. A platform-specific type that genuinely has to cross does so as an opaque pointer or as a fixed-width integer whose interpretation is documented, which is how the native window handle travels from the platform module to the renderer.
+
+No C standard library call in a header body. An inline function in a header does not call into libc.
+
+No variable-length array, no flexible array member, and nothing else from C99 or C11 whose MSVC support is patchy.
+
+## The rules
+
+<CardGrid>
+  <LinkCard title="Naming" href="./naming/" description="Prefixes, symbol shapes, and why C forces all of it." />
+  <LinkCard title="Types" href="./types/" description="Fixed-width integers, opaque handles, plain-data structs, strings and arrays." />
+  <LinkCard title="Errors" href="./errors/" description="The result type, output parameters, and what may not cross." />
+  <LinkCard title="Ownership" href="./ownership/" description="Who allocates, who frees, and what a borrowed pointer promises." />
+  <LinkCard title="Callbacks" href="./callbacks/" description="Signatures, user data, and the re-entrancy rules." />
+  <LinkCard title="Version encoding" href="./versioning/" description="One packed word, two ways to build it, and why the ABI version is generated." />
+  <LinkCard title="Self-description and negotiation" href="./negotiation/" description="What every module reports about itself, and the rule a host applies to it." />
+  <LinkCard title="What breaks" href="./breaking-changes/" description="The change-to-bump table, and the versioned-struct pattern." />
+  <LinkCard title="Header organization" href="./headers/" description="One concept per header, extern C, internal macros and export macros." />
+  <LinkCard title="Documentation" href="./documentation/" description="What every public symbol carries, and why the header is the canonical reference." />
+  <LinkCard title="Testing and CI" href="./testing/" description="Four kinds of test for a repository with no implementation, and the five jobs that run them." />
+  <LinkCard title="Changing an interface" href="./process/" description="The five steps, and what compatibility is promised across versions." />
+  <LinkCard title="Anti-patterns" href="./anti-patterns/" description="Five shapes that look reasonable and are forbidden." />
+  <LinkCard title="Checklist" href="./checklist/" description="What to verify before submitting an interface change." />
+</CardGrid>
