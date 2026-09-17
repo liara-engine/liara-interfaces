@@ -1,3 +1,10 @@
+---
+title: Changelog
+description: The changelog for the Liara engine, with links to the GitHub compare view for each version.
+sidebar:
+    order: 1
+---
+
 # Changelog
 
 ## [0.2.3](https://github.com/liara-engine/liara-interfaces/compare/v0.2.2...v0.2.3) (2026-09-01)
