@@ -3,7 +3,8 @@ Checks: >
     -*,
     bugprone-*,
     -bugprone-easily-swappable-parameters,
-      cert-*,
+    -bugprone-macro-parentheses,
+    cert-*,
     clang-analyzer-*,
     -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
     concurrency-*,
@@ -11,6 +12,8 @@ Checks: >
     modernize-*,
     -modernize-use-trailing-return-type,
     -modernize-avoid-c-arrays,
+    -modernize-redundant-void-arg,
+    -modernize-macro-to-enum,
     -modernize-use-using,
     -modernize-use-nullptr,
     -modernize-concat-nested-namespaces,
@@ -19,7 +22,9 @@ Checks: >
     -modernize-use-equals-delete,
     -modernize-use-default-member-init,
     performance-*,
+    -performance-enum-size,
     portability-*,
+    -portability-avoid-pragma-once,
     readability-*,
     -readability-identifier-length
 
@@ -29,7 +34,8 @@ WarningsAsErrors: >
     -clang-diagnostic-deprecated-declaration,
     -readability-magic-numbers,
 
-HeaderFilterRegex: '^(liara)/.*\.(h)$'
+HeaderFilterRegex: '(include|tests|tools)/.*\.h$'
+ExcludeHeaderFilterRegex: '(/vcpkg_installed/|/build/|\.generated\.)'
 
 CheckOptions:
     -   key: readability-identifier-naming.StructPrefix

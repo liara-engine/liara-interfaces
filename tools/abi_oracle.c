@@ -70,9 +70,11 @@ static int liara_parse_version(const char* const text, uint32_t* const out) {
     unsigned int patch = 0U;
     char trailing = '\0';
 
-    // NOLINTBEGIN(cert-err34-c)
+    // NOLINTBEGIN(cert-err34-c, bugprone-unchecked-string-to-number-conversion)
+    // sscanf returns the number of successfully matched and assigned input items, which should be 3 for major, minor,
+    // and patch. If it is not 3, the input is malformed.
     if (sscanf(text, "%u.%u.%u%c", &major, &minor, &patch, &trailing) != 3) { return 0; }
-    // NOLINTEND(cert-err34-c)
+    // NOLINTEND(cert-err34-c, bugprone-unchecked-string-to-number-conversion)
 
     return liara_try_make_version(major, minor, patch, out) == LIARA_RESULT_SUCCESS;
 }
