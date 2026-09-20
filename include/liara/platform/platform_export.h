@@ -4,8 +4,8 @@
 extern "C" {
 #endif
 
-#if !defined(LIARA_PLATFORM_SHARED) && !defined(LIARA_PLATFORM_STATIC)
-    #error "You must define either LIARA_PLATFORM_SHARED or LIARA_PLATFORM_STATIC"
+#if !defined(LIARA_PLATFORM_SHARED) && !defined(LIARA_PLATFORM_STATIC) && defined(LIARA_PLATFORM_BUILD)
+    #error "Building liara-platform requires either LIARA_PLATFORM_SHARED or LIARA_PLATFORM_STATIC"
 #endif
 
 #if defined(LIARA_PLATFORM_SHARED) && defined(LIARA_PLATFORM_STATIC)

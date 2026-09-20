@@ -4,8 +4,8 @@
 extern "C" {
 #endif
 
-#if !defined(LIARA_CORE_SHARED) && !defined(LIARA_CORE_STATIC)
-    #error "You must define either LIARA_CORE_SHARED or LIARA_CORE_STATIC"
+#if !defined(LIARA_CORE_SHARED) && !defined(LIARA_CORE_STATIC) && defined(LIARA_CORE_BUILD)
+    #error "Building liara-core requires either LIARA_CORE_SHARED or LIARA_CORE_STATIC"
 #endif
 
 #if defined(LIARA_CORE_SHARED) && defined(LIARA_CORE_STATIC)

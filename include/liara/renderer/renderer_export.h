@@ -4,8 +4,8 @@
 extern "C" {
 #endif
 
-#if !defined(LIARA_RENDERER_SHARED) && !defined(LIARA_RENDERER_STATIC)
-    #error "You must define either LIARA_RENDERER_SHARED or LIARA_RENDERER_STATIC"
+#if !defined(LIARA_RENDERER_SHARED) && !defined(LIARA_RENDERER_STATIC) && defined(LIARA_RENDERER_BUILD)
+    #error "Building liara-renderer requires either LIARA_RENDERER_SHARED or LIARA_RENDERER_STATIC"
 #endif
 
 #if defined(LIARA_RENDERER_SHARED) && defined(LIARA_RENDERER_STATIC)
