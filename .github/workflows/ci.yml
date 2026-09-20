@@ -16,6 +16,7 @@ on:
       - vcpkg-configuration.json
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened]
     paths:
       - '.github/workflows/ci.yml'
       - include/**
