@@ -12,6 +12,7 @@ sidebar:
 
 ### Bug Fixes
 
+* **ci:** remove main branch trigger since push to main is now refused ([5b6bbbd](https://github.com/liara-engine/liara-interfaces/commit/5b6bbbdb33706ec7801e1fd2da87981146f202d6))
 * **ci:** remove main branch trigger since push to main is now refused ([f3219af](https://github.com/liara-engine/liara-interfaces/commit/f3219af9a8314f3217272d008edc45ed4485d9b8))
 * **clang-tidy:** adjust header filter regex and update checks ([970f56a](https://github.com/liara-engine/liara-interfaces/commit/970f56a6b71fb3ace51339991adf212763d48015))
 
