@@ -95,7 +95,7 @@ TEST_CASE("liara_version_provides") {
          .label = "patch ignored above 0.0"},
         {.provided = LIARA_MAKE_VERSION_UNSAFE(1, 1, 0),
          .required = LIARA_MAKE_VERSION_UNSAFE(1, 2, 0),
-         .expected = LIARA_VERSION_COMPAT_DEGRADED,
+         .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
          .label = "older minor"            },
         {.provided = LIARA_MAKE_VERSION_UNSAFE(2, 0, 0),
          .required = LIARA_MAKE_VERSION_UNSAFE(1, 0, 0),
