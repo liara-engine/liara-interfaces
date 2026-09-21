@@ -41,8 +41,8 @@ LIARA_STATIC_ASSERT(LIARA_ABI_VERSION_PATCH <= LIARA_VERSION_PATCH_MASK, "Patch 
  * It can be used to determine whether a specific version of the interface is compatible with another version.
  */
 typedef enum liara_version_compat {
-    LIARA_VERSION_COMPAT_EXACT = 0,         // identical
-    LIARA_VERSION_COMPAT_COMPATIBLE = 1,    // provider newer minor, fully usable
+    LIARA_VERSION_COMPAT_EXACT = 0,       // identical
+    LIARA_VERSION_COMPAT_COMPATIBLE = 1,  // provider newer minor, fully usable
     // 2 was DEGRADED, removed in ABI 1.0.0. See ADR 0011. The value is left as a hole for no wrong meaning
     LIARA_VERSION_COMPAT_INCOMPATIBLE = 3,  // major mismatch, older minor, or 0.0.x inequality
 } liara_version_compat_t;
