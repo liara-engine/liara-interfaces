@@ -41,10 +41,10 @@ LIARA_STATIC_ASSERT(LIARA_ABI_VERSION_PATCH <= LIARA_VERSION_PATCH_MASK, "Patch 
  * It can be used to determine whether a specific version of the interface is compatible with another version.
  */
 typedef enum liara_version_compat {
-    LIARA_VERSION_COMPAT_EXACT = 0,         // identical
-    LIARA_VERSION_COMPAT_COMPATIBLE = 1,    // provider newer minor, fully usable
-    LIARA_VERSION_COMPAT_DEGRADED = 2,      // provider older minor: some newer functions unavailable
-    LIARA_VERSION_COMPAT_INCOMPATIBLE = 3,  // major mismatch, or 0.0.x inequality
+    LIARA_VERSION_COMPAT_EXACT = 0,       // identical
+    LIARA_VERSION_COMPAT_COMPATIBLE = 1,  // provider newer minor, fully usable
+    // 2 was DEGRADED, removed in ABI 1.0.0. See ADR 0011. The value is left as a hole for no wrong meaning
+    LIARA_VERSION_COMPAT_INCOMPATIBLE = 3,  // major mismatch, older minor, or 0.0.x inequality
 } liara_version_compat_t;
 
 /**
@@ -87,7 +87,6 @@ typedef enum liara_version_compat {
 #define LIARA_VERSION_COMPAT_STR(compat)                              \
     ((compat) == LIARA_VERSION_COMPAT_EXACT          ? "EXACT"        \
      : (compat) == LIARA_VERSION_COMPAT_COMPATIBLE   ? "COMPATIBLE"   \
-     : (compat) == LIARA_VERSION_COMPAT_DEGRADED     ? "DEGRADED"     \
      : (compat) == LIARA_VERSION_COMPAT_INCOMPATIBLE ? "INCOMPATIBLE" \
                                                      : "UNKNOWN")
 
@@ -140,7 +139,7 @@ static inline const char* liara_version_compat_str(const liara_version_compat_t 
  *
  * The rule, in order: identical versions are EXACT; differing majors are INCOMPATIBLE; a 0.0.x
  * version on either side demands exact equality and is otherwise INCOMPATIBLE; an older provided
- * minor is DEGRADED; anything else is COMPATIBLE.
+ * minor is INCOMPATIBLE; anything else is COMPATIBLE.
  *
  * @param[in] provided The version being offered — typically a module's reported ABI version.
  * @param[in] required The version being asked for — typically the caller's LIARA_ABI_VERSION.
@@ -157,7 +156,7 @@ LIARA_CONSTEXPR_FN liara_version_compat_t liara_version_provides(const uint32_t 
         return LIARA_VERSION_COMPAT_INCOMPATIBLE;
     }
 
-    if (LIARA_VERSION_MINOR(provided) < LIARA_VERSION_MINOR(required)) { return LIARA_VERSION_COMPAT_DEGRADED; }
+    if (LIARA_VERSION_MINOR(provided) < LIARA_VERSION_MINOR(required)) { return LIARA_VERSION_COMPAT_INCOMPATIBLE; }
     return LIARA_VERSION_COMPAT_COMPATIBLE;
 }
 

@@ -44,7 +44,6 @@ static const char* liara_verdict_name(const liara_version_compat_t compat) {
     switch (compat) {
         case LIARA_VERSION_COMPAT_EXACT: return "EXACT";
         case LIARA_VERSION_COMPAT_COMPATIBLE: return "COMPATIBLE";
-        case LIARA_VERSION_COMPAT_DEGRADED: return "DEGRADED";
         case LIARA_VERSION_COMPAT_INCOMPATIBLE: return "INCOMPATIBLE";
         default: return "UNKNOWN";
     }
@@ -107,8 +106,8 @@ static int liara_self_test(void) {
          .why = "patch is not significant"              },
         {.provided = "1.1.0",
          .required = "1.2.0",
-         .expected = LIARA_VERSION_COMPAT_DEGRADED,
-         .why = "older minor is degraded"               },
+         .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
+         .why = "older minor, no partial state"         },
         {.provided = "2.0.0",
          .required = "1.0.0",
          .expected = LIARA_VERSION_COMPAT_INCOMPATIBLE,
