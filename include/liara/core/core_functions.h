@@ -10,12 +10,12 @@
 /**
  * @brief Every entry point of the `liara_core_` namespace, as an X-macro list.
  */
-#define LIARA_CORE_FUNCTIONS(X, prefix)                              \
-    X(prefix, info, const liara_module_info_t*, (void))              \
-    X(prefix, abi_version, uint32_t, (void))                         \
-    X(prefix, create, liara_result_t, (liara_core_handle_t**))       \
-    X(prefix, destroy, liara_result_t, (const liara_core_handle_t*)) \
-    X(prefix, update, void, (liara_core_handle_t*, float))           \
+#define LIARA_CORE_FUNCTIONS(X, prefix)                        \
+    X(prefix, info, const liara_module_info_t*, (void))        \
+    X(prefix, abi_version, uint32_t, (void))                   \
+    X(prefix, create, liara_result_t, (liara_core_handle_t**)) \
+    X(prefix, destroy, void, (liara_core_handle_t*))           \
+    X(prefix, update, void, (liara_core_handle_t*, float))     \
     X(prefix, get_render_packet, liara_result_t, (const liara_core_handle_t*, liara_render_packet_t*))
 
 /** The library name stem, without platform prefix or extension. */

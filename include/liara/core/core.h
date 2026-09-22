@@ -68,15 +68,14 @@ LIARA_CORE_API liara_result_t liara_core_create(liara_core_handle_t** out_core);
  * @brief Destroys a Liara core instance.
  *
  * This function deallocates and cleans up the resources associated with a Liara core instance. After calling this
- * function, the core pointer should not be used again.
+ * function, the core pointer must not be used again.
  *
- * @param[in] core_handle A pointer to the core instance to be destroyed.
+ * @param[in] core_handle A pointer to the core instance to be destroyed. A null pointer is a no-op, as it is for
+ *            `free`. Passing a handle that was already destroyed is undefined.
  *
- * @return A `liara_result_t` indicating the success or failure of the operation. Possible return values include:
- * - `LIARA_RESULT_SUCCESS`: The core was destroyed successfully.
- * - `LIARA_RESULT_NULL_POINTER`: The `core` parameter is a null pointer.
+ * @threadsafety This function is not thread-safe with respect to the handle it destroys. @endthreadsafety
  */
-LIARA_CORE_API liara_result_t liara_core_destroy(const liara_core_handle_t* core_handle);
+LIARA_CORE_API void liara_core_destroy(liara_core_handle_t* core_handle);
 
 /**
  * @brief Advances the Liara core by one tick.
