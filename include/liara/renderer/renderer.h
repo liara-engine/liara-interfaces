@@ -69,19 +69,14 @@ LIARA_RENDERER_API liara_result_t liara_renderer_create(liara_renderer_handle_t*
  * @brief Destroys a Liara renderer instance.
  *
  * This function deallocates and cleans up the resources associated with a Liara renderer instance. After calling this
- * function, the renderer pointer should not be used again.
+ * function, the renderer pointer must not be used again.
  *
- * @param[in] renderer A pointer to the renderer instance to be destroyed.
+ * @param[in] renderer A pointer to the renderer instance to be destroyed. A null pointer is a no-op, as it is for
+ *            `free`. Passing a handle that was already destroyed is undefined.
  *
- * @return A `liara_result_t` indicating the success or failure of the operation. Possible return values include:
- * - `LIARA_RESULT_SUCCESS`: The renderer was destroyed successfully.
- * - `LIARA_RESULT_NULL_POINTER`: The `renderer` parameter is a null pointer.
- * - `LIARA_RESULT_INVALID_STATE`: The renderer instance is in an invalid state (e.g., already destroyed).
- *
- * @threadsafety This function is thread-safe as long as it is not called concurrently with `liara_renderer_create` on
- * the same renderer instance. @endthreadsafety
+ * @threadsafety This function is not thread-safe with respect to the handle it destroys. @endthreadsafety
  */
-LIARA_RENDERER_API liara_result_t liara_renderer_destroy(const liara_renderer_handle_t* renderer);
+LIARA_RENDERER_API void liara_renderer_destroy(liara_renderer_handle_t* renderer);
 
 /**
  * @brief Submits one frame's render packet to the renderer for presentation.
