@@ -7,6 +7,28 @@ sidebar:
 
 # Changelog
 
+## [1.0.0](https://github.com/liara-engine/liara-interfaces/compare/v0.2.5...v1.0.0) (2026-09-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* **core,renderer:** liara_core_destroy and liara_renderer_destroy return void instead of liara_result_t and take a non-const handle. A caller that checked the return value no longer compiles.
+* remove DEGRADED compatibility state ([#34](https://github.com/liara-engine/liara-interfaces/issues/34))
+* **core:** and call liara_core_update once per tick.
+
+### Features
+
+* add entry point definitions for runtime loading of modules ([#35](https://github.com/liara-engine/liara-interfaces/issues/35)) ([a8b8bd3](https://github.com/liara-engine/liara-interfaces/commit/a8b8bd3186b396b326f8133353f3c75ec58753a7))
+* **core:** remove the provisional loop entry points ([#33](https://github.com/liara-engine/liara-interfaces/issues/33)) ([afb9ce8](https://github.com/liara-engine/liara-interfaces/commit/afb9ce8456e0e63fb5b9220dae824d74b43380ed))
+* **platform:** add platform lifecycle, and time and signal entry points ([#37](https://github.com/liara-engine/liara-interfaces/issues/37)) ([28e6796](https://github.com/liara-engine/liara-interfaces/commit/28e67969a1aac696af5e06ed75ce676e0ae11b6e))
+* **platform:** declare the platform module namespace ([#31](https://github.com/liara-engine/liara-interfaces/issues/31)) ([b548532](https://github.com/liara-engine/liara-interfaces/commit/b548532ff98b22fab7d5f721cbc7aa8cefa7b819))
+* remove DEGRADED compatibility state ([#34](https://github.com/liara-engine/liara-interfaces/issues/34)) ([db11f6d](https://github.com/liara-engine/liara-interfaces/commit/db11f6d0f04e55821e393f28ad7ea8316e18a414))
+
+
+### Code Refactoring
+
+* **core,renderer:** destroy returns void and takes a mutable handle ([#36](https://github.com/liara-engine/liara-interfaces/issues/36)) ([c20d8ae](https://github.com/liara-engine/liara-interfaces/commit/c20d8ae816e2953a78a4894dec60c30db220b516))
+
 ## [0.2.5](https://github.com/liara-engine/liara-interfaces/compare/v0.2.4...v0.2.5) (2026-09-20)
 
 
