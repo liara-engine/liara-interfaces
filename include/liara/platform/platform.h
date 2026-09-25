@@ -3,7 +3,7 @@
 #include <liara/internal/portability.h>
 #include <liara/platform/platform_export.h>
 
-#if !defined(__cplusplus) && __STDC_VERSION__ < 202311L
+#ifndef __cplusplus
     #include <stdbool.h>
 #endif
 #include <stdint.h>
