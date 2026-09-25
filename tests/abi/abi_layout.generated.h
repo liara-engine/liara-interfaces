@@ -7,6 +7,7 @@
 #include <stdalign.h>  // alignof (C11)
 
 #include <liara/modules.h>
+#include <liara/platform/platform.h>
 #include <liara/renderer/packet.h>
 
 static_assert(sizeof(liara_module_info_t) == 40u, "ABI: sizeof(liara_module_info_t) changed");
@@ -18,6 +19,10 @@ static_assert(offsetof(liara_module_info_t, reserved) == 12u, "ABI: offsetof(lia
 static_assert(offsetof(liara_module_info_t, module_name) == 16u, "ABI: offsetof(liara_module_info_t.module_name) changed");
 static_assert(offsetof(liara_module_info_t, abi_version_str) == 24u, "ABI: offsetof(liara_module_info_t.abi_version_str) changed");
 static_assert(offsetof(liara_module_info_t, module_version_str) == 32u, "ABI: offsetof(liara_module_info_t.module_version_str) changed");
+
+static_assert(sizeof(liara_platform_create_info_t) == 4u, "ABI: sizeof(liara_platform_create_info_t) changed");
+static_assert(alignof(liara_platform_create_info_t) == 4u, "ABI: alignof(liara_platform_create_info_t) changed");
+static_assert(offsetof(liara_platform_create_info_t, struct_version) == 0u, "ABI: offsetof(liara_platform_create_info_t.struct_version) changed");
 
 static_assert(sizeof(liara_render_drawable_t) == 12u, "ABI: sizeof(liara_render_drawable_t) changed");
 static_assert(alignof(liara_render_drawable_t) == 4u, "ABI: alignof(liara_render_drawable_t) changed");
