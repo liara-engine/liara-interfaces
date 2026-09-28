@@ -113,11 +113,17 @@ LIARA_PLATFORM_API liara_result_t liara_platform_install_signal_handlers(liara_p
 /**
  * @brief Reports whether the user has asked the process to stop.
  *
- * The answer merges a process-global flag written by the signal handler, with the window's close button, which is
- * per-instance.
+ * The answer merges two flags. The process-global one is raised by the signals `liara_platform_install_signal_handlers`
+ * catches, and by a quit the window system itself requests, such as a session ending. The instance's own flag is
+ * raised when the close of its last open window is requested, a window being open from its creation to its
+ * destruction. With a single window, closing it is therefore the same request as a Ctrl+C; with several, closing one
+ * of them produces a `LIARA_PLATFORM_EVENT_WINDOW_CLOSE_REQUESTED` event and nothing else.
  *
- * The flag is sticky: once true it stays true for the life of the process. An entry point to clear it would let a host
- * cancel a quit, and it is deliberately absent until a consumer asks for it.
+ * Close requests are observed by `liara_platform_poll_event` and by nothing else, so a host polls its events before it
+ * reads this flag.
+ *
+ * Both flags are sticky: once true they stay true, for the life of the process and of the instance respectively. An
+ * entry point to clear them would let a host cancel a quit, and it is deliberately absent until a consumer asks for it.
  *
  * @param[in] platform The instance to interrogate. Passing null is a programming error.
  *

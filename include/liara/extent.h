@@ -21,9 +21,8 @@ extern "C" {
  *
  * @threadsafety Plain data, with no thread-safety concerns of its own. @endthreadsafety
  */
-LIARA_TYPEDEF_STRUCT(liara_extent2d_t,
-                     uint32_t width;  /**< Horizontal size. */
-                     uint32_t height; /**< Vertical size, in the same unit as `width`. */
+LIARA_TYPEDEF_STRUCT(liara_extent2d_t, uint32_t width; /**< Horizontal size. */
+                     uint32_t height;                  /**< Vertical size, in the same unit as `width`. */
 );
 
 #ifdef __cplusplus

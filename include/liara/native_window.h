@@ -46,24 +46,24 @@ enum liara_native_window_kinds {
  *
  * @threadsafety Plain data, with no thread-safety concerns of its own. @endthreadsafety
  */
-LIARA_TYPEDEF_STRUCT(liara_native_window_t,
-                     liara_native_window_kind_t kind; /**< Which member of `handle` is valid. */
-                     uint32_t reserved;               /**< Explicit padding. Zero. */
-                     union {
-                         struct {
-                             void* hinstance; /**< `HINSTANCE`. */
-                             void* hwnd;      /**< `HWND`. */
-                         } win32;             /**< Valid when `kind` is `LIARA_NATIVE_WINDOW_KIND_WIN32`. */
-                         struct {
-                             void* dpy;       /**< Xlib `Display*`. */
-                             uint64_t window; /**< Xlib `Window`, an XID. */
-                         } xlib;              /**< Valid when `kind` is `LIARA_NATIVE_WINDOW_KIND_XLIB`. */
-                         struct {
-                             void* display; /**< `struct wl_display*`. */
-                             void* surface; /**< `struct wl_surface*`. */
-                         } wayland;         /**< Valid when `kind` is `LIARA_NATIVE_WINDOW_KIND_WAYLAND`. */
-                         uint64_t padding[4]; /**< Fixes the size of the union. Never read. */
-                     } handle; /**< The window itself, per `kind`. */
+LIARA_TYPEDEF_STRUCT(
+    liara_native_window_t, liara_native_window_kind_t kind; /**< Which member of `handle` is valid. */
+    uint32_t reserved;                                      /**< Explicit padding. Zero. */
+    union {
+        struct {
+            void* hinstance; /**< `HINSTANCE`. */
+            void* hwnd;      /**< `HWND`. */
+        } win32;             /**< Valid when `kind` is `LIARA_NATIVE_WINDOW_KIND_WIN32`. */
+        struct {
+            void* dpy;       /**< Xlib `Display*`. */
+            uint64_t window; /**< Xlib `Window`, an XID. */
+        } xlib;              /**< Valid when `kind` is `LIARA_NATIVE_WINDOW_KIND_XLIB`. */
+        struct {
+            void* display;   /**< `struct wl_display*`. */
+            void* surface;   /**< `struct wl_surface*`. */
+        } wayland;           /**< Valid when `kind` is `LIARA_NATIVE_WINDOW_KIND_WAYLAND`. */
+        uint64_t padding[4]; /**< Fixes the size of the union. Never read. */
+    } handle;                /**< The window itself, per `kind`. */
 );
 
 #ifdef __cplusplus
