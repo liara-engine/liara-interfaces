@@ -40,8 +40,9 @@ enum liara_platform_event_types {
 /**
  * @brief One event, in a record of fixed size.
  *
- * The caller allocates it, so its 64 bytes are part of the contract on 32- and 64-bit targets alike; the payload of a
- * type added later fits inside `data.padding`.
+ * The caller allocates it, so its size is part of the contract: 64 bytes on 64-bit targets. (32-bit x86 Linux, whose
+ * ABI aligns a `uint64_t` to 4 bytes inside a struct, lays it out in 60.) The payload of a type added later fits inside
+ * `data.padding`.
  *
  * @threadsafety Plain data, with no thread-safety concerns of its own. @endthreadsafety
  */
@@ -62,9 +63,9 @@ LIARA_TYPEDEF_STRUCT(
  * @brief Returns the next pending event of an instance, one per call.
  *
  * A drain is the run of calls up to one that returns `false`. Its first call pumps the operating system once; the
- * others only read what that pump produced, and events arriving in the meantime wait for the next drain. A host looping
- * `while (liara_platform_poll_event(...))` therefore terminates, even under a continuous stream of events such as a
- * resize drag. An instance sees the events of its own windows only.
+ * others only read what is already queued for this instance, which a poll on another instance may add to. A host
+ * looping `while (liara_platform_poll_event(...))` over one instance therefore terminates, even under a continuous
+ * stream of events such as a resize drag. An instance sees the events of its own windows only.
  *
  * Window close requests reach `liara_platform_quit_requested` through this call and no other, so a host polls its
  * events before it reads the quit flag.
