@@ -6,9 +6,16 @@
 #include <stddef.h>    // offsetof
 #include <stdalign.h>  // alignof (C11)
 
+#include <liara/extent.h>
 #include <liara/modules.h>
+#include <liara/native_window.h>
 #include <liara/platform/platform.h>
 #include <liara/renderer/packet.h>
+
+static_assert(sizeof(liara_extent2d_t) == 8u, "ABI: sizeof(liara_extent2d_t) changed");
+static_assert(alignof(liara_extent2d_t) == 4u, "ABI: alignof(liara_extent2d_t) changed");
+static_assert(offsetof(liara_extent2d_t, width) == 0u, "ABI: offsetof(liara_extent2d_t.width) changed");
+static_assert(offsetof(liara_extent2d_t, height) == 4u, "ABI: offsetof(liara_extent2d_t.height) changed");
 
 static_assert(sizeof(liara_module_info_t) == 40u, "ABI: sizeof(liara_module_info_t) changed");
 static_assert(alignof(liara_module_info_t) == 8u, "ABI: alignof(liara_module_info_t) changed");
@@ -19,6 +26,12 @@ static_assert(offsetof(liara_module_info_t, reserved) == 12u, "ABI: offsetof(lia
 static_assert(offsetof(liara_module_info_t, module_name) == 16u, "ABI: offsetof(liara_module_info_t.module_name) changed");
 static_assert(offsetof(liara_module_info_t, abi_version_str) == 24u, "ABI: offsetof(liara_module_info_t.abi_version_str) changed");
 static_assert(offsetof(liara_module_info_t, module_version_str) == 32u, "ABI: offsetof(liara_module_info_t.module_version_str) changed");
+
+static_assert(sizeof(liara_native_window_t) == 40u, "ABI: sizeof(liara_native_window_t) changed");
+static_assert(alignof(liara_native_window_t) == 8u, "ABI: alignof(liara_native_window_t) changed");
+static_assert(offsetof(liara_native_window_t, kind) == 0u, "ABI: offsetof(liara_native_window_t.kind) changed");
+static_assert(offsetof(liara_native_window_t, reserved) == 4u, "ABI: offsetof(liara_native_window_t.reserved) changed");
+static_assert(offsetof(liara_native_window_t, handle) == 8u, "ABI: offsetof(liara_native_window_t.handle) changed");
 
 static_assert(sizeof(liara_platform_create_info_t) == 4u, "ABI: sizeof(liara_platform_create_info_t) changed");
 static_assert(alignof(liara_platform_create_info_t) == 4u, "ABI: alignof(liara_platform_create_info_t) changed");
