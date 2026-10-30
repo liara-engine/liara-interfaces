@@ -42,7 +42,7 @@ TEST_CASE("liara_try_make_version: null pointer and out of range") {
 }
 
 TEST_CASE("unsafe macro and masks") {
-    auto u = LIARA_MAKE_VERSION_UNSAFE(5U, 6U, 7U);
+    constexpr auto u = LIARA_MAKE_VERSION_UNSAFE(5U, 6U, 7U);
     CHECK(LIARA_VERSION_MAJOR(u) == 5U);
     CHECK(LIARA_VERSION_MINOR(u) == 6U);
     CHECK(LIARA_VERSION_PATCH(u) == 7U);
