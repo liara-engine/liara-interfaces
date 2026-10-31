@@ -56,6 +56,10 @@ The position is a `double[3]` rather than a `liara_vec3d_t` for two reasons: it 
 
 That type arrives with v0.2, alongside the rest of the maths types. The double precision in it is the decision recorded under [cross-platform strategy](https://liara-engine.liara-engine-documentation.workers.dev/liara/latest/guides/architecture/cross-platform/), taken now because changing a transform's layout later would be a major bump and a migration for everyone.
 
+## Tagged unions
+
+A value that takes one of several shapes crosses as a struct holding a tag and a union, `liara_native_window_t` being the first. The tag comes first and is a fixed-width integer typedef, with its values in an enum beside it, since an enum's own size is implementation-defined. The union is a named member, never an anonymous one. One of its members is a `uint64_t` padding array that fixes the union's size, which is what lets a new shape be added in a minor version: it is a constant appended to the tag's enum plus a union member that fits inside the padding, and no existing offset moves. A consumer reads only the member its tag names, and treats a tag value it does not know as unusable.
+
 ## Strings
 
 A string is a `const char*`, with an explicit length where it matters.
