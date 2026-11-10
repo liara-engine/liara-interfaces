@@ -51,14 +51,20 @@ LIARA_RENDERER_API uint32_t liara_renderer_abi_version(void);
 /**
  * @brief Creates a new Liara renderer instance.
  *
- * This function allocates and initializes a new Liara renderer instance. The created renderer is returned through the
- * `out_renderer` parameter. The caller is responsible for destroying the renderer using `liara_renderer_destroy`.
+ * This function allocates and initializes a new Liara renderer instance: it loads the Vulkan implementation and creates
+ * the GPU device the renderer draws with. The created renderer is returned through the `out_renderer` parameter. The
+ * caller is responsible for destroying the renderer using `liara_renderer_destroy`.
  *
- * @param[out] out_renderer A pointer to a pointer that will receive the newly created renderer instance.
+ * @param[out] out_renderer A pointer to a pointer that will receive the newly created renderer instance. It is left
+ *             untouched unless the call succeeds.
  *
  * @return A `liara_result_t` indicating the success or failure of the operation. Possible return values include:
  * - `LIARA_RESULT_SUCCESS`: The renderer was created successfully.
  * - `LIARA_RESULT_NULL_POINTER`: The `out_renderer` parameter is a null pointer.
+ * - `LIARA_RESULT_NOT_SUPPORTED`: No usable Vulkan 1.3 implementation was found (no loader, no driver, or no suitable
+ *   device), or a component that a debug build of the module requires is missing.
+ * - `LIARA_RESULT_OUT_OF_MEMORY`: Host or device memory ran out.
+ * - `LIARA_RESULT_FAILED`: Any other failure of the graphics API.
  *
  * @threadsafety This function is thread-safe as long as it is not called concurrently with `liara_renderer_destroy` on
  * the same renderer instance. @endthreadsafety

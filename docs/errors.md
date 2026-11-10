@@ -21,6 +21,8 @@ The codes are declared through X-macros, so that the enum, the name table and an
 
 `LIARA_RESULT_SUCCESS` is always zero, so `if (result)` reads as "if something went wrong", which is what a C programmer expects.
 
+A caller treats any code other than `LIARA_RESULT_SUCCESS` as a failure, including a code it does not know. The codes a function documents are the ones a caller may want to tell apart, such as `LIARA_RESULT_NOT_SUPPORTED` against `LIARA_RESULT_OUT_OF_MEMORY`, and the list is not exhaustive: a later minor version may add a code to a function that already returns `liara_result_t`, which is the row of [the change-to-bump table](./breaking-changes/) that relies on this rule.
+
 A function that cannot fail returns `void`. Returning `liara_result_t` unconditionally is noise, and a signature should say honestly whether the call can fail.
 
 ## Output parameters
