@@ -99,10 +99,11 @@ LIARA_RENDERER_API void liara_renderer_destroy(liara_renderer_handle_t* renderer
  * - `LIARA_RESULT_NULL_POINTER`: The `renderer` or `packet` parameter is a null pointer, or `packet->drawables` is
  *   null while `packet->drawable_count` is non-zero.
  * - `LIARA_RESULT_INVALID_ARGUMENT`: `packet->grid_width` or `packet->grid_height` is zero.
- * - `LIARA_RESULT_INVALID_STATE`: The renderer instance is in an invalid state (e.g., not initialized).
+ * - `LIARA_RESULT_OUT_OF_MEMORY`: Memory ran out while drawing the frame.
+ * - `LIARA_RESULT_FAILED`: Any other failure while drawing the frame.
  *
  * @note The renderer does not retain ownership of `packet` or `packet->drawables` beyond the call; it may present
- *       the data however it sees fit (in Phase 0, as a grid of colored terminal cells) and does not need to be
+ *       the data however it sees fit (for now, as a grid of colored terminal cells) and does not need to be
  *       informed when the packet's backing memory is reused or freed by the caller.
  *
  * @threadsafety This function is thread-safe as long as it is not called concurrently with other functions that
