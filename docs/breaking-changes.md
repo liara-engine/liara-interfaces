@@ -26,13 +26,16 @@ sidebar:
 | Adding an enum constant at the end of an enum                                                                   | MINOR |
 | Adding a struct                                                                                                 | MINOR |
 | Adding a field at the end of a versioned struct                                                                 | MINOR |
+| Adding a failure code to a function that already returns `liara_result_t`                                       | MINOR |
 | Documentation, comments, whitespace                                                                             | PATCH |
 
-Two of these rows deserve a note.
+Three of these rows deserve a note.
 
 **Changing the meaning of a parameter** is a major bump that no tool detects. The signature is unchanged, so the ABI snapshot shows no diff and the layout freeze sees nothing, which leaves the conventional commit and the `BREAKING CHANGE` footer as the entire mechanism. Nothing catches you forgetting.
 
 **`void` to `liara_result_t`** is the one exemption in the table, and it is worth knowing why it is safe before relying on it: a caller compiled against the old signature ignores a return value that now arrives in a register it was already ignoring.
+
+**Adding a failure code** is minor because of a rule on the caller's side, stated in [Error handling](./errors/): any code other than `LIARA_RESULT_SUCCESS` is a failure, including one the caller does not know. A caller that switches over the documented codes and treats everything else as success breaks that rule, and the change breaks that caller.
 
 ## Versioned structs
 

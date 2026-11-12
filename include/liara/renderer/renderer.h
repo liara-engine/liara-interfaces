@@ -51,14 +51,20 @@ LIARA_RENDERER_API uint32_t liara_renderer_abi_version(void);
 /**
  * @brief Creates a new Liara renderer instance.
  *
- * This function allocates and initializes a new Liara renderer instance. The created renderer is returned through the
- * `out_renderer` parameter. The caller is responsible for destroying the renderer using `liara_renderer_destroy`.
+ * This function allocates and initializes a new Liara renderer instance: it loads the Vulkan implementation and creates
+ * the GPU device the renderer draws with. The created renderer is returned through the `out_renderer` parameter. The
+ * caller is responsible for destroying the renderer using `liara_renderer_destroy`.
  *
- * @param[out] out_renderer A pointer to a pointer that will receive the newly created renderer instance.
+ * @param[out] out_renderer A pointer to a pointer that will receive the newly created renderer instance. It is left
+ *             untouched unless the call succeeds.
  *
  * @return A `liara_result_t` indicating the success or failure of the operation. Possible return values include:
  * - `LIARA_RESULT_SUCCESS`: The renderer was created successfully.
  * - `LIARA_RESULT_NULL_POINTER`: The `out_renderer` parameter is a null pointer.
+ * - `LIARA_RESULT_NOT_SUPPORTED`: No usable Vulkan 1.3 implementation was found (no loader, no driver, or no suitable
+ *   device), or a component that a debug build of the module requires is missing.
+ * - `LIARA_RESULT_OUT_OF_MEMORY`: Host or device memory ran out.
+ * - `LIARA_RESULT_FAILED`: Any other failure of the graphics API.
  *
  * @threadsafety This function is thread-safe as long as it is not called concurrently with `liara_renderer_destroy` on
  * the same renderer instance. @endthreadsafety
@@ -93,10 +99,11 @@ LIARA_RENDERER_API void liara_renderer_destroy(liara_renderer_handle_t* renderer
  * - `LIARA_RESULT_NULL_POINTER`: The `renderer` or `packet` parameter is a null pointer, or `packet->drawables` is
  *   null while `packet->drawable_count` is non-zero.
  * - `LIARA_RESULT_INVALID_ARGUMENT`: `packet->grid_width` or `packet->grid_height` is zero.
- * - `LIARA_RESULT_INVALID_STATE`: The renderer instance is in an invalid state (e.g., not initialized).
+ * - `LIARA_RESULT_OUT_OF_MEMORY`: Memory ran out while drawing the frame.
+ * - `LIARA_RESULT_FAILED`: Any other failure while drawing the frame.
  *
  * @note The renderer does not retain ownership of `packet` or `packet->drawables` beyond the call; it may present
- *       the data however it sees fit (in Phase 0, as a grid of colored terminal cells) and does not need to be
+ *       the data however it sees fit (for now, as a grid of colored terminal cells) and does not need to be
  *       informed when the packet's backing memory is reused or freed by the caller.
  *
  * @threadsafety This function is thread-safe as long as it is not called concurrently with other functions that
