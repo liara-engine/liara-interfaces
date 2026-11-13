@@ -39,7 +39,11 @@ LIARA_TYPEDEF(int32_t, liara_result_t);
     X(LIARA_RESULT_IO_ERROR, -300)                                                \
     X(LIARA_RESULT_FILE_NOT_FOUND, -301)                                          \
     X(LIARA_RESULT_FILE_ALREADY_EXISTS, -302)                                     \
-    X(LIARA_RESULT_FILE_ACCESS_DENIED, -303)
+    X(LIARA_RESULT_FILE_ACCESS_DENIED, -303)                                      \
+    /* -400 to -499 : Presentation errors */                                      \
+    X(LIARA_RESULT_PRESENTATION_ERROR, -400)                                      \
+    X(LIARA_RESULT_SURFACE_OUT_OF_DATE, -401)                                     \
+    X(LIARA_RESULT_SURFACE_LOST, -402)
 
 /* Reserved for future use */
 
