@@ -13,6 +13,7 @@
 #include <liara/platform/platform.h>
 #include <liara/platform/window.h>
 #include <liara/renderer/packet.h>
+#include <liara/renderer/renderer.h>
 
 static_assert(sizeof(liara_extent2d_t) == 8u, "ABI: sizeof(liara_extent2d_t) changed");
 static_assert(alignof(liara_extent2d_t) == 4u, "ABI: alignof(liara_extent2d_t) changed");
@@ -69,4 +70,13 @@ static_assert(offsetof(liara_render_packet_t, grid_height) == 6u, "ABI: offsetof
 static_assert(offsetof(liara_render_packet_t, background_color) == 8u, "ABI: offsetof(liara_render_packet_t.background_color) changed");
 static_assert(offsetof(liara_render_packet_t, drawables) == 16u, "ABI: offsetof(liara_render_packet_t.drawables) changed");
 static_assert(offsetof(liara_render_packet_t, drawable_count) == 24u, "ABI: offsetof(liara_render_packet_t.drawable_count) changed");
+
+static_assert(sizeof(liara_renderer_create_info_t) == 72u, "ABI: sizeof(liara_renderer_create_info_t) changed");
+static_assert(alignof(liara_renderer_create_info_t) == 8u, "ABI: alignof(liara_renderer_create_info_t) changed");
+static_assert(offsetof(liara_renderer_create_info_t, struct_version) == 0u, "ABI: offsetof(liara_renderer_create_info_t.struct_version) changed");
+static_assert(offsetof(liara_renderer_create_info_t, reserved) == 4u, "ABI: offsetof(liara_renderer_create_info_t.reserved) changed");
+static_assert(offsetof(liara_renderer_create_info_t, native_window) == 8u, "ABI: offsetof(liara_renderer_create_info_t.native_window) changed");
+static_assert(offsetof(liara_renderer_create_info_t, pixel_size) == 48u, "ABI: offsetof(liara_renderer_create_info_t.pixel_size) changed");
+static_assert(offsetof(liara_renderer_create_info_t, preferred_device_name) == 56u, "ABI: offsetof(liara_renderer_create_info_t.preferred_device_name) changed");
+static_assert(offsetof(liara_renderer_create_info_t, preferred_device_name_length) == 64u, "ABI: offsetof(liara_renderer_create_info_t.preferred_device_name_length) changed");
 
