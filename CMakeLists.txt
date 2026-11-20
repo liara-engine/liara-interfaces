@@ -10,7 +10,6 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(LiaraCompilerSettings)
-include(GNUInstallDirs)
 
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/.release-please-manifest.json" RELEASE_PLEASE_MANIFEST)
 string(JSON PROJECT_VERSION GET ${RELEASE_PLEASE_MANIFEST} ".")
@@ -22,6 +21,7 @@ project(LiaraInterfaces
         HOMEPAGE_URL "https://github.com/liara-engine/liara-interfaces"
         LANGUAGES C CXX
 )
+include(GNUInstallDirs)
 
 configure_file(
         "${CMAKE_CURRENT_SOURCE_DIR}/include/liara/config.h.in"
