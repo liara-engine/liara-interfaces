@@ -39,7 +39,7 @@ LIARA_TYPEDEF(uint64_t, liara_render_target_id_t);
  * @warning Experimental. Part of the v0.1 render packet experiment. Expected to be replaced wholesale in ABI 2.0.0,
  *          when v0.2 designs the real packet from what this one taught. Do not extend it to avoid that rewrite.
  */
-#define LIARA_RENDER_TARGET_NONE ((liara_render_target_id_t)0)
+#define LIARA_RENDER_TARGET_NONE LIARA_STATIC_CAST(liara_render_target_id_t, 0)
 
 /**
  * @brief The window the renderer presents to, the only target in this version.
@@ -47,7 +47,7 @@ LIARA_TYPEDEF(uint64_t, liara_render_target_id_t);
  * @warning Experimental. Part of the v0.1 render packet experiment. Expected to be replaced wholesale in ABI 2.0.0,
  *          when v0.2 designs the real packet from what this one taught. Do not extend it to avoid that rewrite.
  */
-#define LIARA_RENDER_TARGET_WINDOW ((liara_render_target_id_t)1)
+#define LIARA_RENDER_TARGET_WINDOW LIARA_STATIC_CAST(liara_render_target_id_t, 1)
 
 /**
  * @brief The part of a target a view covers, as fractions of the target's size.

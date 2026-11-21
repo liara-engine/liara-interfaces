@@ -37,7 +37,7 @@ LIARA_TYPEDEF(uint64_t, liara_mesh_id_t);
  * @warning Experimental. Part of the v0.1 render packet experiment. Expected to be replaced wholesale in ABI 2.0.0,
  *          when v0.2 designs the real packet from what this one taught. Do not extend it to avoid that rewrite.
  */
-#define LIARA_MESH_ID_NONE ((liara_mesh_id_t)0)
+#define LIARA_MESH_ID_NONE LIARA_STATIC_CAST(liara_mesh_id_t, 0)
 
 /**
  * @brief A mesh as separate streams of per-vertex data, the way glTF lays out its attributes.
