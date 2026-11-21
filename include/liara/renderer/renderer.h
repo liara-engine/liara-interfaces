@@ -167,9 +167,13 @@ LIARA_RENDERER_API liara_result_t liara_renderer_submit_frame(liara_renderer_han
  * @brief Gives the renderer a mesh, under an identifier its source chose, for later packets to reference.
  *
  * The data is copied to the GPU during the call, which returns once the copy has completed, and nothing of the
- * caller's is kept. Works on a renderer created without a window as well, since it has a GPU device. The checks run in
- * the order of the list below, before anything reaches the GPU; an argument failure leaves the renderer unchanged and
- * is not reported through the diagnostics.
+ * caller's is kept. Works on a renderer created without a window as well, since it has a GPU device.
+ *
+ * The arguments are checked before anything reaches the GPU, in this order, and the first failure is returned:
+ * `renderer` and `data` not null; `data->struct_version`, before anything else in `data` is read; `mesh` not
+ * `LIARA_MESH_ID_NONE`; `data->positions`, and `data->indices` when there is an index count, not null; the counts; the
+ * ranges; and last, whether `mesh` is already uploaded. An argument failure leaves the renderer unchanged and is not
+ * reported through the diagnostics.
  *
  * @param[in] renderer The renderer that keeps the mesh.
  * @param[in] mesh The identifier later packets use for it. Not `LIARA_MESH_ID_NONE`, and not one already uploaded.
@@ -210,7 +214,8 @@ LIARA_RENDERER_API liara_result_t liara_renderer_mesh_upload(liara_renderer_hand
  * - `LIARA_RESULT_NULL_POINTER`: `renderer` is null.
  * - `LIARA_RESULT_INVALID_ARGUMENT`: `mesh` is `LIARA_MESH_ID_NONE`.
  * - `LIARA_RESULT_RESOURCE_NOT_FOUND`: No mesh is uploaded under that identifier, or it was already released.
- * - `LIARA_RESULT_FAILED`: Waiting for the GPU failed.
+ * - `LIARA_RESULT_OUT_OF_MEMORY`: Host or device memory ran out while waiting for the GPU.
+ * - `LIARA_RESULT_FAILED`: Any other failure while waiting for the GPU.
  *
  * @threadsafety This function is not thread-safe with respect to the renderer it is given. @endthreadsafety
  *
