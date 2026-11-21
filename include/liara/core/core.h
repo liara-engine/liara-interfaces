@@ -2,6 +2,7 @@
 
 #include <liara/core/core_export.h>
 #include <liara/internal/portability.h>
+#include <liara/mesh.h>
 
 #include <stdint.h>
 
@@ -99,11 +100,13 @@ LIARA_CORE_API void liara_core_update(liara_core_handle_t* core_handle, float de
 /**
  * @brief Retrieves the render packet built during the core's most recent update.
  *
- * This is the core's half of the render packet pattern described in ARCHITECTURE.md \S6. It is the host's
- * responsibility to call this after each `liara_core_update` tick (typically from a late update callback, see
- * `liara_core_set_late_update_callback`) and to hand the resulting packet to a renderer via
- * `liara_renderer_submit_frame`. The core never calls the renderer itself (MODULES.md \S10): the data path is
- * always core -> host -> renderer.
+ * This is the core's half of the render packet pattern. It is the host's job to call this after `liara_core_update`
+ * and to hand the packet to a renderer through `liara_renderer_submit_frame`. The core never calls the renderer
+ * itself: the data path is always core, then host, then renderer.
+ *
+ * The packet holds one view, targeting `LIARA_RENDER_TARGET_WINDOW`, covering the whole target and cleared to the
+ * core's background colour. That view has one drawable, referencing the mesh given to `liara_core_draw_mesh`, once the
+ * host has named one and the core has been updated since; it has none otherwise.
  *
  * @param[in] core_handle A pointer to the core instance whose render packet is to be retrieved.
  * @param[out] out_packet A pointer to a `liara_render_packet_t` that will receive a copy of the packet.
@@ -113,16 +116,40 @@ LIARA_CORE_API void liara_core_update(liara_core_handle_t* core_handle, float de
  * - `LIARA_RESULT_NULL_POINTER`: The `core_handle` or `out_packet` parameter is a null pointer.
  * - `LIARA_RESULT_INVALID_STATE`: The core instance is in an invalid state (e.g., already destroyed).
  *
- * @warning The `out_packet->drawables` pointer refers to memory owned by the core and is only valid until the next
- *          call to `liara_core_update` or `liara_core_run` (or until `core_handle` is destroyed). The host must
- *          finish consuming the packet (typically by passing it to `liara_renderer_submit_frame`) before triggering
- *          the next tick; it must not retain the pointer across ticks.
+ * @warning Every pointer in the packet (`views`, and each view's `drawables`) refers to memory owned by the core, valid
+ *          until the next call to `liara_core_update` or until `core_handle` is destroyed. The host must finish
+ *          consuming the packet, typically by passing it to `liara_renderer_submit_frame`, before the next update,
+ *          and must not keep any of those pointers across it.
  *
  * @threadsafety This function is thread-safe as long as it is not called concurrently with other functions that
  * modify the core's state. @endthreadsafety
  */
 LIARA_CORE_API liara_result_t liara_core_get_render_packet(const liara_core_handle_t* core_handle,
                                                            liara_render_packet_t* out_packet);
+
+/**
+ * @brief Names the mesh the core's packets draw.
+ *
+ * From the next `liara_core_update` on, each packet's view carries one drawable referencing `mesh`, until another call
+ * names another. `LIARA_MESH_ID_NONE` returns to no drawable, which is also the state before the first call. The core
+ * does not know whether a renderer has that mesh, and does not try to: the identifier is the host's, and a renderer
+ * skips a drawable whose mesh it lacks.
+ *
+ * @param[in] core_handle The core whose packets draw the mesh.
+ * @param[in] mesh The mesh to draw, as uploaded to the renderer, or `LIARA_MESH_ID_NONE` for none.
+ *
+ * @return A `liara_result_t` indicating the success or failure of the operation. Possible return values include:
+ * - `LIARA_RESULT_SUCCESS`: The next update's packet draws `mesh`.
+ * - `LIARA_RESULT_NULL_POINTER`: `core_handle` is null.
+ * - `LIARA_RESULT_INVALID_STATE`: The core instance is in an invalid state.
+ *
+ * @threadsafety This function is thread-safe as long as it is not called concurrently with other functions that
+ * modify the core's state. @endthreadsafety
+ *
+ * @warning Experimental. Part of the v0.1 render packet experiment. Expected to be replaced wholesale in ABI 2.0.0,
+ *          when v0.2 designs the real packet from what this one taught. Do not extend it to avoid that rewrite.
+ */
+LIARA_CORE_API liara_result_t liara_core_draw_mesh(liara_core_handle_t* core_handle, liara_mesh_id_t mesh);
 
 #ifdef __cplusplus
 }
