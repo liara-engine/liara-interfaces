@@ -7,6 +7,7 @@
 #include <stdalign.h>  // alignof (C11)
 
 #include <liara/extent.h>
+#include <liara/mesh.h>
 #include <liara/modules.h>
 #include <liara/native_window.h>
 #include <liara/platform/event.h>
@@ -19,6 +20,16 @@ static_assert(sizeof(liara_extent2d_t) == 8u, "ABI: sizeof(liara_extent2d_t) cha
 static_assert(alignof(liara_extent2d_t) == 4u, "ABI: alignof(liara_extent2d_t) changed");
 static_assert(offsetof(liara_extent2d_t, width) == 0u, "ABI: offsetof(liara_extent2d_t.width) changed");
 static_assert(offsetof(liara_extent2d_t, height) == 4u, "ABI: offsetof(liara_extent2d_t.height) changed");
+
+static_assert(sizeof(liara_mesh_data_t) == 48u, "ABI: sizeof(liara_mesh_data_t) changed");
+static_assert(alignof(liara_mesh_data_t) == 8u, "ABI: alignof(liara_mesh_data_t) changed");
+static_assert(offsetof(liara_mesh_data_t, struct_version) == 0u, "ABI: offsetof(liara_mesh_data_t.struct_version) changed");
+static_assert(offsetof(liara_mesh_data_t, reserved) == 4u, "ABI: offsetof(liara_mesh_data_t.reserved) changed");
+static_assert(offsetof(liara_mesh_data_t, positions) == 8u, "ABI: offsetof(liara_mesh_data_t.positions) changed");
+static_assert(offsetof(liara_mesh_data_t, colors) == 16u, "ABI: offsetof(liara_mesh_data_t.colors) changed");
+static_assert(offsetof(liara_mesh_data_t, vertex_count) == 24u, "ABI: offsetof(liara_mesh_data_t.vertex_count) changed");
+static_assert(offsetof(liara_mesh_data_t, indices) == 32u, "ABI: offsetof(liara_mesh_data_t.indices) changed");
+static_assert(offsetof(liara_mesh_data_t, index_count) == 40u, "ABI: offsetof(liara_mesh_data_t.index_count) changed");
 
 static_assert(sizeof(liara_module_info_t) == 40u, "ABI: sizeof(liara_module_info_t) changed");
 static_assert(alignof(liara_module_info_t) == 8u, "ABI: alignof(liara_module_info_t) changed");
@@ -56,20 +67,32 @@ static_assert(offsetof(liara_platform_window_create_info_t, reserved) == 12u, "A
 static_assert(offsetof(liara_platform_window_create_info_t, title) == 16u, "ABI: offsetof(liara_platform_window_create_info_t.title) changed");
 static_assert(offsetof(liara_platform_window_create_info_t, title_length) == 24u, "ABI: offsetof(liara_platform_window_create_info_t.title_length) changed");
 
-static_assert(sizeof(liara_render_drawable_t) == 12u, "ABI: sizeof(liara_render_drawable_t) changed");
-static_assert(alignof(liara_render_drawable_t) == 4u, "ABI: alignof(liara_render_drawable_t) changed");
-static_assert(offsetof(liara_render_drawable_t, x) == 0u, "ABI: offsetof(liara_render_drawable_t.x) changed");
-static_assert(offsetof(liara_render_drawable_t, y) == 4u, "ABI: offsetof(liara_render_drawable_t.y) changed");
-static_assert(offsetof(liara_render_drawable_t, color) == 8u, "ABI: offsetof(liara_render_drawable_t.color) changed");
+static_assert(sizeof(liara_render_drawable_t) == 8u, "ABI: sizeof(liara_render_drawable_t) changed");
+static_assert(alignof(liara_render_drawable_t) == 8u, "ABI: alignof(liara_render_drawable_t) changed");
+static_assert(offsetof(liara_render_drawable_t, mesh) == 0u, "ABI: offsetof(liara_render_drawable_t.mesh) changed");
 
-static_assert(sizeof(liara_render_packet_t) == 32u, "ABI: sizeof(liara_render_packet_t) changed");
+static_assert(sizeof(liara_render_packet_t) == 24u, "ABI: sizeof(liara_render_packet_t) changed");
 static_assert(alignof(liara_render_packet_t) == 8u, "ABI: alignof(liara_render_packet_t) changed");
 static_assert(offsetof(liara_render_packet_t, struct_version) == 0u, "ABI: offsetof(liara_render_packet_t.struct_version) changed");
-static_assert(offsetof(liara_render_packet_t, grid_width) == 4u, "ABI: offsetof(liara_render_packet_t.grid_width) changed");
-static_assert(offsetof(liara_render_packet_t, grid_height) == 6u, "ABI: offsetof(liara_render_packet_t.grid_height) changed");
-static_assert(offsetof(liara_render_packet_t, background_color) == 8u, "ABI: offsetof(liara_render_packet_t.background_color) changed");
-static_assert(offsetof(liara_render_packet_t, drawables) == 16u, "ABI: offsetof(liara_render_packet_t.drawables) changed");
-static_assert(offsetof(liara_render_packet_t, drawable_count) == 24u, "ABI: offsetof(liara_render_packet_t.drawable_count) changed");
+static_assert(offsetof(liara_render_packet_t, reserved) == 4u, "ABI: offsetof(liara_render_packet_t.reserved) changed");
+static_assert(offsetof(liara_render_packet_t, views) == 8u, "ABI: offsetof(liara_render_packet_t.views) changed");
+static_assert(offsetof(liara_render_packet_t, view_count) == 16u, "ABI: offsetof(liara_render_packet_t.view_count) changed");
+
+static_assert(sizeof(liara_render_view_t) == 48u, "ABI: sizeof(liara_render_view_t) changed");
+static_assert(alignof(liara_render_view_t) == 8u, "ABI: alignof(liara_render_view_t) changed");
+static_assert(offsetof(liara_render_view_t, target) == 0u, "ABI: offsetof(liara_render_view_t.target) changed");
+static_assert(offsetof(liara_render_view_t, viewport) == 8u, "ABI: offsetof(liara_render_view_t.viewport) changed");
+static_assert(offsetof(liara_render_view_t, clear_color) == 24u, "ABI: offsetof(liara_render_view_t.clear_color) changed");
+static_assert(offsetof(liara_render_view_t, reserved) == 28u, "ABI: offsetof(liara_render_view_t.reserved) changed");
+static_assert(offsetof(liara_render_view_t, drawables) == 32u, "ABI: offsetof(liara_render_view_t.drawables) changed");
+static_assert(offsetof(liara_render_view_t, drawable_count) == 40u, "ABI: offsetof(liara_render_view_t.drawable_count) changed");
+
+static_assert(sizeof(liara_render_viewport_t) == 16u, "ABI: sizeof(liara_render_viewport_t) changed");
+static_assert(alignof(liara_render_viewport_t) == 4u, "ABI: alignof(liara_render_viewport_t) changed");
+static_assert(offsetof(liara_render_viewport_t, x) == 0u, "ABI: offsetof(liara_render_viewport_t.x) changed");
+static_assert(offsetof(liara_render_viewport_t, y) == 4u, "ABI: offsetof(liara_render_viewport_t.y) changed");
+static_assert(offsetof(liara_render_viewport_t, width) == 8u, "ABI: offsetof(liara_render_viewport_t.width) changed");
+static_assert(offsetof(liara_render_viewport_t, height) == 12u, "ABI: offsetof(liara_render_viewport_t.height) changed");
 
 static_assert(sizeof(liara_renderer_create_info_t) == 72u, "ABI: sizeof(liara_renderer_create_info_t) changed");
 static_assert(alignof(liara_renderer_create_info_t) == 8u, "ABI: alignof(liara_renderer_create_info_t) changed");
