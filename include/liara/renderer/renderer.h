@@ -136,7 +136,8 @@ LIARA_RENDERER_API void liara_renderer_destroy(liara_renderer_handle_t* renderer
  * anything is drawn, and a packet failing a check draws nothing and is not reported through the diagnostics. Each view
  * targeting the window is drawn into it, in the packet's order; a view or a drawable naming a target or a mesh the
  * renderer does not know is skipped, with a warning. A renderer created without a window checks the packet and draws
- * nothing.
+ * nothing. A resize, whether the host reported it through `liara_renderer_window_resized` or the renderer noticed it on
+ * its own, is taken into account before the frame is drawn.
  *
  * @param[in] renderer A pointer to the renderer instance that will draw the packet.
  * @param[in] packet A pointer to the render packet to draw. It is read during the call only.
@@ -148,20 +149,47 @@ LIARA_RENDERER_API void liara_renderer_destroy(liara_renderer_handle_t* renderer
  * - `LIARA_RESULT_VERSION_MISMATCH`: `packet->struct_version` is not a version this module understands.
  * - `LIARA_RESULT_INVALID_ARGUMENT`: A view targets `LIARA_RENDER_TARGET_NONE`, a viewport component is not finite or
  *   lies outside [0, 1], a viewport extends past its target, or a drawable references `LIARA_MESH_ID_NONE`.
- * - `LIARA_RESULT_SURFACE_OUT_OF_DATE`: The swapchain no longer matches the window, which was resized or minimised.
- *   Nothing was presented.
+ * - `LIARA_RESULT_SURFACE_OUT_OF_DATE`: Nothing was presented by this call: the swapchain no longer matched the window,
+ *   or the window has no area. The renderer recreates its swapchain on a later call, once the window has an area; the
+ *   host needs to do nothing but call again.
  * - `LIARA_RESULT_SURFACE_LOST`: The window system took the surface away. Nothing was presented.
  * - `LIARA_RESULT_OUT_OF_MEMORY`: Memory ran out while drawing the frame.
  * - `LIARA_RESULT_FAILED`: Any other failure while drawing the frame.
  *
- * Once it has returned `LIARA_RESULT_SURFACE_OUT_OF_DATE` or `LIARA_RESULT_SURFACE_LOST`, every later call returns the
- * same code until the renderer can recreate its swapchain. A renderer created without a window never returns either.
+ * Once it has returned `LIARA_RESULT_SURFACE_LOST`, every later call returns it. A renderer created without a window
+ * never returns either presentation code.
  *
  * @threadsafety This function is thread-safe as long as it is not called concurrently with other functions that
  * modify the renderer's state. @endthreadsafety
  */
 LIARA_RENDERER_API liara_result_t liara_renderer_submit_frame(liara_renderer_handle_t* renderer,
                                                               const liara_render_packet_t* packet);
+
+/**
+ * @brief Tells the renderer the size, in pixels, of the window it presents to.
+ *
+ * The host passes on the size `liara_platform_poll_event` reported with `LIARA_PLATFORM_EVENT_WINDOW_RESIZED`; passing
+ * only the last one of a drain is enough. The renderer keeps the size and adapts its swapchain on the next
+ * `liara_renderer_submit_frame`, so that several calls between two frames cost one recreation.
+ *
+ * Where the window system gives the surface no size of its own, as Wayland does, this call is the only way the
+ * renderer learns that the window was resized, and a host that never makes it gets images of the window's size at
+ * creation. Elsewhere the window system's own size wins, and the renderer also notices a resize without being told.
+ *
+ * A zero component means the window has no area, as when minimised: frames are not presented until the window has one
+ * again. A renderer created without a window ignores the call.
+ *
+ * @param[in] renderer The renderer presenting to the window.
+ * @param[in] pixel_size The window's size, in pixels.
+ *
+ * @return A `liara_result_t` indicating the success or failure of the operation. Possible return values include:
+ * - `LIARA_RESULT_SUCCESS`: The size was recorded, or the renderer has no window.
+ * - `LIARA_RESULT_NULL_POINTER`: `renderer` is null.
+ *
+ * @threadsafety This function is not thread-safe with respect to the renderer it is given. @endthreadsafety
+ */
+LIARA_RENDERER_API liara_result_t liara_renderer_window_resized(liara_renderer_handle_t* renderer,
+                                                                liara_extent2d_t pixel_size);
 
 /**
  * @brief Gives the renderer a mesh, under an identifier its source chose, for later packets to reference.
