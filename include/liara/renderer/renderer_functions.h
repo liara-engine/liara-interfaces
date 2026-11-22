@@ -17,7 +17,8 @@
     X(prefix, destroy, void, (liara_renderer_handle_t*))                                                          \
     X(prefix, submit_frame, liara_result_t, (liara_renderer_handle_t*, const liara_render_packet_t*))             \
     X(prefix, mesh_upload, liara_result_t, (liara_renderer_handle_t*, liara_mesh_id_t, const liara_mesh_data_t*)) \
-    X(prefix, mesh_release, liara_result_t, (liara_renderer_handle_t*, liara_mesh_id_t))
+    X(prefix, mesh_release, liara_result_t, (liara_renderer_handle_t*, liara_mesh_id_t))                          \
+    X(prefix, window_resized, liara_result_t, (liara_renderer_handle_t*, liara_extent2d_t))
 
 /** The library name stem, without platform prefix or extension. */
 #define LIARA_RENDERER_LIBRARY_STEM "liara_renderer"
